@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-fixed": "#a3f69c",
+              "primary-container": "#3e2723",
+              "on-tertiary": "#ffffff",
+              "primary-fixed-dim": "#e3beb8",
+              "inverse-on-surface": "#f8f1da",
+              "on-primary-container": "#ae8d87",
+              "tertiary-container": "#3e271e",
+              "on-error": "#ffffff",
+              "outline-variant": "#d3c3c0",
+              "on-secondary-fixed-variant": "#005312",
+              "secondary-container": "#a0f399",
+              "on-tertiary-fixed": "#2b160f",
+              "on-background": "#1e1c0e",
+              "on-surface": "#1e1c0e",
+              "on-secondary-fixed": "#002204",
+              "surface-container-low": "#faf4dd",
+              "inverse-primary": "#e3beb8",
+              "on-secondary": "#ffffff",
+              "surface-dim": "#e0dac4",
+              "surface-variant": "#e9e2cc",
+              "error-container": "#ffdad6",
+              "primary-fixed": "#ffdad4",
+              "primary": "#271310",
+              "tertiary-fixed-dim": "#e4beb2",
+              "outline": "#827472",
+              "on-primary-fixed": "#2b1613",
+              "on-error-container": "#93000a",
+              "surface": "#fff9ea",
+              "secondary-fixed-dim": "#88d982",
+              "surface-tint": "#745853",
+              "surface-container-lowest": "#ffffff",
+              "error": "#ba1a1a",
+              "tertiary": "#27130b",
+              "on-tertiary-fixed-variant": "#5b4137",
+              "background": "#fff9ea",
+              "surface-container-highest": "#e9e2cc",
+              "on-secondary-container": "#217128",
+              "surface-container-high": "#efe8d2",
+              "tertiary-fixed": "#ffdbce",
+              "on-primary": "#ffffff",
+              "on-primary-fixed-variant": "#5b403c",
+              "surface-bright": "#fff9ea",
+              "inverse-surface": "#333121",
+              "on-tertiary-container": "#ae8d81",
+              "secondary": "#1b6d24",
+              "surface-container": "#f5eed7",
+              "on-surface-variant": "#504442"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>.material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24
+    }
+.bg-login-hero {
+    background-image: linear-gradient(to bottom, rgba(39, 19, 16, 0.4), rgba(39, 19, 16, 0.6)), url(https://lh3.googleusercontent.com/aida-public/AB6AXuCpkQY0dgfxEouoFbsoMHbw-RNWMjP17mEm2Ufo8vKk1UkopMXY7bZDkI0uGVlrcHrsNFvvhbrdEXjQPzjFvpL65RoyBpHSTqtTJlNmM_CV2JYiBDVRR9EgLUTspGhLLo6uGXrmTAWu5s5algkrkug4bN6fwggqjR4J8vikQ6GobMhjxXofR_Ff0n5p0Zf6otgKtdMD_4HPVyqS4OCVBmD8LprTGDBLzbP4NwDqn_ThhCuKfAgNHU4BN40IezZstqjuOLEle73heJFq);
+    background-size: cover;
+    background-position: center
+    }
+.glass-panel {
+    backdrop-filter: blur(12px);
+    background-color: rgba(255, 249, 234, 0.85)
+    }</style>
+</head>
+<body class="bg-background font-body text-on-background min-h-screen flex flex-col">
+<!-- Hero Background Wrapper -->
+<main class="flex-grow relative flex items-center justify-center p-6 bg-login-hero" data-alt="Warm atmospheric boutique cafe interior blurred background">
+<!-- Login Container -->
+<div class="w-full max-w-md">
+<!-- Brand Anchor (Simplified for Login Context) -->
+<div class="mb-10 text-center">
+<h1 class="font-headline font-extrabold text-4xl text-surface tracking-widest uppercase" style="">
+                    Artisanal Ledger
+                </h1>
+<p class="font-body text-surface-container-high text-sm mt-2 opacity-90" style="">Nghệ thuật Thủ công cho Cà phê Mỗi ngày</p>
+</div>
+<!-- Login Card -->
+<div class="glass-panel rounded-xl shadow-[0_24px_48px_rgba(30,28,14,0.15)] overflow-hidden border border-white/20">
+<div class="p-8 md:p-10">
+<!-- Header: đăng nhập -->
+<div id="header-login" class="mb-8">
+<h2 class="font-headline font-bold text-2xl text-primary mb-1">Đăng nhập tài khoản</h2>
+<p class="text-on-surface-variant text-sm">Chào mừng bạn quay lại. Vui lòng nhập thông tin đăng nhập của bạn.</p>
+</div>
+<!-- Header: chọn bàn -->
+<div id="header-table" class="mb-8 hidden">
+<h2 class="font-headline font-bold text-2xl text-primary mb-1">Chọn bàn</h2>
+<p class="text-on-surface-variant text-sm">Nhập số bàn bạn đang ngồi để đặt món tại quán.</p>
+</div>
+<!-- Form đăng nhập nhân viên / admin -->
+<form id="form-login" class="space-y-6" onsubmit="return false;">
+<!-- Username -->
+<div class="space-y-2">
+<label class="font-label text-xs font-semibold uppercase tracking-wider text-on-surface-variant ml-1" for="username">TÊN ĐĂNG NHẬP</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-on-surface-variant/60 group-focus-within:text-secondary transition-colors">
+<span class="material-symbols-outlined text-[20px]">person</span>
+</div>
+<input class="w-full bg-surface-container-highest border-b-2 border-transparent focus:border-secondary focus:ring-0 rounded-lg py-3.5 pl-12 pr-4 text-primary font-medium transition-all placeholder:text-on-surface-variant/40" id="username" name="username" placeholder="Nhập tên đăng nhập" autocomplete="username" type="text"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-2">
+<div class="flex justify-between items-center px-1">
+<label class="font-label text-xs font-semibold uppercase tracking-wider text-on-surface-variant" for="password">MẬT khẩu</label>
+</div>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-on-surface-variant/60 group-focus-within:text-secondary transition-colors">
+<span class="material-symbols-outlined text-[20px]">lock</span>
+</div>
+<input class="w-full bg-surface-container-highest border-b-2 border-transparent focus:border-secondary focus:ring-0 rounded-lg py-3.5 pl-12 pr-4 text-primary font-medium transition-all placeholder:text-on-surface-variant/40" id="password" name="password" placeholder="••••••••" type="password" autocomplete="current-password"/>
+</div>
+</div>
+<!-- Utilities -->
+<div class="flex items-center">
+<label class="relative flex items-center cursor-pointer group">
+<input id="remember-me" class="peer sr-only" type="checkbox"/>
+<div class="w-5 h-5 bg-surface-container-highest border border-outline-variant rounded-md peer-checked:bg-secondary peer-checked:border-secondary transition-all"></div>
+<span class="material-symbols-outlined absolute top-0.5 left-0.5 text-[16px] text-white opacity-0 peer-checked:opacity-100 transition-opacity" style='font-variation-settings: "FILL" 1;'>check</span>
+<span class="ml-3 text-sm font-medium text-on-surface-variant">Ghi nhớ tôi trên thiết bị này</span>
+</label>
+</div>
+<!-- Submit Action -->
+<div class="pt-2">
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary font-headline font-bold py-4 rounded-full shadow-lg active:scale-[0.98] transition-all hover:shadow-xl flex items-center justify-center gap-2 group" type="submit">Đăng nhập ngay <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span></button>
+</div>
+</form>
+<!-- Panel chọn bàn (khách) -->
+<div id="panel-table" class="space-y-6 hidden">
+<div class="space-y-2">
+<label class="font-label text-xs font-semibold uppercase tracking-wider text-on-surface-variant ml-1" for="tableNumber">SỐ BÀN</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-on-surface-variant/60 group-focus-within:text-secondary transition-colors">
+<span class="material-symbols-outlined text-[20px]">table_restaurant</span>
+</div>
+<input class="w-full bg-surface-container-highest border-b-2 border-transparent focus:border-secondary focus:ring-0 rounded-lg py-3.5 pl-12 pr-4 text-primary font-medium transition-all placeholder:text-on-surface-variant/40" id="tableNumber" inputmode="numeric" min="1" placeholder="Ví dụ: 5" type="number"/>
+</div>
+</div>
+<p id="table-flow-message" class="text-sm text-error hidden" role="alert"></p>
+<div class="pt-2 space-y-3">
+<button class="w-full bg-gradient-to-br from-secondary to-primary text-on-primary font-headline font-bold py-4 rounded-full shadow-lg active:scale-[0.98] transition-all hover:shadow-xl flex items-center justify-center gap-2" id="btn-confirm-table" type="button">Chọn bàn</button>
+<button class="w-full text-on-surface-variant text-sm font-medium py-2 hover:text-primary transition-colors" id="btn-back-login" type="button">← Quay lại đăng nhập</button>
+</div>
+</div>
+</div>
+<!-- Footer Separator (No borders rule: using tonal shift) -->
+<div class="bg-surface-container-low py-6 px-8 text-center">
+<p id="footer-hint-login" class="text-on-surface-variant text-sm">Bạn là khách hàng? <button type="button" id="btn-open-table" class="text-secondary font-bold hover:text-on-secondary-fixed-variant transition-colors inline-flex items-center gap-1 ml-1 group">Đặt tại quán <span class="material-symbols-outlined text-[16px] group-hover:scale-110 transition-transform">local_cafe</span></button></p>
+<p id="footer-hint-table" class="text-on-surface-variant text-sm hidden">Bạn có tài khoản? <button type="button" id="btn-back-from-footer" class="text-secondary font-bold hover:text-on-secondary-fixed-variant transition-colors">Đăng nhập tài khoản</button></p>
+</div>
+</div>
+</main>
+<!-- Navigation Shell Suppression: As per instructions, login page suppresses TopNavBar and BottomNavBar -->
+<script>
+(function () {
+  var formLogin = document.getElementById('form-login');
+  var panelTable = document.getElementById('panel-table');
+  var headerLogin = document.getElementById('header-login');
+  var headerTable = document.getElementById('header-table');
+  var footerLogin = document.getElementById('footer-hint-login');
+  var footerTable = document.getElementById('footer-hint-table');
+  var tableMsg = document.getElementById('table-flow-message');
+
+  function clearLoginFields() {
+    var u = document.getElementById('username');
+    var p = document.getElementById('password');
+    var r = document.getElementById('remember-me');
+    if (u) u.value = '';
+    if (p) p.value = '';
+    if (r) r.checked = false;
+  }
+
+  function clearTableFields() {
+    var t = document.getElementById('tableNumber');
+    if (t) t.value = '';
+    if (tableMsg) {
+      tableMsg.textContent = '';
+      tableMsg.classList.add('hidden');
+    }
+  }
+
+  function showTableFlow() {
+    clearLoginFields();
+    headerLogin.classList.add('hidden');
+    headerTable.classList.remove('hidden');
+    formLogin.classList.add('hidden');
+    panelTable.classList.remove('hidden');
+    footerLogin.classList.add('hidden');
+    footerTable.classList.remove('hidden');
+  }
+
+  function showLoginFlow() {
+    clearTableFields();
+    headerTable.classList.add('hidden');
+    headerLogin.classList.remove('hidden');
+    panelTable.classList.add('hidden');
+    formLogin.classList.remove('hidden');
+    footerTable.classList.add('hidden');
+    footerLogin.classList.remove('hidden');
+  }
+
+  document.getElementById('btn-open-table').addEventListener('click', showTableFlow);
+  document.getElementById('btn-back-login').addEventListener('click', showLoginFlow);
+  document.getElementById('btn-back-from-footer').addEventListener('click', showLoginFlow);
+
+  document.getElementById('btn-confirm-table').addEventListener('click', async function () {
+    var raw = document.getElementById('tableNumber').value;
+    var num = parseInt(raw, 10);
+    if (!num || num < 1) {
+      tableMsg.textContent = 'Vui lòng nhập số bàn hợp lệ (từ 1 trở lên).';
+      tableMsg.classList.remove('hidden');
+      return;
+    }
+    tableMsg.classList.add('hidden');
+    try {
+      var loginRes = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ mode: 'CUSTOMER' })
+      });
+      if (!loginRes.ok) {
+        throw new Error('Không thể bắt đầu phiên khách.');
+      }
+      var tableRes = await fetch('/api/customer/table', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ tableNumber: num })
+      });
+      if (!tableRes.ok) {
+        var errBody = await tableRes.text();
+        var msg = 'Không gán được bàn.';
+        try {
+          var j = JSON.parse(errBody);
+          if (j.message) msg = j.message;
+        } catch (ignore) {}
+        if (tableRes.status === 404) msg = 'Bàn không tồn tại trong hệ thống.';
+        throw new Error(msg);
+      }
+      window.location.href = '/menu';
+    } catch (e) {
+      tableMsg.textContent = (e && e.message) ? e.message : 'Có lỗi xảy ra.';
+      tableMsg.classList.remove('hidden');
+      tableMsg.classList.add('text-error');
+      tableMsg.classList.remove('text-secondary');
+    }
+  });
+})();
+</script>
+</body></html>

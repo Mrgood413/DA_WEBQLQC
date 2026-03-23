@@ -1,0 +1,44 @@
+package com.example.WebCafe.service;
+
+import com.example.WebCafe.dto.response.ProductResponse;
+import com.example.WebCafe.model.Category;
+import com.example.WebCafe.model.Product;
+import com.example.WebCafe.repository.ProductRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+public class MenuServiceImpl implements MenuService {
+
+	private final ProductRepository productRepository;
+
+	public MenuServiceImpl(ProductRepository productRepository) {
+		this.productRepository = productRepository;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<ProductResponse> listMenuItems() {
+		return productRepository.findByAvailableTrueOrderByNameAsc().stream()
+				.map(this::toResponse)
+				.toList();
+	}
+
+	private ProductResponse toResponse(Product p) {
+		Category c = p.getCategory();
+		Integer categoryId = c != null ? c.getId() : null;
+		String categoryName = c != null ? c.getName() : null;
+		return new ProductResponse(
+				p.getId(),
+				p.getName(),
+				p.getDescription(),
+				p.getPrice(),
+				p.getImageUrl(),
+				p.getQuantity(),
+				p.getAvailable(),
+				categoryId,
+				categoryName);
+	}
+}
