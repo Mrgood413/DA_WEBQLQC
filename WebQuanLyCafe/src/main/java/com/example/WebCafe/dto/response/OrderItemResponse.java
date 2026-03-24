@@ -1,7 +1,5 @@
 package com.example.WebCafe.dto.response;
 
-import com.example.WebCafe.model.enums.OrderItemStatus;
-
 import java.math.BigDecimal;
 
 public record OrderItemResponse(
@@ -11,6 +9,6 @@ public record OrderItemResponse(
 		Integer quantity,
 		BigDecimal unitPrice,
 		BigDecimal lineTotal,
-		OrderItemStatus status
+		boolean updated
 ) {
 }

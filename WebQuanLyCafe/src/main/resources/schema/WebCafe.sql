@@ -64,10 +64,11 @@ CREATE TABLE products (
     FOREIGN KEY (category_id) REFERENCES categories(id)
 );
 
+-- status: PENDING → PREPARING → DONE → PAID (PAID = đã thanh toán, kết thúc đơn).
 CREATE TABLE orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     table_id INT,
-    paid BOOLEAN DEFAULT FALSE NOT NULL,
+    status ENUM('PENDING','PREPARING','DONE','PAID') DEFAULT 'PENDING' NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (table_id) REFERENCES cafe_tables(id)
 );
@@ -78,7 +79,7 @@ CREATE TABLE order_items (
     product_id INT,
     quantity INT NOT NULL,
     price DECIMAL(10,2) NOT NULL,
-    status ENUM('PENDING','PREPARING','DONE') DEFAULT 'PENDING',
+    updated BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (order_id) REFERENCES orders(id),
     FOREIGN KEY (product_id) REFERENCES products(id)
 );

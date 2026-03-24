@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-
-<html class="light" lang="vi"><head>
+<html class="light" lang="vi">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Quản lý Thực đơn - The Artisanal Ledger</title>
@@ -72,16 +72,13 @@
       }
     </script>
 <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #d3c3c0; border-radius: 10px; }
     </style>
 </head>
 <body class="bg-background font-body text-on-surface flex min-h-screen">
-<!-- SideNavBar Component -->
 <aside class="hidden md:flex flex-col h-full py-8 bg-[#f5eed7] dark:bg-[#271310] h-screen w-64 fixed left-0 top-0 z-50 shadow-xl dark:shadow-none font-inter text-sm font-medium transition-all duration-300 ease-in-out">
 <div class="px-6 mb-10">
 <div class="flex items-center gap-3 mb-2">
@@ -95,26 +92,23 @@
 </div>
 </div>
 <nav class="flex-1 space-y-1">
-<a class="text-[#3e2723] dark:text-[#f5eed7]/80 py-3 px-6 hover:translate-x-1 transition-transform flex items-center gap-4" href="#">
+<a class="text-[#3e2723] dark:text-[#f5eed7]/80 py-3 px-6 hover:translate-x-1 transition-transform flex items-center gap-4" href="/staff/order">
 <span class="material-symbols-outlined">receipt_long</span>
 <span>Orders</span>
 </a>
-<a class="bg-[#ffffff] dark:bg-[#3e2723] text-[#271310] dark:text-[#ffffff] rounded-r-full py-3 px-6 shadow-sm flex items-center gap-4" href="#">
+<a class="bg-[#ffffff] dark:bg-[#3e2723] text-[#271310] dark:text-[#ffffff] rounded-r-full py-3 px-6 shadow-sm flex items-center gap-4" href="/staff/menu">
 <span class="material-symbols-outlined">restaurant_menu</span>
 <span>Menu</span>
 </a>
 </nav>
 <div class="mt-auto px-6 pt-6 border-t border-outline-variant/20">
-<div class="space-y-1">
-<a class="text-error py-2 flex items-center gap-4 hover:opacity-70 transition-opacity" href="#">
+<button type="button" id="btn-logout" class="text-error py-2 flex items-center gap-4 hover:opacity-70 transition-opacity w-full text-left">
 <span class="material-symbols-outlined">logout</span>
 <span>Logout</span>
-</a>
-</div>
+</button>
 </div>
 </aside>
 <main class="flex-1 md:ml-64 min-h-screen flex flex-col">
-<!-- TopAppBar Component -->
 <header class="bg-[#fff9ea] dark:bg-[#1e1c0e] docked full-width top-0 z-40 flex justify-between items-center w-full px-6 py-3 sticky">
 <div class="flex items-center gap-6">
 <span class="md:hidden material-symbols-outlined text-primary cursor-pointer">menu</span>
@@ -125,200 +119,473 @@
 <div class="flex items-center gap-4">
 </div>
 </header>
-<!-- Page Content -->
-<div class="p-6 md:p-8 space-y-8 max-w-7xl mx-auto w-full">
-<!-- Filters & Actions Bar -->
+<div class="p-6 md:p-8 space-y-8 max-w-7xl mx-auto w-full flex-1">
+<p id="page-error" class="hidden text-sm text-error px-1" role="alert"></p>
 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-<div class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar">
-<button class="bg-secondary-container text-on-secondary-container px-6 py-2 rounded-full font-medium text-sm flex items-center gap-2 whitespace-nowrap">
-<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">grid_view</span>
-                        Tất cả món
-                    </button>
-<button class="bg-surface-container-high hover:bg-surface-container-highest transition-colors px-6 py-2 rounded-full font-medium text-sm flex items-center gap-2 whitespace-nowrap">
-<span class="material-symbols-outlined text-sm">coffee</span>
-                        Cà phê
-                    </button>
-<button class="bg-surface-container-high hover:bg-surface-container-highest transition-colors px-6 py-2 rounded-full font-medium text-sm flex items-center gap-2 whitespace-nowrap">
-<span class="material-symbols-outlined text-sm">bakery_dining</span>
-                        Bánh ngọt
-                    </button>
-<button class="bg-surface-container-high hover:bg-surface-container-highest transition-colors px-6 py-2 rounded-full font-medium text-sm flex items-center gap-2 whitespace-nowrap">
-<span class="material-symbols-outlined text-sm">emoji_food_beverage</span>
-                        Trà thảo mộc
-                    </button>
-</div>
-<button class="bg-primary text-on-primary px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-xl hover:translate-y-[-2px] transition-all flex items-center justify-center gap-2">
+<div id="category-tabs" class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar flex-wrap"></div>
+<button type="button" id="btn-add-product" class="bg-primary text-on-primary px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-xl hover:translate-y-[-2px] transition-all flex items-center justify-center gap-2 shrink-0">
 <span class="material-symbols-outlined">add_circle</span>
-                    Thêm món mới
-                </button>
+Thêm món mới
+</button>
 </div>
-<!-- Dashboard Stats Summary (Bento Style) -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10 flex flex-col justify-between py-10">
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10 flex flex-col justify-between py-8">
 <span class="text-on-surface-variant text-xs font-semibold uppercase tracking-wider">Tổng số món</span>
 <div class="mt-4 flex items-end gap-2">
-<span class="text-4xl font-bold font-manrope text-primary">42</span>
-<span class="text-secondary text-sm font-medium mb-1">+2 tháng này</span>
+<span id="stat-total" class="text-4xl font-bold font-manrope text-primary">—</span>
 </div>
 </div>
-<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10 flex flex-col justify-between py-10">
-<span class="text-on-surface-variant text-xs font-semibold uppercase tracking-wider">Đang phục vụ</span>
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10 flex flex-col justify-between py-8">
+<span class="text-on-surface-variant text-xs font-semibold uppercase tracking-wider">Đang hiển thị (bán)</span>
 <div class="mt-4 flex items-end gap-2">
-<span class="text-4xl font-bold font-manrope text-primary">38</span>
-<div class="w-2 h-2 rounded-full bg-secondary mb-2 animate-pulse"></div>
+<span id="stat-visible" class="text-4xl font-bold font-manrope text-primary">—</span>
 </div>
 </div>
 </div>
-<!-- Menu Grid -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-<!-- Item Card 1 -->
-<div class="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col border border-outline-variant/5 py-10">
-<div class="relative h-48 overflow-hidden">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="creamy hot latte with intricate heart-shaped foam art in a ceramic mug on a wooden table" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkaPLvqGA-Eb3Srpv6PvP2hlTnS4Lyb9GPDlsOTmwpqRj_9ONFab9U96lCq4iHR9s0OCHM_CWFW03zgB1SreuntoQroOn8D7xNAxkgOEeKAv-97jfQ89WaAfJEYqZf-d7jsbHBVkbZUkC6urgoZT_fUICSRNcYZt-MXjC-KP_bGh8fiKSFbGvTvJXOxHwYLiu6AvhX3wvL-jYYAXtynwiuoh8vU7JmxIRkPAW_APYy9M-EK2qqlnnz6zdZpBn15GAo6RYSE1ROiaNi"/>
-<div class="absolute top-3 right-3 flex flex-col gap-2">
-<span class="bg-secondary text-on-secondary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Đang bán</span>
+<div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
 </div>
-</div>
-<div class="p-5 flex-1 flex flex-col">
-<div class="flex justify-between items-start mb-2">
-<h3 class="font-manrope font-bold text-primary group-hover:text-secondary transition-colors text-lg">Cà phê Muối</h3>
-<span class="font-bold text-primary">45.000đ</span>
-</div>
-<p class="text-on-surface-variant text-sm line-clamp-2 flex-1 mb-4">Cà phê pha phin truyền thống kết hợp lớp kem muối đặc trưng và ca cao.</p>
-<div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
-<div class="flex gap-2">
-<button class="p-2 rounded-full hover:bg-surface-container-high text-on-surface-variant transition-colors" title="Chỉnh sửa">
-<span class="material-symbols-outlined text-[20px]">edit</span>
-</button>
-<div class="px-2 py-1 bg-surface-container-high rounded text-[10px] font-bold text-on-surface-variant flex items-center gap-1">
-<span class="opacity-60 uppercase tracking-tighter">SL:</span>
-<span>42</span>
-</div>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input checked="" class="sr-only peer" type="checkbox"/>
-<div class="w-11 h-6 bg-outline-variant/40 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
-<span class="ms-2 text-xs font-medium text-on-surface-variant">Hiện</span>
-</label>
-</div>
-</div>
-</div>
-<!-- Item Card 2 -->
-<div class="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col border border-outline-variant/5 py-10">
-<div class="relative h-48 overflow-hidden">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="selection of colorful French macarons on a minimalist marble platter with soft morning light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcQTPIHSLqgQEvthjFYlay9YSi3Bof8E11KHM7BqxN16i8LE67ObfaffngxdG627kWJ1vLiv1NNsekDufyAZWBfs4w5bTX4czeH0DG4Va3BGLnZyqGyGPStr7X1Ff-bQs6DJlpP31n1nhh2NCSt3-Da2jB8wUfeMbWevtCI6dyKfjYMqclSIucyEhKtgpM4Z7pzrHkq2VUYZAqN8vdviOzxPY57k0ePjiliZRjsw0mIRCXQqA34tOG_dI6EYmM5ipYlKDVTxVqjMkv"/>
-</div>
-<div class="p-5 flex-1 flex flex-col">
-<div class="flex justify-between items-start mb-2">
-<h3 class="font-manrope font-bold text-primary group-hover:text-secondary transition-colors text-lg">Bánh Croissant</h3>
-<span class="font-bold text-primary">35.000đ</span>
-</div>
-<p class="text-on-surface-variant text-sm line-clamp-2 flex-1 mb-4">Bánh sừng bò ngàn lớp thơm mùi bơ Pháp, nướng giòn rụm mỗi sáng.</p>
-<div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
-<div class="flex gap-2">
-<button class="p-2 rounded-full hover:bg-surface-container-high text-on-surface-variant transition-colors">
-<span class="material-symbols-outlined text-[20px]">edit</span>
-</button>
-<div class="px-2 py-1 bg-surface-container-high rounded text-[10px] font-bold text-on-surface-variant flex items-center gap-1">
-<span class="opacity-60 uppercase tracking-tighter">SL:</span>
-<span>15</span>
-</div>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input checked="" class="sr-only peer" type="checkbox"/>
-<div class="w-11 h-6 bg-outline-variant/40 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:bg-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
-<span class="ms-2 text-xs font-medium text-on-surface-variant">Hiện</span>
-</label>
-</div>
-</div>
-</div>
-<!-- Item Card 3 -->
-<div class="group bg-surface-container-lowest/50 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col border border-outline-variant/5 opacity-80">
-<div class="relative h-48 overflow-hidden grayscale">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="iced green tea latte in a tall glass with marble condensation and fresh mint leaves" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQgMsJkCAb-NSw9mPV4Oac4DkBO8OAvlxwnbMeSRudOyvGJisXyx1ja--PwnN0VNrNge5RCXzX-QwMVIqRmDd8DM23zudLFqors74ZnCkffm2yXEBCROWHN7SwdpWvUOkq5f09H7jshrMzzWcLV2Y88wD2cV7NeBghjZJMVsmnCK3vmUBiyKDK15lpzYgiAyEJkBya7f5Of11EIhzjz3sEyF34gpzGY-tcmzUAyCMHethWmng2qXTvFYhyu5sGb6dftVxXsW8B4Jp7"/>
-<div class="absolute top-3 right-3">
-<span class="bg-primary-container text-primary-fixed px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Tạm hết</span>
-</div>
-</div>
-<div class="p-5 flex-1 flex flex-col">
-<div class="flex justify-between items-start mb-2">
-<h3 class="font-manrope font-bold text-primary/60 group-hover:text-secondary transition-colors text-lg">Trà Matcha Đá</h3>
-<span class="font-bold text-primary/60">55.000đ</span>
-</div>
-<p class="text-on-surface-variant text-sm line-clamp-2 flex-1 mb-4">Bột trà xanh Nhật Bản nguyên chất hòa quyện cùng sữa tươi thanh trùng.</p>
-<div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
-<div class="flex gap-2">
-<button class="p-2 rounded-full hover:bg-surface-container-high text-on-surface-variant transition-colors">
-<span class="material-symbols-outlined text-[20px]">edit</span>
-</button>
-<div class="px-2 py-1 bg-error-container text-on-error-container rounded text-[10px] font-bold flex items-center gap-1">
-<span class="opacity-60 uppercase tracking-tighter">SL:</span>
-<span>0</span>
-</div>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input class="sr-only peer" type="checkbox"/>
-<div class="w-11 h-6 bg-outline-variant/40 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:bg-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
-<span class="ms-2 text-xs font-medium text-on-surface-variant">Ẩn</span>
-</label>
-</div>
-</div>
-</div>
-<!-- Item Card 4 -->
-<div class="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col border border-outline-variant/5">
-<div class="relative h-48 overflow-hidden">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="dense dark chocolate brownie with a flaky sea salt topping on a rustic ceramic plate" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyMS70pxevjQWt0EHUhvz6ixJsb7sR-DJqx7VkSkB4doQ6J2GkKk3W2UBtMLqlLxIyseoHcC8_up1V2T-i_DOIIEsceffM1HoYnetwbjeVHHfWggiOPd0u29gzEc8yo-wSP98-edoE_f-XUykgsGKcIzxEWR0fv0UsCy8-GtK1_OfBZu34sslqMT2FRbh6TQRp39gS-1zsPiruTvQVWqej3HMMDYLAC3XiMu7bFx8Cdx4PsEF-uQffCkFatOmQKqmpDAAW_kOlYmCM"/>
-</div>
-<div class="p-5 flex-1 flex flex-col">
-<div class="flex justify-between items-start mb-2">
-<h3 class="font-manrope font-bold text-primary group-hover:text-secondary transition-colors text-lg">Brownie Muối Biển</h3>
-<span class="font-bold text-primary">40.000đ</span>
-</div>
-<p class="text-on-surface-variant text-sm line-clamp-2 flex-1 mb-4">Sô-cô-la đen nguyên chất nướng chảy với điểm nhấn muối biển tinh khiết.</p>
-<div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
-<div class="flex gap-2">
-<button class="p-2 rounded-full hover:bg-surface-container-high text-on-surface-variant transition-colors">
-<span class="material-symbols-outlined text-[20px]">edit</span>
-</button>
-<div class="px-2 py-1 bg-surface-container-high rounded text-[10px] font-bold text-on-surface-variant flex items-center gap-1">
-<span class="opacity-60 uppercase tracking-tighter">SL:</span>
-<span>28</span>
-</div>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input checked="" class="sr-only peer" type="checkbox"/>
-<div class="w-11 h-6 bg-outline-variant/40 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:bg-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
-<span class="ms-2 text-xs font-medium text-on-surface-variant">Hiện</span>
-</label>
-</div>
-</div>
-</div>
-<!-- New Item Placeholder Button -->
-<button class="border-2 border-dashed border-outline-variant/40 rounded-xl h-full flex flex-col items-center justify-center p-8 gap-3 hover:bg-surface-container-low hover:border-primary/30 transition-all text-on-surface-variant hover:text-primary min-h-[400px]">
-<span class="material-symbols-outlined text-4xl">add_circle</span>
-<span class="font-bold text-lg">Thêm món mới</span>
-<span class="text-xs opacity-60 text-center">Tải lên hình ảnh và nhập thông tin thực đơn của bạn</span>
-</button>
-</div>
-</div>
-<!-- Pagination or Bottom Footer Info -->
-<footer class="mt-auto px-8 py-6 flex items-center justify-between border-t border-outline-variant/10 bg-surface-container-low/30">
-<p class="text-xs text-on-surface-variant font-medium">Đang hiển thị 1-8 trong số 42 món ăn</p>
-<div class="flex gap-2">
-<button class="p-2 rounded-lg bg-surface-container-high text-on-surface opacity-50 cursor-not-allowed">
-<span class="material-symbols-outlined">chevron_left</span>
-</button>
-<button class="px-4 py-2 rounded-lg bg-primary text-on-primary font-bold text-sm">1</button>
-<button class="px-4 py-2 rounded-lg bg-surface-container-high text-on-surface font-medium text-sm hover:bg-surface-container-highest transition-colors">2</button>
-<button class="px-4 py-2 rounded-lg bg-surface-container-high text-on-surface font-medium text-sm hover:bg-surface-container-highest transition-colors">3</button>
-<button class="p-2 rounded-lg bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-colors">
-<span class="material-symbols-outlined">chevron_right</span>
-</button>
-</div>
-</footer>
 </main>
-<!-- FAB for Mobile View Only -->
-<button class="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-primary text-on-primary rounded-full shadow-2xl z-50 flex items-center justify-center scale-95 active:scale-90 transition-transform">
-<span class="material-symbols-outlined text-3xl">add</span>
+
+<div id="modalBackdrop" class="fixed inset-0 bg-black/40 z-[100] hidden items-center justify-center p-4">
+<div class="bg-surface rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto custom-scrollbar border border-outline-variant/20">
+<div class="p-6 border-b border-outline-variant/10 flex justify-between items-center sticky top-0 bg-surface z-10">
+<h3 id="modal-title" class="font-manrope font-bold text-lg text-primary">Thêm món</h3>
+<button type="button" id="modal-close" class="p-2 rounded-lg hover:bg-surface-container-high text-on-surface-variant">
+<span class="material-symbols-outlined">close</span>
 </button>
-</body></html>
+</div>
+<form id="product-form" class="p-6 space-y-4">
+<input type="hidden" id="f-product-id"/>
+<div class="space-y-1">
+<label class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant" for="f-name">Tên món</label>
+<input required id="f-name" name="name" maxlength="150" class="w-full rounded-lg border border-outline-variant/30 bg-surface-container-highest px-3 py-2 text-primary"/>
+</div>
+<div class="space-y-1">
+<label class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant" for="f-description">Mô tả chi tiết</label>
+<textarea id="f-description" name="description" rows="4" class="w-full rounded-lg border border-outline-variant/30 bg-surface-container-highest px-3 py-2 text-primary text-sm"></textarea>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="space-y-1">
+<label class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant" for="f-price">Giá (đ)</label>
+<input required id="f-price" name="price" type="number" min="0" step="1000" class="w-full rounded-lg border border-outline-variant/30 bg-surface-container-highest px-3 py-2 text-primary"/>
+</div>
+<div class="space-y-1">
+<label class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant" for="f-quantity">Số lượng tồn</label>
+<input required id="f-quantity" name="quantity" type="number" min="0" step="1" class="w-full rounded-lg border border-outline-variant/30 bg-surface-container-highest px-3 py-2 text-primary"/>
+</div>
+</div>
+<div class="space-y-1">
+<label class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant" for="f-imageUrl">URL hình ảnh</label>
+<input id="f-imageUrl" name="imageUrl" type="url" maxlength="255" placeholder="https://..." class="w-full rounded-lg border border-outline-variant/30 bg-surface-container-highest px-3 py-2 text-primary text-sm"/>
+</div>
+<div class="space-y-1">
+<label class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant" for="f-categoryId">Danh mục</label>
+<select required id="f-categoryId" name="categoryId" class="w-full rounded-lg border border-outline-variant/30 bg-surface-container-highest px-3 py-2 text-primary"></select>
+</div>
+<div class="flex items-center gap-3 pt-2">
+<input id="f-available" name="available" type="checkbox" class="rounded border-outline-variant w-4 h-4 text-secondary focus:ring-secondary"/>
+<label for="f-available" class="text-sm font-medium text-on-surface">Hiển thị trong thực đơn (đang bán)</label>
+</div>
+<p id="form-error" class="text-sm text-error hidden" role="alert"></p>
+<div class="flex gap-3 pt-4">
+<button type="submit" class="flex-1 bg-primary text-on-primary font-bold py-3 rounded-full shadow-lg">Lưu</button>
+<button type="button" id="form-cancel" class="px-6 py-3 rounded-full border border-outline-variant text-on-surface-variant font-medium">Hủy</button>
+</div>
+</form>
+</div>
+</div>
+
+<script>
+(function () {
+  var API = {
+    products: '/api/staff/products',
+    categories: '/api/staff/categories',
+    logout: '/api/auth/logout'
+  };
+
+  var state = {
+    products: [],
+    categories: [],
+    filterCategoryId: null
+  };
+
+  var els = {
+    grid: document.getElementById('product-grid'),
+    tabs: document.getElementById('category-tabs'),
+    statTotal: document.getElementById('stat-total'),
+    statVisible: document.getElementById('stat-visible'),
+    pageError: document.getElementById('page-error'),
+    modalBackdrop: document.getElementById('modalBackdrop'),
+    modalTitle: document.getElementById('modal-title'),
+    form: document.getElementById('product-form'),
+    formError: document.getElementById('form-error')
+  };
+
+  function fmtMoney(n) {
+    if (n == null || n === '') return '0';
+    var num = typeof n === 'number' ? n : parseFloat(String(n), 10);
+    if (isNaN(num)) return String(n);
+    return num.toLocaleString('vi-VN') + 'đ';
+  }
+
+  async function apiJson(url, opts) {
+    var res = await fetch(url, Object.assign({ credentials: 'same-origin' }, opts || {}));
+    var text = await res.text();
+    var data = null;
+    try { data = text ? JSON.parse(text) : null; } catch (e) { data = null; }
+    if (!res.ok) {
+      var msg = (data && data.message) ? data.message : ('HTTP ' + res.status);
+      var err = new Error(msg);
+      err.status = res.status;
+      throw err;
+    }
+    return data;
+  }
+
+  function renderTabs() {
+    var frag = document.createDocumentFragment();
+    function addTab(label, catId, active) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = label;
+      btn.className = 'px-6 py-2 rounded-full font-medium text-sm whitespace-nowrap transition-colors ' +
+        (active ? 'bg-secondary-container text-on-secondary-container shadow-sm' : 'bg-surface-container-high hover:bg-surface-container-highest text-on-surface');
+      btn.addEventListener('click', function () {
+        state.filterCategoryId = catId;
+        renderTabs();
+        renderGrid();
+      });
+      frag.appendChild(btn);
+    }
+    addTab('Tất cả', null, state.filterCategoryId === null);
+    state.categories.forEach(function (c) {
+      addTab(c.name, c.id, state.filterCategoryId === c.id);
+    });
+    els.tabs.innerHTML = '';
+    els.tabs.appendChild(frag);
+  }
+
+  function filteredProducts() {
+    if (state.filterCategoryId == null) return state.products;
+    return state.products.filter(function (p) { return p.categoryId === state.filterCategoryId; });
+  }
+
+  function updateStats() {
+    var total = state.products.length;
+    var visible = state.products.filter(function (p) { return p.available; }).length;
+    els.statTotal.textContent = String(total);
+    els.statVisible.textContent = String(visible);
+  }
+
+  function renderGrid() {
+    var list = filteredProducts();
+    els.grid.innerHTML = '';
+    if (!list.length) {
+      var empty = document.createElement('p');
+      empty.className = 'text-on-surface-variant text-sm col-span-full text-center py-12';
+      empty.textContent = 'Chưa có món nào trong nhóm này.';
+      els.grid.appendChild(empty);
+      return;
+    }
+    list.forEach(function (p) {
+      var card = document.createElement('div');
+      card.className = 'group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col border border-outline-variant/5';
+      var imgWrap = document.createElement('div');
+      imgWrap.className = 'relative h-48 overflow-hidden bg-surface-container-high';
+      if (p.imageUrl) {
+        var img = document.createElement('img');
+        img.className = 'w-full h-full object-cover';
+        img.alt = '';
+        img.src = p.imageUrl;
+        imgWrap.appendChild(img);
+      } else {
+        var ph = document.createElement('div');
+        ph.className = 'w-full h-full flex items-center justify-center text-on-surface-variant/40';
+        ph.innerHTML = '<span class="material-symbols-outlined text-5xl">image</span>';
+        imgWrap.appendChild(ph);
+      }
+      var badge = document.createElement('span');
+      badge.className = 'absolute top-3 right-3 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ' +
+        (p.available ? 'bg-secondary text-on-secondary' : 'bg-primary-container text-primary-fixed');
+      badge.textContent = p.available ? 'Đang bán' : 'Ẩn';
+      imgWrap.appendChild(badge);
+      card.appendChild(imgWrap);
+
+      var body = document.createElement('div');
+      body.className = 'p-5 flex-1 flex flex-col';
+      var titleRow = document.createElement('div');
+      titleRow.className = 'flex justify-between items-start mb-2 gap-2';
+      var h3 = document.createElement('h3');
+      h3.className = 'font-manrope font-bold text-primary text-lg';
+      h3.textContent = p.name || '';
+      var price = document.createElement('span');
+      price.className = 'font-bold text-primary shrink-0';
+      price.textContent = fmtMoney(p.price);
+      titleRow.appendChild(h3);
+      titleRow.appendChild(price);
+      body.appendChild(titleRow);
+      var cat = document.createElement('p');
+      cat.className = 'text-xs text-on-surface-variant mb-1';
+      cat.textContent = p.categoryName || '—';
+      body.appendChild(cat);
+      var desc = document.createElement('p');
+      desc.className = 'text-on-surface-variant text-sm line-clamp-3 flex-1 mb-4';
+      desc.textContent = p.description || '(Chưa có mô tả)';
+      body.appendChild(desc);
+
+      var row = document.createElement('div');
+      row.className = 'flex items-center justify-between pt-4 border-t border-outline-variant/10 gap-2 flex-wrap';
+      var editBtn = document.createElement('button');
+      editBtn.type = 'button';
+      editBtn.className = 'p-2 rounded-full hover:bg-surface-container-high text-on-surface-variant';
+      editBtn.title = 'Chỉnh sửa';
+      editBtn.innerHTML = '<span class="material-symbols-outlined text-[20px]">edit</span>';
+      editBtn.addEventListener('click', function () { openEditModal(p); });
+
+      var qtyWrap = document.createElement('div');
+      qtyWrap.className = 'flex items-center gap-2';
+      var minus = document.createElement('button');
+      minus.type = 'button';
+      minus.className = 'w-8 h-8 rounded-full bg-surface-container-high text-primary font-bold';
+      minus.textContent = '−';
+      var qtyInput = document.createElement('input');
+      qtyInput.type = 'number';
+      qtyInput.min = '0';
+      qtyInput.className = 'w-16 text-center rounded border border-outline-variant/30 px-1 py-1 text-sm';
+      qtyInput.value = String(p.quantity != null ? p.quantity : 0);
+      var plus = document.createElement('button');
+      plus.type = 'button';
+      plus.className = 'w-8 h-8 rounded-full bg-surface-container-high text-primary font-bold';
+      plus.textContent = '+';
+
+      function patchQty(next) {
+        if (next < 0) next = 0;
+        apiJson(API.products + '/' + p.id, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ quantity: next })
+        }).then(function (updated) {
+          var idx = state.products.findIndex(function (x) { return x.id === p.id; });
+          if (idx >= 0) state.products[idx] = updated;
+          renderGrid();
+          updateStats();
+        }).catch(function (e) { alert(e.message || 'Lỗi cập nhật'); });
+      }
+      minus.addEventListener('click', function () {
+        var v = parseInt(qtyInput.value, 10) || 0;
+        patchQty(v - 1);
+      });
+      plus.addEventListener('click', function () {
+        var v = parseInt(qtyInput.value, 10) || 0;
+        patchQty(v + 1);
+      });
+      qtyInput.addEventListener('change', function () {
+        var v = parseInt(qtyInput.value, 10);
+        if (isNaN(v) || v < 0) v = 0;
+        patchQty(v);
+      });
+
+      qtyWrap.appendChild(minus);
+      qtyWrap.appendChild(qtyInput);
+      qtyWrap.appendChild(plus);
+
+      var toggleWrap = document.createElement('div');
+      toggleWrap.className = 'flex items-center gap-2 shrink-0';
+      var chk = document.createElement('input');
+      chk.type = 'checkbox';
+      chk.className = 'rounded border-outline-variant w-4 h-4 text-secondary';
+      chk.checked = !!p.available;
+      chk.title = 'Hiển thị trong thực đơn';
+      chk.addEventListener('change', function () {
+        apiJson(API.products + '/' + p.id, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ available: chk.checked })
+        }).then(function (updated) {
+          var idx = state.products.findIndex(function (x) { return x.id === p.id; });
+          if (idx >= 0) state.products[idx] = updated;
+          renderGrid();
+          updateStats();
+        }).catch(function (e) {
+          chk.checked = !chk.checked;
+          alert(e.message || 'Lỗi');
+        });
+      });
+      var sp = document.createElement('span');
+      sp.className = 'text-xs font-medium text-on-surface-variant whitespace-nowrap';
+      sp.textContent = 'Hiện';
+      toggleWrap.appendChild(chk);
+      toggleWrap.appendChild(sp);
+
+      row.appendChild(editBtn);
+      row.appendChild(qtyWrap);
+      row.appendChild(toggleWrap);
+      body.appendChild(row);
+      card.appendChild(body);
+      els.grid.appendChild(card);
+    });
+  }
+
+  function fillCategorySelect() {
+    var sel = document.getElementById('f-categoryId');
+    sel.innerHTML = '';
+    state.categories.forEach(function (c) {
+      var o = document.createElement('option');
+      o.value = String(c.id);
+      o.textContent = c.name;
+      sel.appendChild(o);
+    });
+  }
+
+  function openModal() {
+    els.modalBackdrop.classList.remove('hidden');
+    els.modalBackdrop.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    els.modalBackdrop.classList.add('hidden');
+    els.modalBackdrop.classList.remove('flex');
+    document.body.style.overflow = '';
+    els.formError.classList.add('hidden');
+    els.formError.textContent = '';
+  }
+
+  function openAddModal() {
+    els.modalTitle.textContent = 'Thêm món mới';
+    document.getElementById('f-product-id').value = '';
+    document.getElementById('f-name').value = '';
+    document.getElementById('f-description').value = '';
+    document.getElementById('f-price').value = '';
+    document.getElementById('f-quantity').value = '0';
+    document.getElementById('f-imageUrl').value = '';
+    document.getElementById('f-available').checked = true;
+    fillCategorySelect();
+    if (state.categories.length) {
+      document.getElementById('f-categoryId').value = String(state.filterCategoryId != null ? state.filterCategoryId : state.categories[0].id);
+    }
+    openModal();
+  }
+
+  function openEditModal(p) {
+    els.modalTitle.textContent = 'Chỉnh sửa món';
+    document.getElementById('f-product-id').value = String(p.id);
+    document.getElementById('f-name').value = p.name || '';
+    document.getElementById('f-description').value = p.description || '';
+    document.getElementById('f-price').value = p.price != null ? String(p.price) : '';
+    document.getElementById('f-quantity').value = p.quantity != null ? String(p.quantity) : '0';
+    document.getElementById('f-imageUrl').value = p.imageUrl || '';
+    document.getElementById('f-available').checked = !!p.available;
+    fillCategorySelect();
+    if (p.categoryId != null) {
+      document.getElementById('f-categoryId').value = String(p.categoryId);
+    }
+    openModal();
+  }
+
+  document.getElementById('btn-add-product').addEventListener('click', openAddModal);
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  document.getElementById('form-cancel').addEventListener('click', closeModal);
+  els.modalBackdrop.addEventListener('click', function (e) {
+    if (e.target === els.modalBackdrop) closeModal();
+  });
+
+  els.form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    els.formError.classList.add('hidden');
+    var id = document.getElementById('f-product-id').value;
+    var name = document.getElementById('f-name').value.trim();
+    var description = document.getElementById('f-description').value;
+    var price = parseFloat(document.getElementById('f-price').value);
+    var quantity = parseInt(document.getElementById('f-quantity').value, 10);
+    var imageUrl = document.getElementById('f-imageUrl').value.trim();
+    var categoryId = parseInt(document.getElementById('f-categoryId').value, 10);
+    var available = document.getElementById('f-available').checked;
+    if (!name || isNaN(price) || price < 0 || isNaN(quantity) || quantity < 0 || isNaN(categoryId)) {
+      els.formError.textContent = 'Vui lòng kiểm tra lại dữ liệu.';
+      els.formError.classList.remove('hidden');
+      return;
+    }
+    var payloadCreate = {
+      name: name,
+      description: description || null,
+      price: price,
+      imageUrl: imageUrl || null,
+      quantity: quantity,
+      available: available,
+      categoryId: categoryId
+    };
+    if (id) {
+      var payloadPatch = {
+        name: name,
+        description: description,
+        price: price,
+        imageUrl: imageUrl || null,
+        quantity: quantity,
+        available: available,
+        categoryId: categoryId
+      };
+      apiJson(API.products + '/' + id, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payloadPatch)
+      }).then(function (updated) {
+        var idx = state.products.findIndex(function (x) { return x.id === updated.id; });
+        if (idx >= 0) state.products[idx] = updated;
+        else state.products.push(updated);
+        closeModal();
+        renderGrid();
+        updateStats();
+      }).catch(function (err) {
+        els.formError.textContent = err.message || 'Lỗi lưu';
+        els.formError.classList.remove('hidden');
+      });
+    } else {
+      apiJson(API.products, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payloadCreate)
+      }).then(function (created) {
+        state.products.push(created);
+        closeModal();
+        renderGrid();
+        updateStats();
+      }).catch(function (err) {
+        els.formError.textContent = err.message || 'Lỗi thêm món';
+        els.formError.classList.remove('hidden');
+      });
+    }
+  });
+
+  document.getElementById('btn-logout').addEventListener('click', function () {
+    fetch(API.logout, { method: 'POST', credentials: 'same-origin' }).then(function () {
+      window.location.href = '/login';
+    });
+  });
+
+  function boot() {
+    els.pageError.classList.add('hidden');
+    Promise.all([
+      apiJson(API.categories),
+      apiJson(API.products)
+    ]).then(function (pairs) {
+      state.categories = pairs[0] || [];
+      state.products = pairs[1] || [];
+      renderTabs();
+      renderGrid();
+      updateStats();
+    }).catch(function (err) {
+      if (err.status === 401) {
+        window.location.href = '/login';
+        return;
+      }
+      els.pageError.textContent = err.message || 'Không tải được dữ liệu.';
+      els.pageError.classList.remove('hidden');
+    });
+  }
+
+  boot();
+})();
+</script>
+</body>
+</html>
