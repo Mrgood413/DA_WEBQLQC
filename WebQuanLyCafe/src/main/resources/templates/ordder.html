@@ -95,6 +95,21 @@
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-header { animation: fadeInDown 0.6s ease-out forwards; }
+        .animate-title { opacity: 0; animation: fadeInUp 0.6s ease-out 0.2s forwards; }
+        .animate-card { opacity: 0; animation: fadeInUp 0.6s ease-out forwards; }
+        .delay-1 { animation-delay: 0.4s; }
+        .delay-2 { animation-delay: 0.5s; }
+        .delay-3 { animation-delay: 0.6s; }
+        .delay-4 { animation-delay: 0.7s; }
         .btn-ordered {
             background-color: #ba1a1a !important;
             color: white !important;
@@ -114,7 +129,7 @@
 </head>
 <body class="bg-background text-on-background font-body selection:bg-secondary-container selection:text-on-secondary-container min-h-screen animate-fade-in-up">
 <!-- Top Navigation Bar -->
-<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 max-w-none bg-[#fff9ea] dark:bg-[#1e1c0e]">
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 max-w-none bg-[#fff9ea] dark:bg-[#1e1c0e] animate-header">
 <div class="flex items-center gap-8">
 <span class="text-xl font-bold text-[#271310] dark:text-[#f5eed7] font-['Manrope'] tracking-tight">The Artisanal Ledger</span>
 <nav class="hidden md:flex gap-6 items-center font-['Manrope'] font-semibold tracking-tight">
@@ -123,7 +138,7 @@
 </nav>
 </div>
 <div class="flex items-center gap-4">
-<button class="Active: scale-95 transition-transform">
+<button class="active:scale-95 transition-transform">
 <span class="material-symbols-outlined text-[#271310] dark:text-[#f5eed7] text-2xl">account_circle</span>
 </button>
 </div>
@@ -132,20 +147,26 @@
 <!-- Main Content -->
 <main class="pt-24 pb-32 px-4 md:px-8 max-w-4xl mx-auto">
 <!-- Header Section -->
-<header class="mb-8">
+<header class="mb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4 animate-title">
+<div>
 <span class="text-secondary font-bold uppercase tracking-[0.2em] text-[10px] mb-2 block">Cập nhật thời gian thực</span>
 <h1 class="font-headline text-4xl md:text-5xl font-extrabold text-primary leading-tight">Theo dõi đơn hàng</h1>
+</div>
+<div class="bg-surface-container-high rounded-2xl px-5 py-4 min-w-[180px]">
+<p class="text-[11px] uppercase tracking-[0.18em] text-on-surface-variant font-bold">Tổng tiền</p>
+<p id="order-header-total" class="font-headline text-2xl font-extrabold text-secondary mt-1">0đ</p>
+</div>
 </header>
 <!-- Order Status Section -->
 <section>
 <div class="flex items-end justify-between mb-6">
 <h2 class="font-headline text-2xl font-bold text-primary">Trạng thái đơn hàng</h2>
 <div class="text-right">
-<p class="text-xs text-on-surface-variant">Đơn #AL-89234</p>
-<p class="text-xs font-bold">Đặt lúc 10:42 AM</p>
+<p id="order-code" class="text-xs text-on-surface-variant">Đơn Giỏ hàng tạm</p>
+<p id="order-time" class="text-xs font-bold">Chưa đặt đơn</p>
 </div>
 </div>
-<div class="bg-surface-container-high rounded-2xl p-6 md:p-8 relative overflow-hidden shadow-sm">
+<div class="bg-surface-container-high rounded-2xl p-6 md:p-8 relative overflow-hidden shadow-sm animate-card delay-1">
 <!-- Progress Bar -->
 <div class="relative mb-16 mt-4">
 <!-- Progress Container -->
@@ -179,35 +200,22 @@
 </div>
 <!-- Order Content Breakdown -->
 <div class="space-y-4 mb-8 pt-4 border-t border-outline-variant/20">
-<div class="flex justify-between items-center py-2">
-<div class="flex items-center gap-4">
-<span class="text-xs font-bold w-4 text-secondary">1x</span>
-<span class="text-sm font-medium">Signature Latte (Extra Shot)</span>
-</div>
-<span class="text-sm font-bold">$6.25</span>
-</div>
-<div class="flex justify-between items-center py-2">
-<div class="flex items-center gap-4">
-<span class="text-xs font-bold w-4 text-secondary">2x</span>
-<span class="text-sm font-medium">Almond Croissant</span>
-</div>
-<span class="text-sm font-bold">$12.50</span>
-</div>
+<div id="order-items"></div>
 <div class="pt-4 mt-4 border-t border-outline-variant/30 flex justify-between items-center">
 <span class="font-headline font-bold text-xl text-primary">Tổng cộng</span>
-<span class="font-headline font-bold text-xl text-secondary">$18.75</span>
+<span id="order-total" class="font-headline font-bold text-xl text-secondary">0đ</span>
 </div>
 </div>
 <!-- Order Action Button -->
 <div class="mt-6 flex flex-col items-center">
 <button class="w-full bg-primary text-on-primary py-4 rounded-xl text-sm font-bold uppercase tracking-widest hover:bg-primary-container active:scale-[0.98] transition-all shadow-md group relative overflow-hidden duration-300 ease-in-out" id="mainOrderBtn">
-<span class="relative z-10">Đặt đơn</span>
+<span id="mainOrderBtnText" class="relative z-10">Đặt đơn</span>
 </button>
 </div>
 </div>
 <!-- Call to Action Section -->
-<div class="mt-8 space-y-4">
-<button class="w-full bg-primary text-on-primary py-5 rounded-2xl text-base font-extrabold uppercase tracking-widest hover:shadow-xl active:scale-[0.99] transition-all flex items-center justify-center gap-3">
+<div class="mt-8 space-y-4 animate-card delay-2">
+<button id="add-more-btn" class="w-full bg-primary text-on-primary py-5 rounded-2xl text-base font-extrabold uppercase tracking-widest hover:shadow-xl active:scale-[0.99] transition-all flex items-center justify-center gap-3">
 <span class="material-symbols-outlined">add_circle</span>
                 Gọi thêm
             </button>
@@ -216,7 +224,7 @@
 </section>
 </main>
 <!-- Bottom Navigation Bar (Mobile) -->
-<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 lg:hidden bg-white/80 dark:bg-[#1e1c0e]/80 backdrop-blur-xl border-t border-outline-variant/10 font-inter text-[10px] font-medium uppercase tracking-tighter">
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 lg:hidden bg-white/80 dark:bg-[#1e1c0e]/80 backdrop-blur-xl border-t border-outline-variant/10 font-inter text-[10px] font-medium uppercase tracking-tighter animate-card delay-4">
 <a class="flex flex-col items-center justify-center text-on-surface-variant p-3 active:scale-90 duration-200" href="/menu">
 <span class="material-symbols-outlined mb-1">menu_book</span>
 <span>Thực đơn</span>
@@ -224,7 +232,7 @@
 <div class="flex flex-col items-center justify-center bg-primary text-on-primary rounded-2xl p-3 mb-1 active:scale-90 duration-200 shadow-md">
 <div class="relative">
 <span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">shopping_bag</span>
-<span class="absolute -top-1 -right-2 bg-secondary text-on-secondary text-[8px] px-1 rounded-full font-bold">3</span>
+<span id="mobile-cart-count" class="absolute -top-1 -right-2 bg-secondary text-on-secondary text-[8px] px-1 rounded-full font-bold">0</span>
 </div>
 <span>Giỏ hàng</span>
 </div>
@@ -233,67 +241,6 @@
 <span>Cá nhân</span>
 </div>
 </nav>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const mainOrderBtn = document.getElementById('mainOrderBtn');
-        const btnText = mainOrderBtn.querySelector('span');
-        const progressLine = document.getElementById('progressLine');
-        
-        const milestones = [
-            { el: document.getElementById('milestone-1'), label: document.getElementById('milestone-1').parentElement.querySelector('.milestone-label'), width: '12%' },
-            { el: document.getElementById('milestone-2'), label: document.getElementById('milestone-2').parentElement.querySelector('.milestone-label'), width: '50%' },
-            { el: document.getElementById('milestone-3'), label: document.getElementById('milestone-3').parentElement.querySelector('.milestone-label'), width: '100%' }
-        ];
-
-        let currentState = 0; // 0: Not started, 1: Step 1, 2: Step 2, 3: Step 3
-
-        mainOrderBtn.addEventListener('click', function() {
-            if (currentState === 3) {
-                resetUI();
-            } else {
-                currentState++;
-                updateProgress(currentState);
-            }
-        });
-
-        function updateProgress(state) {
-            const currentMilestone = milestones[state - 1];
-            
-            // Move progress line
-            progressLine.style.width = currentMilestone.width;
-
-            // Activate milestone visual with slight delay for the line to reach
-            setTimeout(() => {
-                currentMilestone.el.classList.add('milestone-active', 'animate-bounce-once');
-                currentMilestone.label.classList.remove('opacity-40');
-                currentMilestone.label.classList.add('text-secondary', 'opacity-100');
-                
-                // Update Button UI based on state
-                if (state === 1) {
-                    mainOrderBtn.classList.add('btn-ordered');
-                    btnText.textContent = 'HỦY ĐƠN';
-                } else if (state === 2) {
-                    btnText.textContent = 'ĐANG THỰC HIỆN...';
-                } else if (state === 3) {
-                    btnText.textContent = 'HOÀN TẤT';
-                    mainOrderBtn.classList.remove('btn-ordered');
-                    mainOrderBtn.classList.add('bg-secondary');
-                }
-            }, 800);
-        }
-
-        function resetUI() {
-            currentState = 0;
-            mainOrderBtn.classList.remove('btn-ordered', 'bg-secondary');
-            btnText.textContent = 'Đặt đơn';
-            progressLine.style.width = '0%';
-            
-            milestones.forEach(m => {
-                m.el.classList.remove('milestone-active', 'animate-bounce-once');
-                m.label.classList.add('opacity-40');
-                m.label.classList.remove('text-secondary', 'opacity-100');
-            });
-        }
-    });
-</script>
+<script src="/js/cart-store.js"></script>
+<script src="/js/order-page.js"></script>
 </body></html>

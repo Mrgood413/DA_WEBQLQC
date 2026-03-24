@@ -67,16 +67,8 @@ CREATE TABLE products (
 CREATE TABLE orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     table_id INT,
-    status ENUM(
-        'CART',
-        'CONFIRMED',
-        'PREPARING',
-        'DONE',
-        'PAID',
-        'CANCELLED'
-    ) DEFAULT 'CART',
+    paid BOOLEAN DEFAULT FALSE NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    confirmed_at TIMESTAMP NULL,
     FOREIGN KEY (table_id) REFERENCES cafe_tables(id)
 );
 

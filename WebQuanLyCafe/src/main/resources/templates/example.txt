@@ -1,0 +1,317 @@
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+          tailwind.config = {
+            darkMode: "class",
+            theme: {
+              extend: {
+                colors: {
+                  "tertiary-fixed-dim": "#e4beb2",
+                  "surface-container-high": "#efe8d2",
+                  "secondary-fixed-dim": "#88d982",
+                  "primary": "#271310",
+                  "surface-variant": "#e9e2cc",
+                  "tertiary-fixed": "#ffdbce",
+                  "outline": "#827472",
+                  "error-container": "#ffdad6",
+                  "secondary-fixed": "#a3f69c",
+                  "on-tertiary-fixed": "#2b160f",
+                  "on-surface-variant": "#504442",
+                  "on-primary-fixed-variant": "#5b403c",
+                  "secondary-container": "#a0f399",
+                  "surface-container-highest": "#e9e2cc",
+                  "on-primary-container": "#ae8d87",
+                  "on-background": "#1e1c0e",
+                  "inverse-surface": "#333121",
+                  "surface-container-lowest": "#ffffff",
+                  "surface-container-low": "#faf4dd",
+                  "error": "#ba1a1a",
+                  "background": "#fff9ea",
+                  "surface-bright": "#fff9ea",
+                  "on-tertiary": "#ffffff",
+                  "on-secondary-fixed-variant": "#005312",
+                  "on-error-container": "#93000a",
+                  "surface-tint": "#745853",
+                  "surface": "#fff9ea",
+                  "on-tertiary-fixed-variant": "#5b4137",
+                  "on-secondary-fixed": "#002204",
+                  "on-surface": "#1e1c0e",
+                  "on-error": "#ffffff",
+                  "tertiary": "#27130b",
+                  "outline-variant": "#d3c3c0",
+                  "on-primary-fixed": "#2b1613",
+                  "surface-container": "#f5eed7",
+                  "primary-fixed-dim": "#e3beb8",
+                  "tertiary-container": "#3e271e",
+                  "on-secondary-container": "#217128",
+                  "primary-fixed": "#ffdad4",
+                  "inverse-on-surface": "#f8f1da",
+                  "on-tertiary-container": "#ae8d81",
+                  "on-primary": "#ffffff",
+                  "on-secondary": "#ffffff",
+                  "surface-dim": "#e0dac4",
+                  "primary-container": "#3e2723",
+                  "secondary": "#1b6d24",
+                  "inverse-primary": "#e3beb8"
+                },
+                fontFamily: {
+                  "headline": ["Manrope"],
+                  "body": ["Inter"],
+                  "label": ["Inter"]
+                },
+                borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+              },
+            },
+          }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .brand-font { font-family: 'Manrope', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-header { animation: fadeInDown 0.6s ease-out forwards; }
+        .animate-title { opacity: 0; animation: fadeInUp 0.6s ease-out 0.2s forwards; }
+        .animate-sidebar { opacity: 0; animation: fadeInUp 0.6s ease-out 0.4s forwards; }
+        .animate-card { opacity: 0; animation: fadeInUp 0.6s ease-out forwards; }
+        
+        /* Staggered delays for the food cards */
+        .delay-1 { animation-delay: 0.5s; }
+        .delay-2 { animation-delay: 0.6s; }
+        .delay-3 { animation-delay: 0.7s; }
+        .delay-4 { animation-delay: 0.8s; }
+        .delay-5 { animation-delay: 0.9s; }
+        .delay-6 { animation-delay: 1.0s; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col" data-mode="connect">
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 max-w-none bg-[#fff9ea] dark:bg-[#1e1c0e] animate-header">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold text-[#271310] dark:text-[#f5eed7] font-['Manrope'] tracking-tight">The Artisanal Ledger</span>
+<nav class="hidden md:flex gap-6 items-center font-['Manrope'] font-semibold tracking-tight">
+<a class="text-[#1b6d24] dark:text-[#a0f399] border-b-2 border-[#1b6d24] dark:border-[#a0f399] pb-1 transition-all duration-300" href="#">Thực đơn</a>
+<a class="text-[#3e2723] dark:text-[#f5eed7] opacity-80 hover:opacity-100 hover:text-[#1b6d24] dark:hover:text-[#a0f399] border-b-2 border-transparent hover:border-[#1b6d24] dark:hover:border-[#a0f399] pb-1 transition-all duration-300 transform hover:translate-x-1 md:hover:translate-x-0" href="#">Đơn hàng</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="pl-10 pr-4 py-2 rounded-full bg-surface-container border-none focus:ring-2 focus:ring-secondary text-sm w-64" placeholder="Tìm kiếm món ăn..." type="text"/>
+</div>
+<button class="Active: scale-95 transition-transform">
+<span class="material-symbols-outlined text-[#271310] dark:text-[#f5eed7] text-2xl">account_circle</span>
+</button>
+</div>
+<div class="absolute bottom-0 left-0 bg-[#f5eed7] dark:bg-[#271310] h-[1px] w-full"></div>
+</header>
+<main class="flex-grow pt-24 pb-12 px-6 max-w-7xl mx-auto w-full">
+<div class="mb-12 animate-title">
+<h1 class="text-5xl font-bold text-primary mb-4 tracking-tighter">Thực Đơn Bản Địa</h1>
+</div>
+<div class="flex flex-col md:flex-row gap-8 items-start">
+<aside class="w-full md:w-64 md:sticky md:top-24 h-auto md:max-h-[calc(100vh-8rem)] overflow-y-auto no-scrollbar animate-sidebar">
+<nav class="flex flex-row md:flex-col gap-2 p-1">
+<button class="flex items-center gap-3 px-4 py-3 rounded-xl bg-secondary-container text-on-secondary-container font-semibold text-sm transition-all text-left whitespace-nowrap md:whitespace-normal">
+<span class="material-symbols-outlined text-lg">grid_view</span>
+                        Tất cả
+                    </button>
+<button class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface hover:bg-surface-container transition-all text-sm font-medium text-left whitespace-nowrap md:whitespace-normal">
+<span class="material-symbols-outlined text-lg">coffee</span>
+                        Cà phê Đen
+                    </button>
+<button class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface hover:bg-surface-container transition-all text-sm font-medium text-left whitespace-nowrap md:whitespace-normal">
+<span class="material-symbols-outlined text-lg">coffee_maker</span>
+                        Cà phê Sữa
+                    </button>
+<button class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface hover:bg-surface-container transition-all text-sm font-medium text-left whitespace-nowrap md:whitespace-normal">
+<span class="material-symbols-outlined text-lg">bakery_dining</span>
+                        Bánh ngọt
+                    </button>
+<button class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface hover:bg-surface-container transition-all text-sm font-medium text-left whitespace-nowrap md:whitespace-normal">
+<span class="material-symbols-outlined text-lg">local_cafe</span>
+                        Trà thảo mộc
+                    </button>
+<div class="hidden md:block my-4 border-t border-outline-variant opacity-30"></div>
+<div class="w-full mt-2 md:mt-0">
+<button class="w-full flex items-center justify-between bg-secondary text-white px-4 py-4 rounded-xl shadow-lg hover:brightness-110 transition-all duration-300 group">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-xl">shopping_cart</span>
+<div class="flex flex-col items-start leading-tight">
+<span class="font-bold text-sm">5 món</span>
+<span class="text-xs opacity-90">235.000đ</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</nav>
+</aside>
+<div class="flex-grow flex flex-col gap-4">
+<!-- Card 1 -->
+<div class="group bg-surface-container-lowest rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col sm:flex-row h-auto sm:h-48 border border-transparent hover:border-outline-variant animate-card delay-1">
+<div class="relative w-full sm:w-64 h-48 sm:h-full overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5S3z63XTOaqx1S0DNYwa3exOoyakerDgGwQx_d3BiLIP2r91h0Zefnq8s9F8xdYIGL3fGLWb8ULBFxCdHqsGfbSft4BmbGymhyvf1SDkiGg77E-RGiRvK-9RhBD8mHtnAMs0FVYV8rUJUxfvetdFeRE876SR7ue0swQCq5ym_IgEkN7cvqBZa5siOMh5Ls3cWXZZwY8vGAELu9KssqZnlzP9seZwu7OG22SeNinENajAJf6Iu6ypjvSLHKVAvGOOz_HMFpBONszn8"/>
+<div class="absolute top-3 right-3 bg-white/80 backdrop-blur-md px-2 py-0.5 rounded-full text-[10px] font-bold text-primary">BEST SELLER</div>
+</div>
+<div class="p-6 flex flex-col flex-grow justify-between">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-xl font-bold text-primary">Latte Nghệ Thuật</h3>
+<p class="text-sm text-on-surface-variant mt-1">Espresso nguyên chất, sữa nóng</p>
+</div>
+<span class="text-secondary font-bold text-lg">55.000đ</span>
+</div>
+<div class="flex items-center justify-end gap-4 mt-4">
+<div class="flex items-center bg-surface-container rounded-full px-2 py-1">
+<button class="w-8 h-8 flex items-center justify-center text-primary hover:bg-surface-container-high rounded-full"><span class="material-symbols-outlined text-sm">remove</span></button>
+<span class="px-3 font-semibold text-sm">1</span>
+<button class="w-8 h-8 flex items-center justify-center text-primary hover:bg-surface-container-high rounded-full"><span class="material-symbols-outlined text-sm">add</span></button>
+</div>
+<button class="px-8 bg-primary text-white py-2 rounded-full text-sm font-semibold hover:bg-primary-container transition-colors Active:scale-95">Thêm</button>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="group bg-surface-container-lowest rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col sm:flex-row h-auto sm:h-48 border border-transparent hover:border-outline-variant animate-card delay-2">
+<div class="relative w-full sm:w-64 h-48 sm:h-full overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWlNvzGuR1PGv_QbSO2rJ7Yk2-N9SFgpymFz9zZ4z2rBppN5mirkUtdEnITLHlxN0ylvqj0eS_vkgnshT70FobplAZa5tBFtj1sqQqYo3DF7XEQdhNCMhDxwhSMpmC-eVg2QHyGb_NCP5od9O1wsioDliSYkq11D818EUa57muD5OSMbEn0IUZuG-Aby2_IymOTT4AC6lbg9ipoGNZxW0FwL8QKDaAFKJwEpKwmiQqbWeoPAAYJ-zk5knXPnHoZp-9sFUJTzPNLWD_"/>
+</div>
+<div class="p-6 flex flex-col flex-grow justify-between">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-xl font-bold text-primary">Croissant Bơ Pháp</h3>
+<p class="text-sm text-on-surface-variant mt-1">Bột ngàn lớp, bơ cao cấp</p>
+</div>
+<span class="text-secondary font-bold text-lg">45.000đ</span>
+</div>
+<div class="flex items-center justify-end gap-4 mt-4">
+<div class="flex items-center bg-surface-container rounded-full px-2 py-1">
+<button class="w-8 h-8 flex items-center justify-center text-primary hover:bg-surface-container-high rounded-full"><span class="material-symbols-outlined text-sm">remove</span></button>
+<span class="px-3 font-semibold text-sm">0</span>
+<button class="w-8 h-8 flex items-center justify-center text-primary hover:bg-surface-container-high rounded-full"><span class="material-symbols-outlined text-sm">add</span></button>
+</div>
+<button class="px-8 bg-primary text-white py-2 rounded-full text-sm font-semibold hover:bg-primary-container transition-colors Active:scale-95">Thêm</button>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="group bg-surface-container-lowest rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col sm:flex-row h-auto sm:h-48 border border-transparent hover:border-outline-variant animate-card delay-3">
+<div class="relative w-full sm:w-64 h-48 sm:h-full overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLhD_egwRsHHiIFYR6Z36mRyx3Eq67PVwVBLynEpQcKmmCkvipwTONjodprmG4Ki28HBhK2E0M3v4q3Ohm2hSW0nRLzkvxhEYrZEWg0JdWj7eWvM9ZWTYmuJnfikYhFwu3AmaJX1z01OqvzVTxgUTR3FuPb4zjI5e5IudUiOVfLMrcSzhjXGzRWjBqN-X9hmpAWj7E62j3uS4tpXoyN2Kfrtc-4nXzyBVQ3ON4fKpamaXbCWyi96ZItGl4jHN_KyMNcy5qqg9dyZSs"/>
+</div>
+<div class="p-6 flex flex-col flex-grow justify-between">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-xl font-bold text-primary">Cà Phê Sữa Đá</h3>
+<p class="text-sm text-on-surface-variant mt-1">Robusta Đắk Lắk, sữa đặc</p>
+</div>
+<span class="text-secondary font-bold text-lg">35.000đ</span>
+</div>
+<div class="flex items-center justify-end gap-4 mt-4">
+<div class="flex items-center bg-surface-container rounded-full px-2 py-1">
+<button class="w-8 h-8 flex items-center justify-center text-primary hover:bg-surface-container-high rounded-full"><span class="material-symbols-outlined text-sm">remove</span></button>
+<span class="px-3 font-semibold text-sm">1</span>
+<button class="w-8 h-8 flex items-center justify-center text-primary hover:bg-surface-container-high rounded-full"><span class="material-symbols-outlined text-sm">add</span></button>
+</div>
+<button class="px-8 bg-primary text-white py-2 rounded-full text-sm font-semibold hover:bg-primary-container transition-colors Active:scale-95">Thêm</button>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="group bg-surface-container-lowest rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col sm:flex-row h-auto sm:h-48 border border-transparent hover:border-outline-variant animate-card delay-4">
+<div class="relative w-full sm:w-64 h-48 sm:h-full overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBQGDFEVutd7_lr-N1fwBnGkzJcqGACR4_nDLhleSyqubwruYVSfukhJx2VPMeGgNwBQTSxv2s8NKZGGC58Z-1K59wcq0Cmf0aHMnCjKgaWZbX606huMA70Xg6Cp2TkXHa4ZAx7F-78zduwi7fndlXlpf1-2X-esCO2X4B4iiLKnUeSe6xriJoxwJwooIz1aE42pWNsh1EddFIRFy2vWTCvdQkWEoDp8MnYVVhHzpP3yYIEbLiEl8UYs6gtUwswSwE0XlajCLyGtHm"/>
+</div>
+<div class="p-6 flex flex-col flex-grow justify-between">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-xl font-bold text-primary">Tiramisu Cổ Điển</h3>
+<p class="text-sm text-on-surface-variant mt-1">Mascarpone, cốt cà phê</p>
+</div>
+<span class="text-secondary font-bold text-lg">65.000đ</span>
+</div>
+<div class="flex items-center justify-end gap-4 mt-4">
+<div class="flex items-center bg-surface-container rounded-full px-2 py-1">
+<button class="w-8 h-8 flex items-center justify-center text-primary hover:bg-surface-container-high rounded-full"><span class="material-symbols-outlined text-sm">remove</span></button>
+<span class="px-3 font-semibold text-sm">0</span>
+<button class="w-8 h-8 flex items-center justify-center text-primary hover:bg-surface-container-high rounded-full"><span class="material-symbols-outlined text-sm">add</span></button>
+</div>
+<button class="px-8 bg-primary text-white py-2 rounded-full text-sm font-semibold hover:bg-primary-container transition-colors Active:scale-95">Thêm</button>
+</div>
+</div>
+</div>
+<!-- Card 5 -->
+<div class="group bg-surface-container-lowest rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col sm:flex-row h-auto sm:h-48 border border-transparent hover:border-outline-variant animate-card delay-5">
+<div class="relative w-full sm:w-64 h-48 sm:h-full overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4-UOJWQNwi2ccZt1lJoqEhvLZgR7MbKs1MJx_-fvPwI6cJaQ5MaHv5T-tbIJMWGS8CNsFsjk3yLpKOBRkQYz1QxG9TEt_4j9oqlV0bX5NyOoWXITCO8whHdgAPtj5PHQsGsGUseHk4swYM0w6eA7sFj7TcJWAgXT8qUYpD2FSEgG-hxroIOLC1G9T0t-TBKS3giF1c1UTsDTa0vJ4DfRruR8TCZd3tCmuFpUfS6Ew1cvu7-3t8ectf8Y7gd5KNz7iZD7bVV4FwIv"/>
+</div>
+<div class="p-6 flex flex-col flex-grow justify-between">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-xl font-bold text-primary">Cold Brew Nguyên Bản</h3>
+<p class="text-sm text-on-surface-variant mt-1">Ủ lạnh 16 giờ, hương trái cây</p>
+</div>
+<span class="text-secondary font-bold text-lg">50.000đ</span>
+</div>
+<div class="flex items-center justify-end gap-4 mt-4">
+<div class="flex items-center bg-surface-container rounded-full px-2 py-1">
+<button class="w-8 h-8 flex items-center justify-center text-primary hover:bg-surface-container-high rounded-full"><span class="material-symbols-outlined text-sm">remove</span></button>
+<span class="px-3 font-semibold text-sm">1</span>
+<button class="w-8 h-8 flex items-center justify-center text-primary hover:bg-surface-container-high rounded-full"><span class="material-symbols-outlined text-sm">add</span></button>
+</div>
+<button class="px-8 bg-primary text-white py-2 rounded-full text-sm font-semibold hover:bg-primary-container transition-colors Active:scale-95">Thêm</button>
+</div>
+</div>
+</div>
+<!-- Card 6 -->
+<div class="group bg-surface-container-lowest rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col sm:flex-row h-auto sm:h-48 border border-transparent hover:border-outline-variant animate-card delay-6">
+<div class="relative w-full sm:w-64 h-48 sm:h-full overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMhgrBto1_7M4JjhjYb8YXM0qb61cESnU9eqOn7aZaaoe0CiiKreXO89ULEkM1WGtINcoh-QRsy5KeHNudJ9eFvV6OWokHkOcRAU7RrYY7jA1V1i-UNSY-JXPYdMKReGRX_y2qSOFOc8TGuwnDliEbImTvBE0vV40J7ASJhrxtQ7GsF5A0WtoH9_kp3szI5KuGLWSMkZDXUiMdiNO1fWWyzYEoPy6gHqMWYuXB1psG548x8dpGQfkP7B9w8BCkSgXg4n-pS-FHghPM"/>
+</div>
+<div class="p-6 flex flex-col flex-grow justify-between">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-xl font-bold text-primary">Donut Đường Mật</h3>
+<p class="text-sm text-on-surface-variant mt-1">Phủ đường hạt, cốt bánh mềm</p>
+</div>
+<span class="text-secondary font-bold text-lg">30.000đ</span>
+</div>
+<div class="flex items-center justify-end gap-4 mt-4">
+<div class="flex items-center bg-surface-container rounded-full px-2 py-1">
+<button class="w-8 h-8 flex items-center justify-center text-primary hover:bg-surface-container-high rounded-full"><span class="material-symbols-outlined text-sm">remove</span></button>
+<span class="px-3 font-semibold text-sm">0</span>
+<button class="w-8 h-8 flex items-center justify-center text-primary hover:bg-surface-container-high rounded-full"><span class="material-symbols-outlined text-sm">add</span></button>
+</div>
+<button class="px-8 bg-primary text-white py-2 rounded-full text-sm font-semibold hover:bg-primary-container transition-colors Active:scale-95">Thêm</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="w-full py-8 px-6 flex flex-col md:flex-row justify-between items-center gap-4 bg-[#f5eed7] dark:bg-[#271310] text-[#3e2723] dark:text-[#f5eed7] font-['Inter'] text-sm font-medium animate-card delay-6">
+<div class="flex gap-6 items-center">
+<span class="opacity-70">© 2024 The Artisanal Ledger</span>
+<div class="flex gap-4">
+<a class="opacity-70 hover:underline hover:text-[#271310] dark:hover:text-white transition-opacity duration-300" href="#">Privacy Policy</a>
+<a class="opacity-70 hover:underline hover:text-[#271310] dark:hover:text-white transition-opacity duration-300" href="#">Contact Support</a>
+</div>
+</div>
+</footer>
+</body></html>

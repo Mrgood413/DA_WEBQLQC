@@ -3,7 +3,6 @@ package com.example.WebCafe.service;
 import com.example.WebCafe.dto.request.AddCartItemRequest;
 import com.example.WebCafe.dto.response.OrderDetailResponse;
 import com.example.WebCafe.dto.response.OrderSummaryResponse;
-import com.example.WebCafe.model.enums.OrderStatus;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +24,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	public OrderDetailResponse getOrder(Integer orderId, HttpSession session) {
 		return new OrderDetailResponse(
 				orderId,
-				OrderStatus.CART,
-				null,
+				false,
 				null,
 				null,
 				Collections.emptyList(),
@@ -38,8 +36,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	public OrderDetailResponse createCart(HttpSession session) {
 		return new OrderDetailResponse(
 				null,
-				OrderStatus.CART,
-				null,
+				false,
 				null,
 				null,
 				Collections.emptyList(),
