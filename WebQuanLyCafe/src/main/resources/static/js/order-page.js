@@ -1,6 +1,9 @@
 (function () {
 	"use strict";
 
+	var tableNumberCache = null;
+	var TABLE_NUMBER_KEY = "webcafe.tableNumber";
+
 	var STATUS_WIDTHS = ["0%", "12%", "50%", "100%"];
 	var PLACEHOLDER_IMG =
 		"data:image/svg+xml," +
@@ -29,15 +32,16 @@
 		if (isNaN(date.getTime())) return "Chưa đặt đơn";
 		return "Đặt lúc " + date.toLocaleTimeString("vi-VN", {
 			hour: "2-digit",
-			minute: "2-digit"
+			minute: "2-digit",
+			hour12: false
 		});
 	}
 
-	function getOrderCode(cart) {
-		var seed = cart.placedAt || cart.updatedAt;
-		if (!seed) return "Giỏ hàng tạm";
-		var compact = seed.replace(/\D/g, "").slice(-6);
-		return "#AL-" + compact;
+	function getTableLabel(tableNumber) {
+		if (tableNumber != null && tableNumber !== "") {
+			return "Bàn " + tableNumber;
+		}
+		return "Chưa chọn bàn";
 	}
 
 	function getMilestones() {
@@ -214,8 +218,8 @@
 		var totals = window.WebCafeCart ? window.WebCafeCart.getTotals(cart) : { itemCount: 0, total: 0 };
 		var editable = cart.status === 0;
 
-		orderCodeEl.textContent = "Đơn " + getOrderCode(cart);
-		orderTimeEl.textContent = formatTime(cart.placedAt || cart.updatedAt);
+		orderCodeEl.textContent = getTableLabel(tableNumberCache);
+		orderTimeEl.textContent = formatTime(cart.placedAt);
 		countBadgeEl.textContent = totals.itemCount;
 		totalEl.textContent = formatVnd(totals.total);
 		if (headerTotalEl) headerTotalEl.textContent = formatVnd(totals.total);
@@ -258,9 +262,56 @@
 		updateButtonState(cart);
 	}
 
+	function readStoredTableNumber() {
+		try {
+			var raw = window.localStorage.getItem(TABLE_NUMBER_KEY);
+			if (raw == null || raw === "") return null;
+			var n = parseInt(raw, 10);
+			if (isNaN(n) || n < 1) return null;
+			return n;
+		} catch (e) {
+			return null;
+		}
+	}
+
+	function fetchTableNumber(done) {
+		tableNumberCache = readStoredTableNumber();
+		fetch("/api/customer/table", { credentials: "same-origin" })
+			.then(function (r) {
+				if (r.status === 401) {
+					tableNumberCache = readStoredTableNumber();
+					return null;
+				}
+				if (!r.ok) {
+					tableNumberCache = readStoredTableNumber();
+					return null;
+				}
+				return r.json();
+			})
+			.then(function (data) {
+				if (!data) return;
+				if (data.tableNumber != null && data.tableNumber !== "") {
+					tableNumberCache = data.tableNumber;
+					try {
+						window.localStorage.setItem(TABLE_NUMBER_KEY, String(data.tableNumber));
+					} catch (e) {}
+				} else {
+					tableNumberCache = readStoredTableNumber();
+				}
+			})
+			.catch(function () {
+				tableNumberCache = readStoredTableNumber();
+			})
+			.finally(function () {
+				if (typeof done === "function") done();
+			});
+	}
+
 	document.addEventListener("DOMContentLoaded", function () {
 		var mainOrderBtn = document.getElementById("mainOrderBtn");
 		var addMoreBtn = document.getElementById("add-more-btn");
+
+		fetchTableNumber(renderCart);
 
 		mainOrderBtn.addEventListener("click", function () {
 			var cart = window.WebCafeCart.getCart();
@@ -295,7 +346,5 @@
 			if (event.key && event.key !== "webcafe.cart") return;
 			renderCart();
 		});
-
-		renderCart();
 	});
 })();

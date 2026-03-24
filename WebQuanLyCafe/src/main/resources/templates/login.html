@@ -260,12 +260,44 @@
         if (tableRes.status === 404) msg = 'Bàn không tồn tại trong hệ thống.';
         throw new Error(msg);
       }
+      try {
+        window.localStorage.setItem('webcafe.tableNumber', String(num));
+      } catch (ignore) {}
       window.location.href = '/menu';
     } catch (e) {
       tableMsg.textContent = (e && e.message) ? e.message : 'Có lỗi xảy ra.';
       tableMsg.classList.remove('hidden');
       tableMsg.classList.add('text-error');
       tableMsg.classList.remove('text-secondary');
+    }
+  });
+
+  formLogin.addEventListener('submit', async function () {
+    var u = document.getElementById('username');
+    var p = document.getElementById('password');
+    var username = u ? String(u.value || '').trim() : '';
+    var password = p ? String(p.value || '') : '';
+
+    if (!username || !password) {
+      alert('Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu.');
+      return;
+    }
+
+    try {
+      var loginRes = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ mode: 'STAFF', username: username, password: password })
+      });
+
+      if (!loginRes.ok) {
+        throw new Error('Tên đăng nhập hoặc mật khẩu không đúng, hoặc tài khoản không phải nhân viên.');
+      }
+
+      window.location.href = '/staff/order';
+    } catch (e) {
+      alert((e && e.message) ? e.message : 'Đăng nhập thất bại.');
     }
   });
 })();

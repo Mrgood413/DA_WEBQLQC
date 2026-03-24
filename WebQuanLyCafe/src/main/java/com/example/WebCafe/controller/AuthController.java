@@ -43,6 +43,14 @@ public class AuthController {
 	}
 
 	/**
+	 * GET vào URL API đăng nhập (bookmark, prefetch) — chuyển tới trang đăng nhập thay vì 405 + WARN trong log.
+	 */
+	@GetMapping("/api/auth/login")
+	public String loginApiGetRedirect() {
+		return "redirect:/login";
+	}
+
+	/**
 	 * Đăng nhập: {@code mode=CUSTOMER} (khách, không cần user trong DB), {@code STAFF}, {@code ADMIN}.
 	 * Phiên lưu bằng cookie {@code JSESSIONID}.
 	 */
@@ -54,6 +62,12 @@ public class AuthController {
 		// Ghi SecurityContext vào session — không có bước này request sau (vd. chọn bàn) không có ROLE_CUSTOMER.
 		securityContextRepository.saveContext(SecurityContextHolder.getContext(), httpRequest, httpResponse);
 		return ResponseEntity.ok().build();
+	}
+
+	/** GET nhầm tới URL logout API — chỉ chuyển trang (đăng xuất thật dùng POST). */
+	@GetMapping("/api/auth/logout")
+	public String logoutApiGetRedirect() {
+		return "redirect:/login";
 	}
 
 	/** Xóa phiên và cookie phiên. */

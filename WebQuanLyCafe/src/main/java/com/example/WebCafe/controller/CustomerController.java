@@ -2,6 +2,7 @@ package com.example.WebCafe.controller;
 
 import com.example.WebCafe.dto.request.AddCartItemRequest;
 import com.example.WebCafe.dto.request.SetTableRequest;
+import com.example.WebCafe.dto.response.CustomerTableResponse;
 import com.example.WebCafe.dto.response.OrderDetailResponse;
 import com.example.WebCafe.dto.response.OrderSummaryResponse;
 import com.example.WebCafe.dto.response.ProductResponse;
@@ -43,6 +44,11 @@ public class CustomerController {
 	public ResponseEntity<Void> setTable(@Valid @RequestBody SetTableRequest request, HttpSession session) {
 		customerSessionService.setTable(session, request.tableNumber());
 		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/table")
+	public CustomerTableResponse getTable(HttpSession session) {
+		return new CustomerTableResponse(customerSessionService.getTableNumber(session));
 	}
 
 	@GetMapping("/menu")

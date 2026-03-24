@@ -22,4 +22,10 @@ public class CustomerSessionServiceImpl implements CustomerSessionService {
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Bàn không tồn tại"));
 		session.setAttribute(SessionKeys.TABLE_NUMBER, tableNumber);
 	}
+
+	@Override
+	public Integer getTableNumber(HttpSession session) {
+		Object attr = session.getAttribute(SessionKeys.TABLE_NUMBER);
+		return attr instanceof Integer ? (Integer) attr : null;
+	}
 }
