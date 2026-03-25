@@ -3,12 +3,19 @@ package com.example.WebCafe.service;
 import com.example.WebCafe.dto.request.AdminProductRequest;
 import com.example.WebCafe.dto.request.PaymentRequest;
 import com.example.WebCafe.dto.request.StaffProductUpdateRequest;
+import com.example.WebCafe.dto.response.OrderItemResponse;
 import com.example.WebCafe.dto.response.CategoryOptionResponse;
 import com.example.WebCafe.dto.response.OrderQueueResponse;
 import com.example.WebCafe.dto.response.ProductResponse;
+import com.example.WebCafe.model.CafeOrder;
 import com.example.WebCafe.model.Category;
+import com.example.WebCafe.model.OrderItem;
 import com.example.WebCafe.model.Product;
+import com.example.WebCafe.model.Payment;
+import com.example.WebCafe.model.enums.OrderStatus;
+import com.example.WebCafe.repository.CafeOrderRepository;
 import com.example.WebCafe.repository.CategoryRepository;
+import com.example.WebCafe.repository.PaymentRepository;
 import com.example.WebCafe.repository.ProductRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,16 +25,27 @@ import org.springframework.web.server.ResponseStatusException;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
+import java.time.LocalDateTime;
 
 @Service
 public class StaffServiceImpl implements StaffService {
 
 	private final ProductRepository productRepository;
 	private final CategoryRepository categoryRepository;
+	private final CafeOrderRepository cafeOrderRepository;
+	private final PaymentRepository paymentRepository;
+	private final OrderMilestoneEventService orderMilestoneEventService;
 
-	public StaffServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository) {
+	public StaffServiceImpl(ProductRepository productRepository,
+			CategoryRepository categoryRepository,
+			CafeOrderRepository cafeOrderRepository,
+			PaymentRepository paymentRepository,
+			OrderMilestoneEventService orderMilestoneEventService) {
 		this.productRepository = productRepository;
 		this.categoryRepository = categoryRepository;
+		this.cafeOrderRepository = cafeOrderRepository;
+		this.paymentRepository = paymentRepository;
+		this.orderMilestoneEventService = orderMilestoneEventService;
 	}
 
 	@Override
@@ -102,17 +120,107 @@ public class StaffServiceImpl implements StaffService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<OrderQueueResponse> listQueue() {
-		return List.of();
+		return cafeOrderRepository.findAll().stream()
+				.filter(o -> o.getStatus() == OrderStatus.PENDING
+						|| o.getStatus() == OrderStatus.PREPARING
+						|| o.getStatus() == OrderStatus.DONE
+						|| o.getStatus() == OrderStatus.PAID)
+				.sorted(Comparator.comparing(CafeOrder::getId).reversed())
+				.map(this::toQueue)
+				.toList();
 	}
 
 	@Override
 	public void confirmOrder(Integer orderId) {
-		// TODO: xác nhận đơn phía nhân viên
+		CafeOrder o = cafeOrderRepository.findById(orderId)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy order"));
+
+		int milestone;
+		OrderStatus next;
+		if (o.getStatus() == OrderStatus.PENDING) {
+			next = OrderStatus.PREPARING;
+			milestone = 2;
+		} else if (o.getStatus() == OrderStatus.PREPARING) {
+			next = OrderStatus.DONE;
+			milestone = 3;
+		} else {
+			// DONE/PAID: không xử lý bước tiếp theo tại đây
+			return;
+		}
+
+		o.setStatus(next);
+		cafeOrderRepository.save(o);
+		orderMilestoneEventService.emitMilestone(orderId, milestone);
 	}
 
 	@Override
 	public void recordPayment(Integer orderId, PaymentRequest request) {
-		// TODO: ghi payment + cập nhật trạng thái đơn
+		CafeOrder o = cafeOrderRepository.findById(orderId)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy order"));
+
+		// Chỉ cho phép thanh toán khi đã xong món
+		if (o.getStatus() != OrderStatus.DONE) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Chưa thể thanh toán lúc này");
+		}
+
+		BigDecimal total = o.getItems().stream()
+				.map(oi -> oi.getPrice().multiply(BigDecimal.valueOf(oi.getQuantity())))
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		Payment payment = new Payment();
+		payment.setOrder(o);
+		payment.setMethod(request.method());
+		payment.setTotalAmount(total);
+
+		paymentRepository.save(payment);
+
+		o.setStatus(OrderStatus.PAID);
+		cafeOrderRepository.save(o);
+	}
+
+	private OrderQueueResponse toQueue(CafeOrder o) {
+		Integer tableNumber = o.getTable() != null ? o.getTable().getTableNumber() : null;
+		LocalDateTime createdAt = o.getCreatedAt();
+
+		List<OrderItemResponse> items = o.getItems() == null ? List.of() :
+				o.getItems().stream().map(this::toItem).toList();
+
+		LocalDateTime lastItemUpdatedAt = items.stream()
+				.map(OrderItemResponse::updatedAt)
+				.filter(x -> x != null)
+				.max(LocalDateTime::compareTo)
+				.orElse(null);
+
+		boolean hasMoreItems = createdAt != null && lastItemUpdatedAt != null && lastItemUpdatedAt.isAfter(createdAt);
+
+		return new OrderQueueResponse(
+				o.getId(),
+				tableNumber,
+				o.getStatus(),
+				items.size(),
+				createdAt,
+				lastItemUpdatedAt,
+				hasMoreItems,
+				items);
+	}
+
+	private OrderItemResponse toItem(OrderItem oi) {
+		Product p = oi.getProduct();
+		Integer productId = p != null ? p.getId() : null;
+		String productName = p != null ? p.getName() : null;
+		BigDecimal unitPrice = oi.getPrice();
+		Integer qty = oi.getQuantity();
+		BigDecimal lineTotal = (unitPrice == null || qty == null)
+				? BigDecimal.ZERO
+				: unitPrice.multiply(BigDecimal.valueOf(qty));
+		return new OrderItemResponse(
+				oi.getId(),
+				productId,
+				productName,
+				qty,
+				unitPrice,
+				lineTotal,
+				oi.getUpdated());
 	}
 
 	private ProductResponse toResponse(Product p) {

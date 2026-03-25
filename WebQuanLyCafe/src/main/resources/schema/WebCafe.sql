@@ -49,7 +49,8 @@ CREATE TABLE cafe_tables (
 
 CREATE TABLE categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL
+    name VARCHAR(100) NOT NULL,
+    image_url VARCHAR(255)
 );
 
 CREATE TABLE products (
@@ -79,7 +80,7 @@ CREATE TABLE order_items (
     product_id INT,
     quantity INT NOT NULL,
     price DECIMAL(10,2) NOT NULL,
-    updated BOOLEAN NOT NULL DEFAULT FALSE,
+    updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (order_id) REFERENCES orders(id),
     FOREIGN KEY (product_id) REFERENCES products(id)
 );

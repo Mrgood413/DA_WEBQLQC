@@ -28,6 +28,9 @@ public class Category {
 	@Column(nullable = false, length = 100)
 	private String name;
 
+	@Column(name = "image_url", length = 255)
+	private String imageUrl;
+
 	@OneToMany(mappedBy = "category")
 	private List<Product> products = new ArrayList<>();
 }

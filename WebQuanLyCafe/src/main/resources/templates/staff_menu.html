@@ -76,6 +76,23 @@
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #d3c3c0; border-radius: 10px; }
+
+        /* Animation loading style lấy từ example.txt */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+        .delay-400 { animation-delay: 400ms; }
+        .delay-500 { animation-delay: 500ms; }
+        .delay-600 { animation-delay: 600ms; }
+        .delay-700 { animation-delay: 700ms; }
     </style>
 </head>
 <body class="bg-background font-body text-on-surface flex min-h-screen">
@@ -121,6 +138,17 @@
 </header>
 <div class="p-6 md:p-8 space-y-8 max-w-7xl mx-auto w-full flex-1">
 <p id="page-error" class="hidden text-sm text-error px-1" role="alert"></p>
+<div id="staff-menu-loading" class="fixed inset-0 bg-black/40 z-[200] hidden items-center justify-center p-4">
+  <div class="bg-surface rounded-xl shadow-2xl max-w-sm w-full border border-outline-variant/20 p-6 animate-fade-in-up delay-200">
+    <p class="font-bold text-primary text-center">Đang tải dữ liệu...</p>
+    <div class="mt-4 flex items-center justify-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-secondary animate-pulse delay-100"></span>
+      <span class="w-2 h-2 rounded-full bg-secondary animate-pulse delay-200"></span>
+      <span class="w-2 h-2 rounded-full bg-secondary animate-pulse delay-300"></span>
+    </div>
+    <p class="mt-2 text-sm text-on-surface-variant text-center">Vui lòng chờ</p>
+  </div>
+</div>
 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
 <div id="category-tabs" class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar flex-wrap"></div>
 <button type="button" id="btn-add-product" class="bg-primary text-on-primary px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-xl hover:translate-y-[-2px] transition-all flex items-center justify-center gap-2 shrink-0">
@@ -215,6 +243,7 @@ Thêm món mới
     statTotal: document.getElementById('stat-total'),
     statVisible: document.getElementById('stat-visible'),
     pageError: document.getElementById('page-error'),
+    loading: document.getElementById('staff-menu-loading'),
     modalBackdrop: document.getElementById('modalBackdrop'),
     modalTitle: document.getElementById('modal-title'),
     form: document.getElementById('product-form'),
@@ -287,9 +316,10 @@ Thêm món mới
       els.grid.appendChild(empty);
       return;
     }
-    list.forEach(function (p) {
+    list.forEach(function (p, idx) {
       var card = document.createElement('div');
-      card.className = 'group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col border border-outline-variant/5';
+      var delayMs = Math.min((idx + 1) * 100, 700);
+      card.className = 'group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col border border-outline-variant/5 animate-fade-in-up delay-' + delayMs;
       var imgWrap = document.createElement('div');
       imgWrap.className = 'relative h-48 overflow-hidden bg-surface-container-high';
       if (p.imageUrl) {
@@ -565,6 +595,7 @@ Thêm món mới
 
   function boot() {
     els.pageError.classList.add('hidden');
+    if (els.loading) els.loading.classList.remove('hidden');
     Promise.all([
       apiJson(API.categories),
       apiJson(API.products)
@@ -574,13 +605,17 @@ Thêm món mới
       renderTabs();
       renderGrid();
       updateStats();
+      if (els.loading) els.loading.classList.add('hidden');
     }).catch(function (err) {
       if (err.status === 401) {
-        window.location.href = '/login';
+        if (els.loading) els.loading.classList.add('hidden');
+        els.pageError.textContent = err.message || 'Vui lòng đăng nhập.';
+        els.pageError.classList.remove('hidden');
         return;
       }
       els.pageError.textContent = err.message || 'Không tải được dữ liệu.';
       els.pageError.classList.remove('hidden');
+      if (els.loading) els.loading.classList.add('hidden');
     });
   }
 

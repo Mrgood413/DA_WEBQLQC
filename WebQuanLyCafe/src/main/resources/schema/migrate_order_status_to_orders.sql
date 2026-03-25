@@ -1,2 +1,0 @@
--- Lỗi thời: schema hiện tại xem migrate_combine_paid_status_order_item_updated.sql
--- (orders: status gồm PAID; order_items: không còn status, có updated).

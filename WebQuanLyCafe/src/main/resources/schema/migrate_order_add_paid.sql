@@ -1,2 +1,0 @@
--- Lỗi thời: thanh toán nằm trong orders.status = 'PAID' (không còn cột paid).
--- Dùng: migrate_combine_paid_status_order_item_updated.sql

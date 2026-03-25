@@ -283,19 +283,40 @@
       return;
     }
 
+    async function parseLoginError(res) {
+      var text = await res.text();
+      try {
+        var j = JSON.parse(text);
+        if (j && j.message) return j.message;
+      } catch (ignore) {}
+      return 'Đăng nhập thất bại.';
+    }
+
     try {
-      var loginRes = await fetch('/api/auth/login', {
+      var staffRes = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
         body: JSON.stringify({ mode: 'STAFF', username: username, password: password })
       });
-
-      if (!loginRes.ok) {
-        throw new Error('Tên đăng nhập hoặc mật khẩu không đúng, hoặc tài khoản không phải nhân viên.');
+      if (staffRes.ok) {
+        window.location.href = '/staff/menu';
+        return;
       }
 
-      window.location.href = '/staff/menu';
+      var adminRes = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ mode: 'ADMIN', username: username, password: password })
+      });
+      if (adminRes.ok) {
+        window.location.href = '/admin/category';
+        return;
+      }
+
+      var msg = await parseLoginError(adminRes);
+      throw new Error(msg);
     } catch (e) {
       alert((e && e.message) ? e.message : 'Đăng nhập thất bại.');
     }

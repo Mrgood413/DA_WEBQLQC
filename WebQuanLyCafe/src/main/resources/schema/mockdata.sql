@@ -7,8 +7,9 @@ USE WebCafe;
 -- ========== Tài khoản hệ thống ==========
 -- Mật khẩu mặc định cho các tài khoản bên dưới: 123456
 INSERT INTO users (username, password, full_name, phone) VALUES
-('staff01', '$2b$10$ZcGXIBExA3Ssv88VsoosOerIi9JVzzO/rWTmPjk20NxdjQ3DwYReO', 'Nguyen Van Staff', '0901000001'),
-('admin01', '$2b$10$QEWMj.bSXKSfdcBYITwa4e81ElAXSzD7K0ZAV.jG.sa5qpKIKUobS', 'Nguyen Van Admin', '0901000002');
+('staff01', '$2b$10$ZcGXIBExA3Ssv88VsoosOerIi9JVzzO/rWTmPjk20NxdjQ3DwYReO', 'Nguyen Van Minh', '0901000001'),
+('staff02', '$2b$10$ZcGXIBExA3Ssv88VsoosOerIi9JVzzO/rWTmPjk20NxdjQ3DwYReO', 'Tran Van Dat', '0901000003'),
+('admin01', '$2b$10$QEWMj.bSXKSfdcBYITwa4e81ElAXSzD7K0ZAV.jG.sa5qpKIKUobS', 'Nguyen Thi Lan', '0901000002');
 
 INSERT INTO staff (user_id, gender, age, is_active)
 SELECT id, 'MALE', 24, TRUE FROM users WHERE username = 'staff01';
@@ -17,11 +18,11 @@ INSERT INTO admins (user_id)
 SELECT id FROM users WHERE username = 'admin01';
 
 -- ========== Danh mục ==========
-INSERT INTO categories (name) VALUES
-('Cà phê'),
-('Trà'),
-('Bánh ngọt'),
-('Đồ uống khác');
+INSERT INTO categories (name, image_url) VALUES
+('Cà phê', 'https://images.unsplash.com/photo-1517701604599-bb29b565090c'),
+('Trà', 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085'),
+('Bánh ngọt', 'https://images.unsplash.com/photo-1509042239860-f550ce710b93'),
+('Đồ uống khác', 'https://images.unsplash.com/photo-1461988320302-91bde64fc8e4');
 
 -- ========== Sản phẩm ==========
 -- category_id: 1=Cà phê, 2=Trà, 3=Bánh ngọt, 4=Đồ uống khác

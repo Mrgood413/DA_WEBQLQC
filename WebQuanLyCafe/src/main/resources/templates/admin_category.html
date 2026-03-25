@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quản lý Danh mục - The Artisanal Ledger</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fff9ea;
+        }
+        .font-headline { font-family: 'Manrope', sans-serif; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "on-primary": "#ffffff",
+                "on-secondary-container": "#217128",
+                "outline": "#827472",
+                "on-tertiary": "#ffffff",
+                "on-error-container": "#93000a",
+                "on-tertiary-container": "#ae8d81",
+                "on-surface-variant": "#504442",
+                "on-secondary-fixed-variant": "#005312",
+                "primary": "#271310",
+                "tertiary": "#27130b",
+                "error-container": "#ffdad6",
+                "tertiary-fixed-dim": "#e4beb2",
+                "surface-container": "#f5eed7",
+                "on-error": "#ffffff",
+                "primary-fixed": "#ffdad4",
+                "inverse-surface": "#333121",
+                "surface-variant": "#e9e2cc",
+                "secondary-fixed-dim": "#88d982",
+                "on-primary-fixed-variant": "#5b403c",
+                "secondary-fixed": "#a3f69c",
+                "tertiary-fixed": "#ffdbce",
+                "on-tertiary-fixed-variant": "#5b4137",
+                "surface-container-low": "#faf4dd",
+                "background": "#fff9ea",
+                "on-primary-container": "#ae8d87",
+                "surface-bright": "#fff9ea",
+                "primary-container": "#3e2723",
+                "surface-container-lowest": "#ffffff",
+                "surface-container-high": "#efe8d2",
+                "outline-variant": "#d3c3c0",
+                "on-primary-fixed": "#2b1613",
+                "primary-fixed-dim": "#e3beb8",
+                "inverse-primary": "#e3beb8",
+                "on-tertiary-fixed": "#2b160f",
+                "surface": "#fff9ea",
+                "tertiary-container": "#3e271e",
+                "on-surface": "#1e1c0e",
+                "secondary-container": "#a0f399",
+                "surface-tint": "#745853",
+                "secondary": "#1b6d24",
+                "on-secondary": "#ffffff",
+                "inverse-on-surface": "#f8f1da",
+                "error": "#ba1a1a",
+                "surface-container-highest": "#e9e2cc",
+                "on-secondary-fixed": "#002204",
+                "on-background": "#1e1c0e",
+                "surface-dim": "#e0dac4"
+              },
+              fontFamily: {
+                "headline": ["Manrope"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+              },
+              borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+</head>
+<body class="text-on-background selection:bg-secondary-container">
+<!-- SideNavBar (Shared Component) -->
+<aside class="h-screen w-64 fixed left-0 top-0 border-r-0 bg-[#f5eed7] flex flex-col py-6 z-20">
+<div class="px-6 mb-8">
+<h1 class="font-headline font-bold text-[#271310] text-xl tracking-tight">Artisanal POS</h1>
+<p class="text-xs text-[#3e2723]/70 font-medium uppercase tracking-widest mt-1">Manager Portal</p>
+</div>
+<nav class="flex-1 space-y-1 px-2">
+<a class="flex items-center text-[#3e2723]/70 hover:text-[#271310] px-4 py-3 hover:bg-[#ffffff]/50 rounded-full transition-all group" href="#">
+<span class="material-symbols-outlined mr-3">dashboard</span>
+<span class="font-medium text-sm">Dashboard</span>
+</a>
+<!-- Active Tab: Categories -->
+<a class="flex items-center bg-[#ffffff] text-[#271310] rounded-full shadow-sm mx-2 px-4 py-3 transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined mr-3">category</span>
+<span class="font-medium text-sm">Categories</span>
+</a>
+<a class="flex items-center text-[#3e2723]/70 hover:text-[#271310] px-4 py-3 hover:bg-[#ffffff]/50 rounded-full transition-all group" href="#">
+<span class="material-symbols-outlined mr-3">group</span>
+<span class="font-medium text-sm">Staff</span>
+</a>
+<a class="flex items-center text-[#3e2723]/70 hover:text-[#271310] px-4 py-3 hover:bg-[#ffffff]/50 rounded-full transition-all group" href="#">
+<span class="material-symbols-outlined mr-3">payments</span>
+<span class="font-medium text-sm">Revenue</span>
+</a>
+</nav>
+<div class="px-4 mt-auto pt-6 space-y-1">
+<a class="flex items-center text-[#3e2723]/70 hover:text-[#271310] px-4 py-3 hover:bg-[#ffffff]/50 rounded-full transition-all" href="#">
+<span class="material-symbols-outlined mr-3">settings</span>
+<span class="font-medium text-sm">Settings</span>
+</a>
+<a class="flex items-center text-[#3e2723]/70 hover:text-[#271310] px-4 py-3 hover:bg-[#ffffff]/50 rounded-full transition-all" href="#">
+<span class="material-symbols-outlined mr-3">logout</span>
+<span class="font-medium text-sm">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen">
+<!-- TopAppBar (Shared Component) -->
+<header class="w-full top-0 sticky z-10 bg-[#fff9ea] flex justify-between items-center px-8 py-4">
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="absolute inset-y-0 left-3 flex items-center text-outline">
+<span class="material-symbols-outlined text-lg">search</span>
+</span>
+<input class="bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 text-sm w-64 focus:ring-2 focus:ring-secondary/20 transition-all outline-none" placeholder="Tìm kiếm danh mục..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-primary/60 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="flex items-center gap-3 pl-6 border-l border-outline-variant/30">
+<div class="text-right">
+<p class="text-xs font-bold text-primary">Admin User</p>
+<p class="text-[10px] text-primary/50 uppercase tracking-tighter">Manager Profile</p>
+</div>
+<div class="h-10 w-10 rounded-full overflow-hidden bg-surface-container-high ring-2 ring-surface-container">
+<img alt="Manager Profile" data-alt="close-up portrait of a professional man in a clean white shirt smiling in a bright modern office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYL1W_w6EPTmITugnAarnuRm7OhNptQ4d2_-D6n1anu_J1cWn_TJ4cO4-CQl_lYBmhnNU1T3ueaAJP7VV1L3lRdIBwI3m4kXM46V5VHY84MMj_-azLDZgeqUYGRq-roWPvz9NqHwqzdAPb58vtgzA12eLnQbsQd05kpLoup5pq5hygUmRFTMfa1BuzV2sq0rE_q1L-ZnTArgyrPjlh-niACr4Wlgwr3UATBrFkCuZ8DWp2XPVSY-Z1H1cYD9fvUpBaF7BCKQSItUcR"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Category Content -->
+<div class="px-8 py-8">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+<div class="max-w-2xl">
+<h2 class="font-headline text-4xl font-bold text-primary tracking-tight leading-none mb-4">Quản lý Danh mục</h2>
+<p class="text-on-surface-variant font-body leading-relaxed max-w-lg">
+                    Tổ chức thực đơn của bạn một cách nghệ thuật. Tại đây, bạn có thể chỉnh sửa các nhóm sản phẩm, cập nhật số lượng và tối ưu hóa trải nghiệm gọi món cho khách hàng.
+                </p>
+</div>
+</div>
+<!-- Category Grid (Bento Style) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Category Card 1: Coffee -->
+<div class="group relative bg-surface-container-lowest rounded-xl overflow-hidden transition-all hover:shadow-2xl hover:shadow-primary/5 border border-transparent hover:border-outline-variant/20">
+<div class="h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="aerial view of steaming cups of latte art coffee on a rustic wooden table with scattered coffee beans" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFEtEwWhvGNSYo8OrmBDy55gquyClHzJ_N2AclXlTSG0j9RxcSjrBax6A6_sphjPGG9wJfHK2Sf3pxnVIUm7StOj9geX_D0CVTvkeM1tr7IRawgpUzEXhbalS1wm0DNFlh9-huD2nKslbgs84ZaHEkGaLGC0aSfkSSF3-DYrVWz5w8f-EiSkwwkMEf3r7f3_18T9JgEymSxH7bKxhVV65nWF-7dDqQiUbzQ5xGBGakuaCUCzYRqUi_E9cmq5MfD9dPGxVG7Nj5Y2yR"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent flex flex-end p-6 items-end">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase">Hot Seller</span>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-start gap-3">
+<div class="h-10 w-10 shrink-0 flex items-center justify-center rounded-lg bg-primary-container text-primary-fixed-dim shadow-inner">
+<span class="material-symbols-outlined">coffee</span>
+</div>
+<div>
+<h3 class="font-headline text-2xl font-bold text-primary mb-1">Cà phê</h3>
+<p class="text-sm text-on-surface-variant font-medium">24 Sản phẩm</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="h-10 w-10 flex items-center justify-center rounded-full bg-surface-container hover:bg-surface-variant transition-colors text-primary">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="h-10 w-10 flex items-center justify-center rounded-full bg-error-container/10 hover:bg-error-container/30 transition-colors text-error">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Category Card 2: Tea -->
+<div class="group relative bg-surface-container-lowest rounded-xl overflow-hidden transition-all hover:shadow-2xl hover:shadow-primary/5 border border-transparent hover:border-outline-variant/20">
+<div class="h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="organic loose leaf green tea and dried flowers arranged on a minimalist beige ceramic surface with soft natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAC2fS281J5IX4QeQc4cwXcKb0ZpRVbgti9wBety6uJ6HoGqS4me6pXqSJd9thIgLiVoNP4I5y_aKndQZ_pz9ZNN3Dh6oR3HcascGtWIcsaR0d_u7distNbQfjx4bikXs5YFoUn4TGgczaLsZiwTkzCU4Ur85GxxnkXU-yciEvqt6jOT7Lfv3axr0duZ7mFkpds-GxfuJE-hmKR6Vwi-PgKFtv-mKrgt-SI05tYdX-uqqSZd1hvqi6yFov-syBHlur2sQdZp_eB878U"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-start gap-3">
+<div class="h-10 w-10 shrink-0 flex items-center justify-center rounded-lg bg-primary-container text-primary-fixed-dim shadow-inner">
+<span class="material-symbols-outlined">eco</span>
+</div>
+<div>
+<h3 class="font-headline text-2xl font-bold text-primary mb-1">Trà &amp; Thảo mộc</h3>
+<p class="text-sm text-on-surface-variant font-medium">18 Sản phẩm</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="h-10 w-10 flex items-center justify-center rounded-full bg-surface-container hover:bg-surface-variant transition-colors text-primary">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="h-10 w-10 flex items-center justify-center rounded-full bg-error-container/10 hover:bg-error-container/30 transition-colors text-error">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Category Card 3: Pastries -->
+<div class="group relative bg-surface-container-lowest rounded-xl overflow-hidden transition-all hover:shadow-2xl hover:shadow-primary/5 border border-transparent hover:border-outline-variant/20">
+<div class="h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="assorted french pastries including croissants and macaroons on a marble slab in a luxury bakery setting with warm golden tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDK0FKkKFhsGR3zsvuHhpL-epw_vozhE4N6zRXoXXZjdO0ENlns_XCRnS30YdpkWDQRwuo5aCKT1BbcFjhL0Txky0hwjbgiCc61SWtIR1ow9nZUWZB7I9nKY0MR_vslIB3oaZhXKWbJfq7w0-AtKNZ7ELuxpxAKpCU11EV2N7jAK_PG9PesMU2hJ5Um3HM4VNXLCGxQitXPbhmEQ8uLTQTnkCG5O1BRybBZ8rtn28lq3QdYk57f45ZyuH-RH-vqbKnnXHErtuz_HyaN"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-start gap-3">
+<div class="h-10 w-10 shrink-0 flex items-center justify-center rounded-lg bg-primary-container text-primary-fixed-dim shadow-inner">
+<span class="material-symbols-outlined">bakery_dining</span>
+</div>
+<div>
+<h3 class="font-headline text-2xl font-bold text-primary mb-1">Bánh ngọt</h3>
+<p class="text-sm text-on-surface-variant font-medium">12 Sản phẩm</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="h-10 w-10 flex items-center justify-center rounded-full bg-surface-container hover:bg-surface-variant transition-colors text-primary">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="h-10 w-10 flex items-center justify-center rounded-full bg-error-container/10 hover:bg-error-container/30 transition-colors text-error">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Category Card 4: Brunch -->
+<div class="group relative bg-surface-container-lowest rounded-xl overflow-hidden transition-all hover:shadow-2xl hover:shadow-primary/5 border border-transparent hover:border-outline-variant/20">
+<div class="h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="healthy avocado toast with poached eggs and microgreens served on a stylish stoneware plate in a sunlit breakfast cafe" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2Qec68WCmU0WhgmOu-thoOuPgYVkqP_sISjhgSf8xbw_kGz-4tNfdOJshoiQHNzRYgQh2B5UF6cPMSW3YssTnZuxT_yEkkdNQ4HPVEypdUuYXetiG_MZghw0hETH-uK4yz4LYjbEOG40lGk8xrmk2x5pzzh72u2eQ590sRwjVAgLSJIMk2TqBUFN-2LA6F7Mg4n7ubeeL8xahd7rVcpLWfX_uJRhARYGgl2OnjsgLYwZBKwEFFYmeDq5hSXzhA1YmrpFqqfM5tftp"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-start gap-3">
+<div class="h-10 w-10 shrink-0 flex items-center justify-center rounded-lg bg-primary-container text-primary-fixed-dim shadow-inner">
+<span class="material-symbols-outlined">restaurant</span>
+</div>
+<div>
+<h3 class="font-headline text-2xl font-bold text-primary mb-1">Bữa sáng muộn</h3>
+<p class="text-sm text-on-surface-variant font-medium">8 Sản phẩm</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="h-10 w-10 flex items-center justify-center rounded-full bg-surface-container hover:bg-surface-variant transition-colors text-primary">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="h-10 w-10 flex items-center justify-center rounded-full bg-error-container/10 hover:bg-error-container/30 transition-colors text-error">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Category Card 5: Juices -->
+<div class="group relative bg-surface-container-lowest rounded-xl overflow-hidden transition-all hover:shadow-2xl hover:shadow-primary/5 border border-transparent hover:border-outline-variant/20">
+<div class="h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="vibrant cold-pressed juices in glass bottles surrounded by fresh oranges, ginger, and kale on a bright minimal background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiSp8VGSmiJK6fdy96Dm_0uA6cLnw1RCg950W-whKJBjgw78ucjQj8UL48lL5jg4GuFHadjN-kVwaz5e5E6BY_gsjrVpvFxZh4Fs8ROX8hiZssGNdd0nLVvvjR9vD9PGSq7er3mfMZhJHZ_awn9NwdnZE6tU6p80VqAiK4EoEB2-prGxrjxhCF48Nm7eZlAA-Oem17diWq1HjtD4EDsgfE9UgaKMdB-4h4fb2hR6-Dx9vm69_N8haMFCJMUL8nwDhbm2pwpKjQSpXZ"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-start gap-3">
+<div class="h-10 w-10 shrink-0 flex items-center justify-center rounded-lg bg-primary-container text-primary-fixed-dim shadow-inner">
+<span class="material-symbols-outlined">local_drink</span>
+</div>
+<div>
+<h3 class="font-headline text-2xl font-bold text-primary mb-1">Nước ép tươi</h3>
+<p class="text-sm text-on-surface-variant font-medium">10 Sản phẩm</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="h-10 w-10 flex items-center justify-center rounded-full bg-surface-container hover:bg-surface-variant transition-colors text-primary">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="h-10 w-10 flex items-center justify-center rounded-full bg-error-container/10 hover:bg-error-container/30 transition-colors text-error">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Empty "Add" State Bento -->
+<div class="group border-2 border-dashed border-outline-variant/40 rounded-xl flex flex-col items-center justify-center p-8 transition-all hover:border-secondary/40 hover:bg-surface-container-low cursor-pointer min-h-[400px]">
+<div class="flex flex-col items-center text-center">
+<div class="h-16 w-16 bg-surface-container rounded-xl flex items-center justify-center mb-6 transition-all group-hover:scale-110 group-hover:bg-secondary-container/20 group-hover:text-secondary shadow-sm">
+<span class="material-symbols-outlined text-3xl text-primary/40 group-hover:text-secondary">add_circle</span>
+</div>
+<div class="space-y-1">
+<h3 class="font-headline text-xl font-bold text-primary/80 group-hover:text-primary">Thêm danh mục</h3>
+<p class="text-sm text-on-surface-variant max-w-[200px] leading-relaxed">
+                            Xác định tên và chọn biểu tượng đặc trưng cho thực đơn mới.
+                        </p>
+</div>
+</div>
+<div class="mt-8 grid grid-cols-4 gap-2 opacity-30 group-hover:opacity-60 transition-opacity">
+<div class="w-8 h-8 rounded bg-primary/20 flex items-center justify-center"><span class="material-symbols-outlined text-xs">category</span></div>
+<div class="w-8 h-8 rounded bg-primary/20 flex items-center justify-center"><span class="material-symbols-outlined text-xs">restaurant_menu</span></div>
+<div class="w-8 h-8 rounded bg-primary/20 flex items-center justify-center"><span class="material-symbols-outlined text-xs">icecream</span></div>
+<div class="w-8 h-8 rounded bg-primary/20 flex items-center justify-center"><span class="material-symbols-outlined text-xs">liquor</span></div>
+</div>
+</div>
+</div>
+<!-- Footer Stats -->
+<footer class="mt-16 pt-8 border-t border-outline-variant/20 flex flex-col md:flex-row justify-between items-center text-xs text-on-surface-variant gap-4">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+<span>Tổng cộng: 5 Danh mục</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary/20"></div>
+<span>72 Sản phẩm đang hoạt động</span>
+</div>
+</div>
+<div class="font-medium">
+                The Artisanal Ledger © 2024 • Hệ thống quản lý thông minh cho doanh nghiệp của bạn.
+            </div>
+</footer>
+</div>
+</main>
+</body></html>

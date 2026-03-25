@@ -1,6 +1,7 @@
 package com.example.WebCafe.controller;
 
 import com.example.WebCafe.dto.request.AddCartItemRequest;
+import com.example.WebCafe.dto.request.ConfirmOrderRequest;
 import com.example.WebCafe.dto.request.SetTableRequest;
 import com.example.WebCafe.dto.response.CustomerTableResponse;
 import com.example.WebCafe.dto.response.OrderDetailResponse;
@@ -9,6 +10,7 @@ import com.example.WebCafe.dto.response.ProductResponse;
 import com.example.WebCafe.service.CustomerOrderService;
 import com.example.WebCafe.service.CustomerSessionService;
 import com.example.WebCafe.service.MenuService;
+import com.example.WebCafe.service.OrderMilestoneEventService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 
@@ -32,12 +35,15 @@ public class CustomerController {
 	private final CustomerSessionService customerSessionService;
 	private final MenuService menuService;
 	private final CustomerOrderService customerOrderService;
+	private final OrderMilestoneEventService orderMilestoneEventService;
 
 	public CustomerController(CustomerSessionService customerSessionService, MenuService menuService,
-			CustomerOrderService customerOrderService) {
+			CustomerOrderService customerOrderService,
+			OrderMilestoneEventService orderMilestoneEventService) {
 		this.customerSessionService = customerSessionService;
 		this.menuService = menuService;
 		this.customerOrderService = customerOrderService;
+		this.orderMilestoneEventService = orderMilestoneEventService;
 	}
 
 	@PostMapping("/table")
@@ -80,14 +86,24 @@ public class CustomerController {
 	}
 
 	@PostMapping("/orders/{orderId}/confirm")
-	public ResponseEntity<Void> confirm(@PathVariable Integer orderId, HttpSession session) {
-		customerOrderService.confirmOrder(orderId, session);
-		return ResponseEntity.noContent().build();
+	public ResponseEntity<OrderDetailResponse> confirm(@PathVariable Integer orderId,
+			@Valid @RequestBody ConfirmOrderRequest request,
+			HttpSession session) {
+		OrderDetailResponse res = customerOrderService.confirmOrder(orderId, request, session);
+		return ResponseEntity.ok(res);
 	}
 
 	@PostMapping("/orders/{orderId}/cancel")
 	public ResponseEntity<Void> cancel(@PathVariable Integer orderId, HttpSession session) {
 		customerOrderService.cancelOrder(orderId, session);
 		return ResponseEntity.noContent().build();
+	}
+
+	/**
+	 * SSE stream: milestone-2/3 khi staff xác nhận.
+	 */
+	@GetMapping("/orders/{orderId}/events")
+	public SseEmitter events(@PathVariable Integer orderId) {
+		return orderMilestoneEventService.register(orderId);
 	}
 }

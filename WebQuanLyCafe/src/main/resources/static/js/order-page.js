@@ -3,6 +3,10 @@
 
 	var tableNumberCache = null;
 	var TABLE_NUMBER_KEY = "webcafe.tableNumber";
+	var ORDER_ID_KEY = "webcafe.orderId";
+	var SENT_ITEMS_KEY = "webcafe.sentItems";
+	var MORE_PENDING_KEY = "webcafe.morePending";
+	var MORE_SNAPSHOT_KEY = "webcafe.moreSnapshot";
 
 	var STATUS_WIDTHS = ["0%", "12%", "50%", "100%"];
 	var PLACEHOLDER_IMG =
@@ -42,6 +46,69 @@
 			return "Bàn " + tableNumber;
 		}
 		return "Chưa chọn bàn";
+	}
+
+	function safeJsonParse(raw, fallback) {
+		if (raw == null) return fallback;
+		try {
+			return JSON.parse(raw);
+		} catch (e) {
+			return fallback;
+		}
+	}
+
+	function apiJson(url, opts) {
+		return fetch(url, Object.assign({ credentials: "same-origin" }, opts || {})).then(function (res) {
+			return res.text().then(function (text) {
+				var data = null;
+				try {
+					data = text ? JSON.parse(text) : null;
+				} catch (e) {
+					data = null;
+				}
+				if (!res.ok) {
+					var msg = (data && data.message) ? data.message :
+						(data && data.error) ? data.error :
+							(text ? text : ("HTTP " + res.status));
+					var err = new Error(msg);
+					err.status = res.status;
+					throw err;
+				}
+				return data;
+			});
+		});
+	}
+
+	function readItemQtyMap(storageKey) {
+		var raw = window.localStorage ? window.localStorage.getItem(storageKey) : null;
+		var parsed = safeJsonParse(raw, null);
+		if (!parsed || typeof parsed !== "object") return {};
+		return parsed;
+	}
+
+	function writeItemQtyMap(storageKey, map) {
+		if (!window.localStorage) return;
+		window.localStorage.setItem(storageKey, JSON.stringify(map || {}));
+	}
+
+	function getCartItemQtyMap(cart) {
+		var map = {};
+		if (!cart || !Array.isArray(cart.items)) return map;
+		cart.items.forEach(function (it) {
+			if (it == null || it.id == null) return;
+			map[String(it.id)] = Math.max(0, parseInt(it.quantity, 10) || 0);
+		});
+		return map;
+	}
+
+	function readMorePending() {
+		var raw = window.localStorage ? window.localStorage.getItem(MORE_PENDING_KEY) : null;
+		return !!safeJsonParse(raw, false);
+	}
+
+	function writeMorePending(flag) {
+		if (!window.localStorage) return;
+		window.localStorage.setItem(MORE_PENDING_KEY, JSON.stringify(!!flag));
 	}
 
 	function getMilestones() {
@@ -100,17 +167,27 @@
 		var button = document.getElementById("mainOrderBtn");
 		var text = document.getElementById("mainOrderBtnText");
 		var addMoreBtn = document.getElementById("add-more-btn");
+		var addMoreTextEl = document.getElementById("add-more-btn-text");
 		var hasItems = cart.items.length > 0;
-		var editable = cart.status === 0;
+		var canAddMore = cart.status === 2 && hasItems;
 
 		button.disabled = !hasItems;
 		button.classList.toggle("opacity-50", !hasItems);
 		button.classList.toggle("cursor-not-allowed", !hasItems);
 		button.classList.remove("btn-ordered", "bg-secondary");
 		if (addMoreBtn) {
-			addMoreBtn.disabled = !editable;
-			addMoreBtn.classList.toggle("opacity-50", !editable);
-			addMoreBtn.classList.toggle("cursor-not-allowed", !editable);
+			addMoreBtn.disabled = !canAddMore;
+			addMoreBtn.classList.toggle("opacity-50", !canAddMore);
+			addMoreBtn.classList.toggle("cursor-not-allowed", !canAddMore);
+
+			if (addMoreTextEl) {
+				if (cart.status === 2) {
+					var morePending = readMorePending();
+					addMoreTextEl.textContent = morePending ? "Gửi thêm" : "Gọi thêm";
+				} else {
+					addMoreTextEl.textContent = "Gọi thêm";
+				}
+			}
 		}
 
 		if (!hasItems) {
@@ -136,6 +213,39 @@
 
 		button.classList.add("bg-secondary");
 		text.textContent = "HOÀN TẤT";
+	}
+
+	/**
+	 * Hook để nhân viên xác nhận (milestone-2/3) cập nhật UI.
+	 * Hiện tại backend đang TODO, nên hàm này chỉ được gọi khi bạn nối EventSource/WebSocket/polling.
+	 */
+	function applyStaffMilestone(milestone) {
+		var next = parseInt(milestone, 10);
+		if (isNaN(next)) return;
+		if (next < 2 || next > 3) return; // milestone-2/3 only
+		window.WebCafeCart.setStatus(next);
+		if (next === 3) {
+			// Khi xong: không còn gọi thêm
+			writeMorePending(false);
+			window.localStorage.removeItem(MORE_SNAPSHOT_KEY);
+			window.localStorage.removeItem(SENT_ITEMS_KEY);
+		}
+		renderCart();
+	}
+
+	function subscribeOrderEvents(orderId) {
+		if (!orderId) return;
+		if (typeof EventSource !== "function") return;
+		try {
+			var es = new EventSource("/api/customer/orders/" + orderId + "/events");
+			es.addEventListener("milestone", function (e) {
+				var milestone = parseInt(e.data, 10);
+				applyStaffMilestone(milestone);
+			});
+			es.onerror = function () {
+				// không làm gì, EventSource sẽ tự retry
+			};
+		} catch (err) {}
 	}
 
 	function changeCartItemQuantity(productId, delta) {
@@ -239,10 +349,38 @@
 			emptyState.remove();
 		});
 
+		// Gắn "Món thêm" theo baseline local:
+		// - Khi morePending=true: so với MORE_SNAPSHOT_KEY để biết món nào được thêm sau lần gọi gần nhất.
+		// - Khi morePending=false: không cần phân cách.
+		itemsEl.querySelectorAll('[data-divider="more"]').forEach(function (d) {
+			d.remove();
+		});
+
+		var morePending = cart.status === 2 && readMorePending();
+		var baselineMap = morePending ? readItemQtyMap(MORE_SNAPSHOT_KEY) : readItemQtyMap(SENT_ITEMS_KEY);
+		if (morePending && (!baselineMap || Object.keys(baselineMap).length === 0)) {
+			baselineMap = getCartItemQtyMap(cart);
+		}
+		var dividerInserted = false;
+
 		var seen = {};
 
 		cart.items.forEach(function (item, index) {
 			var productId = String(item.id);
+
+			// Chèn divider ngay trước món "mới" (món có quantity > baseline)
+			if (!dividerInserted && morePending) {
+				var baseQty = baselineMap && baselineMap[productId] ? baselineMap[productId] : 0;
+				if (item.quantity > baseQty) {
+					var divider = document.createElement("div");
+					divider.setAttribute("data-divider", "more");
+					divider.className = "my-4 px-4 py-2 bg-surface-container-lowest border border-outline-variant/20 rounded-xl";
+					divider.innerHTML = '<p class="text-[10px] font-bold uppercase tracking-tight text-secondary">Món được thêm</p>';
+					itemsEl.appendChild(divider);
+					dividerInserted = true;
+				}
+			}
+
 			var row = itemsEl.querySelector('[data-product-id="' + productId + '"]');
 			if (!row) {
 				row = document.createElement("div");
@@ -313,6 +451,14 @@
 
 		fetchTableNumber(renderCart);
 
+		var storedOrderId = null;
+		try {
+			storedOrderId = parseInt(window.localStorage.getItem(ORDER_ID_KEY), 10);
+		} catch (e) {}
+		if (storedOrderId && !isNaN(storedOrderId)) {
+			subscribeOrderEvents(storedOrderId);
+		}
+
 		mainOrderBtn.addEventListener("click", function () {
 			var cart = window.WebCafeCart.getCart();
 			if (!cart.items.length) {
@@ -321,25 +467,146 @@
 			}
 
 			if (cart.status === 1) {
-				playCancelAnimation(function () {
-					window.WebCafeCart.setStatus(0);
-					renderCart();
+				var orderId = null;
+				try {
+					orderId = parseInt(window.localStorage.getItem(ORDER_ID_KEY), 10);
+				} catch (e) {}
+				if (!orderId || isNaN(orderId)) {
+					playCancelAnimation(function () {
+						window.localStorage.removeItem(SENT_ITEMS_KEY);
+						window.localStorage.removeItem(MORE_SNAPSHOT_KEY);
+						window.localStorage.removeItem(ORDER_ID_KEY);
+						writeMorePending(false);
+						window.WebCafeCart.setStatus(0);
+						renderCart();
+					});
+					return;
+				}
+
+				apiJson("/api/customer/orders/" + orderId + "/cancel", {
+					method: "POST"
+				}).then(function () {
+					playCancelAnimation(function () {
+						window.localStorage.removeItem(SENT_ITEMS_KEY);
+						window.localStorage.removeItem(MORE_SNAPSHOT_KEY);
+						window.localStorage.removeItem(ORDER_ID_KEY);
+						writeMorePending(false);
+						window.WebCafeCart.setStatus(0);
+						renderCart();
+					});
+				}).catch(function (err) {
+					alert(err && err.message ? err.message : "Không thể hủy đơn");
 				});
 				return;
 			}
 
 			if (cart.status === 3) {
+				// Hoàn tất: reset toàn bộ baseline
+				window.localStorage.removeItem(SENT_ITEMS_KEY);
+				window.localStorage.removeItem(MORE_SNAPSHOT_KEY);
+				window.localStorage.removeItem(ORDER_ID_KEY);
+				writeMorePending(false);
 				window.WebCafeCart.clearCart();
 				renderCart();
 				return;
 			}
 
-			window.WebCafeCart.setStatus((cart.status || 0) + 1);
-			renderCart();
+			// milestone-2 và milestone-3 do nhân viên xác nhận => khách chỉ được đặt đơn (milestone-1).
+			// Từ status 0 => set 1, không auto chạy lên 2/3.
+			if (cart.status === 0) {
+				var orderItems = cart.items.map(function (it) {
+					return {
+						productId: it.id,
+						quantity: it.quantity
+					};
+				});
+
+				apiJson("/api/customer/orders/0/confirm", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ items: orderItems })
+				}).then(function (res) {
+					if (res && res.id != null) {
+						window.localStorage.setItem(ORDER_ID_KEY, String(res.id));
+						subscribeOrderEvents(res.id);
+					}
+
+					// Snapshot các món ban đầu khi đặt đơn
+					writeItemQtyMap(SENT_ITEMS_KEY, getCartItemQtyMap(cart));
+					window.localStorage.removeItem(MORE_SNAPSHOT_KEY);
+					writeMorePending(false);
+
+					window.WebCafeCart.setStatus(1);
+					renderCart();
+				}).catch(function (err) {
+					alert(err && err.message ? err.message : "Không thể đặt đơn");
+				});
+			}
 		});
 
 		addMoreBtn.addEventListener("click", function () {
-			window.location.href = "/menu";
+			var cart = window.WebCafeCart.getCart();
+			if (cart.status !== 2) return;
+			if (!cart.items.length) {
+				window.location.href = "/menu";
+				return;
+			}
+
+			var morePending = readMorePending();
+			if (!morePending) {
+				// Lần 1: lưu baseline hiện tại, điều hướng menu để thêm món mới
+				var sentMap = readItemQtyMap(SENT_ITEMS_KEY);
+				if (!sentMap || Object.keys(sentMap).length === 0) {
+					sentMap = getCartItemQtyMap(cart);
+				}
+				writeItemQtyMap(MORE_SNAPSHOT_KEY, sentMap);
+				writeMorePending(true);
+				window.location.href = "/menu";
+				return;
+			}
+
+			// Lần 2 (đã quay lại): "gửi thêm" => cập nhật baseline đã gửi
+			var orderId = null;
+			try {
+				orderId = parseInt(window.localStorage.getItem(ORDER_ID_KEY), 10);
+			} catch (e) {}
+
+			if (!orderId || isNaN(orderId)) {
+				alert("Chưa có orderId để gửi thêm");
+				return;
+			}
+
+			var baselineMap = readItemQtyMap(MORE_SNAPSHOT_KEY) || {};
+			var currentMap = getCartItemQtyMap(cart);
+
+			var deltas = [];
+			Object.keys(currentMap).forEach(function (pid) {
+				var baseQty = baselineMap[pid] ? baselineMap[pid] : 0;
+				var delta = currentMap[pid] - baseQty;
+				if (delta > 0) {
+					deltas.push({
+						pid: parseInt(pid, 10),
+						delta: delta
+					});
+				}
+			});
+
+			var calls = deltas.map(function (x) {
+				return apiJson("/api/customer/orders/" + orderId + "/items", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ productId: x.pid, quantity: x.delta })
+				});
+			});
+
+			Promise.all(calls).then(function () {
+				writeItemQtyMap(SENT_ITEMS_KEY, currentMap);
+				window.localStorage.removeItem(MORE_SNAPSHOT_KEY);
+				writeMorePending(false);
+				renderCart();
+			}).catch(function (err) {
+				alert(err && err.message ? err.message : "Không thể gửi thêm món");
+			});
 		});
 
 		window.addEventListener("storage", function (event) {

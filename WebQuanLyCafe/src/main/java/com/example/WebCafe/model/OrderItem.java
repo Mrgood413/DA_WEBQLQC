@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "order_items")
@@ -42,5 +43,5 @@ public class OrderItem {
 
 	/** Dòng món đã được chỉnh sửa (ví dụ đổi SL/giá sau khi gửi bếp). */
 	@Column(name = "updated", nullable = false)
-	private boolean updated = false;
+	private LocalDateTime updated = LocalDateTime.now();
 }

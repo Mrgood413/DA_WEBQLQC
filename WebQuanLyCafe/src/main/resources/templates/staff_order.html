@@ -83,26 +83,80 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #d3c3c0; border-radius: 10px; }
     </style>
 <style>
-  /* Animation chuyển Xác nhận đơn → Hủy (từ example.txt) */
   .btn-transition {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .state-1 { background-color: #3e2723; color: #ffffff; }
-  .state-2 { background-color: #ba1a1a; color: #ffffff; }
+  .state-primary { background-color: #271310; color: #ffffff; }
+  .state-success { background-color: #1b6d24; color: #ffffff; }
+  .state-info { background-color: #006494; color: #ffffff; }
+  .state-neutral { background-color: #827472; color: #ffffff; opacity: 0.6; cursor: not-allowed; }
+  .state-error { background-color: #ba1a1a; color: #ffffff; opacity: 0.6; cursor: not-allowed; }
 </style>
 <script>
-  /** Chỉ một bước: xác nhận (nâu) → Hủy (đỏ), có transition */
-  function handleConfirmToCancel(btn) {
-    var s = parseInt(btn.getAttribute('data-state') || '1', 10);
-    if (s !== 1) return;
-    btn.setAttribute('data-state', '2');
-    btn.innerHTML = 'Hủy';
-    btn.className = 'main-action-btn btn-transition state-2 px-6 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 whitespace-nowrap scale-95 hover:scale-100 active:opacity-80 transition-all';
+  function handleOrderClick(btn) {
+    const state = parseInt(btn.getAttribute('data-state') || '1');
+    const cancelBtn = btn.parentElement.querySelector('.cancel-btn');
+
+    if (state === 1) {
+      btn.innerHTML = 'Hoàn thành';
+      btn.className = 'main-action-btn btn-transition state-success px-6 py-2.5 rounded-full text-sm font-bold whitespace-nowrap';
+      btn.setAttribute('data-state', '2');
+    } else if (state === 2) {
+      btn.innerHTML = 'Thanh toán';
+      btn.className = 'main-action-btn btn-transition state-info px-6 py-2.5 rounded-full text-sm font-bold whitespace-nowrap';
+      btn.setAttribute('data-state', '3');
+    } else if (state === 3) {
+      btn.innerHTML = 'Đã thanh toán';
+      btn.className = 'main-action-btn btn-transition state-neutral px-6 py-2.5 rounded-full text-sm font-bold whitespace-nowrap';
+      btn.setAttribute('data-state', '4');
+      btn.disabled = true;
+      if(cancelBtn) cancelBtn.remove();
+    }
   }
-</script></head>
+
+  function handleCancelClick(btn) {
+    const row = btn.closest('.p-6');
+    const mainBtn = row.querySelector('.main-action-btn');
+    mainBtn.innerHTML = 'Đã hủy';
+    mainBtn.className = 'main-action-btn btn-transition state-error px-6 py-2.5 rounded-full text-sm font-bold whitespace-nowrap';
+    mainBtn.disabled = true;
+    btn.remove();
+  }
+</script><style>
+  @keyframes slideOutLeft {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(-20px); opacity: 0; }
+  }
+  @keyframes slideInRight {
+    from { transform: translateX(20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  .animate-slide-out { animation: slideOutLeft 0.3s ease-in forwards; }
+  .animate-slide-in { animation: slideInRight 0.3s ease-out forwards; }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+  }
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-400 { animation-delay: 400ms; }
+  .delay-500 { animation-delay: 500ms; }
+</style></head>
 <body class="bg-surface text-on-surface">
 <!-- SideNavBar Component -->
-<aside class="h-screen w-64 fixed left-0 top-0 z-50 bg-[#f5eed7] dark:bg-[#271310] flex flex-col py-8 shadow-xl dark:shadow-none transition-all duration-300 ease-in-out">
+<aside class="h-screen w-64 fixed left-0 top-0 z-50 bg-[#f5eed7] dark:bg-[#271310] flex flex-col py-8 shadow-xl dark:shadow-none transition-all duration-300 ease-in-out animate-fade-in-up">
 <div class="px-6 mb-10">
 <div class="flex items-center gap-3 mb-2">
 <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary">
@@ -126,17 +180,17 @@
 </nav>
 <div class="mt-auto px-6 pt-6 border-t border-outline-variant/20">
 <div class="space-y-1">
-<button type="button" id="staff-order-logout" class="text-error py-2 flex items-center gap-4 hover:opacity-70 transition-opacity text-sm font-medium w-full text-left">
+<a class="text-error py-2 flex items-center gap-4 hover:opacity-70 transition-opacity text-sm font-medium" href="#" style="">
 <span class="material-symbols-outlined" style="">logout</span>
 <span class="" style="">Logout</span>
-</button>
+</a>
 </div>
 </div>
 </aside>
 <!-- Main Content Area -->
 <main class="ml-64 min-h-screen flex flex-col">
 <!-- TopAppBar Component -->
-<header class="bg-[#fff9ea] dark:bg-[#1e1c0e] flex justify-between items-center w-full px-8 py-4 sticky top-0 z-40">
+<header class="bg-[#fff9ea] dark:bg-[#1e1c0e] flex justify-between items-center w-full px-8 py-4 sticky top-0 z-40 animate-fade-in-up delay-100">
 <div class="flex items-center gap-6">
 <h2 class="text-xl font-bold text-[#271310] dark:text-[#f5eed7] tracking-tight font-manrope" style="">Hàng đợi Đơn hàng</h2>
 </div>
@@ -145,15 +199,11 @@
 </header>
 <div class="p-8 max-w-7xl mx-auto w-full space-y-8">
 <!-- Dashboard Stats Summary -->
-<div class="grid grid-cols-1 gap-4">
-<div class="bg-surface-container-low p-6 rounded-2xl border border-outline-variant/10 flex flex-col justify-center py-10">
-<div class="flex items-center justify-center text-center">
-<div>
-<span class="text-on-surface-variant text-xs font-semibold uppercase tracking-wider" style="">Tổng số đơn đã xác nhận</span>
-<div class="mt-2 flex items-baseline gap-2">
-<span class="text-5xl font-extrabold font-manrope text-primary tracking-tight" style="">48</span>
-</div>
-</div>
+<div class="grid grid-cols-1 gap-4 animate-fade-in-up delay-200">
+<div class="bg-surface-container-low p-12 rounded-2xl border border-outline-variant/10 flex flex-col items-center justify-center text-center">
+<span class="text-on-surface-variant text-xs font-bold uppercase tracking-[0.2em] mb-3" style="">Tổng số đơn đã xác nhận</span>
+<div class="flex items-baseline gap-2">
+<span class="text-7xl font-extrabold font-manrope text-primary tracking-tighter" style="">48</span>
 </div>
 </div>
 </div>
@@ -163,13 +213,13 @@
 <section class="space-y-6">
 <!-- Section: Pending Orders -->
 <div class="space-y-6">
-<h3 class="font-headline text-2xl font-bold flex items-center gap-3" style="">Chờ xác nhận</h3>
+<h3 class="font-headline text-2xl font-bold flex items-center gap-3 animate-fade-in-up delay-300" style="">Chờ xác nhận</h3>
 <!-- Scroll List Container -->
 <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/20 overflow-hidden">
 <div class="max-h-[600px] overflow-y-auto custom-scrollbar">
-<div class="divide-y divide-outline-variant/20">
+<div class="divide-y divide-outline-variant/20" id="order-list-container">
 <!-- Order Item 1 -->
-<div class="p-6 hover:bg-surface-container-low transition-colors border-l-4 border-error flex items-center gap-6">
+<div class="p-6 hover:bg-surface-container-low transition-colors flex items-center gap-6 animate-fade-in-up delay-400">
 <div class="w-32 flex-shrink-0">
 <span class="text-[10px] font-bold uppercase tracking-widest text-outline block" style="">BÀN SỐ 04</span>
 <h4 class="font-headline text-base font-bold text-primary" style="">#ORD-8821</h4>
@@ -190,14 +240,14 @@
 <div class="w-32 text-right flex-shrink-0">
 <span class="font-headline font-bold text-lg text-primary block" style="">155.000đ</span>
 </div>
-<div class="flex-shrink-0 flex items-center gap-2 min-w-[140px] justify-end">
-<button type="button" class="main-action-btn btn-transition state-1 px-6 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 whitespace-nowrap scale-95 hover:scale-100 active:opacity-80 transition-all" data-state="1" onclick="handleConfirmToCancel(this)">
+<div class="flex-shrink-0 flex items-center gap-2">
+<button class="main-action-btn btn-transition state-primary px-6 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 scale-95 hover:scale-100 active:opacity-80 transition-all whitespace-nowrap" data-state="1" onclick="handleOrderClick(this)">
     Xác nhận đơn
   </button>
 </div>
 </div>
 <!-- Order Item 2 -->
-<div class="p-6 hover:bg-surface-container-low transition-colors border-l-4 border-error flex items-center gap-6">
+<div class="p-6 hover:bg-surface-container-low transition-colors flex items-center gap-6 animate-fade-in-up delay-500">
 <div class="w-32 flex-shrink-0">
 <span class="text-[10px] font-bold uppercase tracking-widest text-outline block" style="">MANG VỀ</span>
 <h4 class="font-headline text-base font-bold text-primary" style="">#ORD-8822</h4>
@@ -218,14 +268,14 @@
 <div class="w-32 text-right flex-shrink-0">
 <span class="font-headline font-bold text-lg text-primary block" style="">150.000đ</span>
 </div>
-<div class="flex-shrink-0 flex items-center gap-2 min-w-[140px] justify-end">
-<button type="button" class="main-action-btn btn-transition state-1 px-6 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 whitespace-nowrap scale-95 hover:scale-100 active:opacity-80 transition-all" data-state="1" onclick="handleConfirmToCancel(this)">
+<div class="flex-shrink-0 flex items-center gap-2">
+<button class="main-action-btn btn-transition state-primary px-6 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 scale-95 hover:scale-100 active:opacity-80 transition-all whitespace-nowrap" data-state="1" onclick="handleOrderClick(this)">
     Xác nhận đơn
   </button>
 </div>
 </div>
 <!-- Order Item 3 (Example Duplicate for Scroll) -->
-<div class="p-6 hover:bg-surface-container-low transition-colors border-l-4 border-error flex items-center gap-6 opacity-80">
+<div class="p-6 hover:bg-surface-container-low transition-colors flex items-center gap-6 opacity-80 animate-fade-in-up delay-500">
 <div class="w-32 flex-shrink-0">
 <span class="text-[10px] font-bold uppercase tracking-widest text-outline block" style="">BÀN SỐ 12</span>
 <h4 class="font-headline text-base font-bold text-primary" style="">#ORD-8820</h4>
@@ -242,8 +292,8 @@
 <div class="w-32 text-right flex-shrink-0">
 <span class="font-headline font-bold text-lg text-primary block" style="">135.000đ</span>
 </div>
-<div class="flex-shrink-0 flex items-center gap-2 min-w-[140px] justify-end">
-<button type="button" class="main-action-btn btn-transition state-1 px-6 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 whitespace-nowrap scale-95 hover:scale-100 active:opacity-80 transition-all" data-state="1" onclick="handleConfirmToCancel(this)">
+<div class="flex-shrink-0 flex items-center gap-2">
+<button class="main-action-btn btn-transition state-primary px-6 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 scale-95 hover:scale-100 active:opacity-80 transition-all whitespace-nowrap" data-state="1" onclick="handleOrderClick(this)">
     Xác nhận đơn
   </button>
 </div>
@@ -256,14 +306,14 @@
 </div>
 </div>
 <!-- Footer Info -->
-<footer class="mt-auto px-8 py-6 flex items-center justify-between border-t border-outline-variant/10 bg-surface-container-low/30">
-<p class="text-xs text-on-surface-variant font-medium" style="">Đang hiển thị đơn hàng trong ca làm việc</p>
+<footer class="mt-auto px-8 py-6 flex items-center justify-between border-t border-outline-variant/10 bg-surface-container-low/30 animate-fade-in-up delay-500">
+<p id="staff-queue-title" class="text-xs text-on-surface-variant font-medium" style="">Đang hiển thị đơn hàng trong ca làm việc</p>
 <div class="flex gap-2">
-<button class="p-2 rounded-lg bg-surface-container-high text-on-surface opacity-50 cursor-not-allowed" style="">
+<button class="p-2 rounded-lg bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-colors" onclick="handlePagination(-1)" style="">
 <span class="material-symbols-outlined" style="">chevron_left</span>
 </button>
-<button class="px-4 py-2 rounded-lg bg-primary text-on-primary font-bold text-sm" style="">1</button>
-<button class="p-2 rounded-lg bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-colors" style="">
+<button id="staff-queue-page-btn" class="px-4 py-2 rounded-lg bg-primary text-on-primary font-bold text-sm" onclick="handlePagination(1)" style="">1</button>
+<button class="p-2 rounded-lg bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-colors" onclick="handlePagination(1)" style="">
 <span class="material-symbols-outlined" style="">chevron_right</span>
 </button>
 </div>
@@ -274,8 +324,252 @@
 <span class="material-symbols-outlined text-3xl" style="">add</span>
 </button>
 <script>
-document.getElementById('staff-order-logout').addEventListener('click', function () {
-  fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' }).then(function () { window.location.href = '/login'; });
-});
+  (function () {
+    "use strict";
+
+    var statusPages = ["PENDING", "PREPARING", "DONE", "PAID"];
+    var pageIndex = 0;
+    var allOrders = [];
+    var lastSeenUpdatedAtByOrderId = {};
+
+    function formatVnd(n) {
+      var num = typeof n === "number" ? n : parseFloat(n);
+      if (isNaN(num)) num = 0;
+      return new Intl.NumberFormat("vi-VN").format(num) + "đ";
+    }
+
+    function safeDate(d) {
+      if (!d) return null;
+      var dt = new Date(d);
+      if (isNaN(dt.getTime())) return null;
+      return dt;
+    }
+
+    function formatTime(isoString) {
+      var dt = safeDate(isoString);
+      if (!dt) return "";
+      return dt.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit", hour12: false });
+    }
+
+    function getStatusLabel(status) {
+      if (status === "PENDING") return "Chờ xác nhận";
+      if (status === "PREPARING") return "Đơn chuẩn bị";
+      if (status === "DONE") return "Đơn hoàn thành";
+      if (status === "PAID") return "Đơn thanh toán";
+      return "Đơn";
+    }
+
+    function getNextAction(order) {
+      if (!order || !order.status) return null;
+      var status = String(order.status);
+      if (status === "PENDING") return { type: "confirm", label: "Xác nhận đơn", btnClass: "state-primary", disabled: false };
+      if (status === "PREPARING") return { type: "confirm", label: "Hoàn thành", btnClass: "state-success", disabled: false };
+      if (status === "DONE") return { type: "payment", label: "Thanh toán", btnClass: "state-info", disabled: false };
+      if (status === "PAID") return { type: "done", label: "Đã thanh toán", btnClass: "state-neutral", disabled: true };
+      return null;
+    }
+
+    function handleStaffConfirm(orderId) {
+      fetch("/api/staff/orders/" + orderId + "/confirm", {
+        method: "POST",
+        credentials: "same-origin"
+      })
+        .then(function (r) {
+          if (!r.ok) return r.text().then(function (t) { throw new Error(t || "Xác nhận thất bại"); });
+        })
+        .then(function () {
+          loadOrdersAndRender();
+        })
+        .catch(function (err) {
+          alert(err && err.message ? err.message : "Xác nhận thất bại");
+        });
+    }
+
+    function handleStaffPayment(orderId) {
+      fetch("/api/staff/orders/" + orderId + "/payment", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ method: "CASH" })
+      })
+        .then(function (r) {
+          if (!r.ok) return r.text().then(function (t) { throw new Error(t || "Thanh toán thất bại"); });
+        })
+        .then(function () {
+          loadOrdersAndRender();
+        })
+        .catch(function (err) {
+          alert(err && err.message ? err.message : "Thanh toán thất bại");
+        });
+    }
+
+    function markUpdated(items, orderCreatedAt) {
+      var created = safeDate(orderCreatedAt);
+      if (!created) return items.map(function (it) { return { item: it, isMore: false }; });
+      return items.map(function (it) {
+        var u = safeDate(it.updatedAt);
+        var isMore = u && u.getTime() > created.getTime();
+        return { item: it, isMore: !!isMore };
+      });
+    }
+
+    function renderPage() {
+      var container = document.getElementById("order-list-container");
+      if (!container) return;
+
+      var currentStatus = statusPages[pageIndex] || "PENDING";
+      var pageOrders = (allOrders || []).filter(function (o) {
+        return String(o.status) === currentStatus;
+      });
+
+      container.innerHTML = "";
+
+      if (!pageOrders.length) {
+        var empty = document.createElement("div");
+        empty.className = "p-6 text-center opacity-70";
+        empty.innerHTML = '<p class="text-sm">Chưa có đơn trong trạng thái: ' + getStatusLabel(currentStatus) + '</p>';
+        container.appendChild(empty);
+        return;
+      }
+
+      pageOrders.forEach(function (o, idx) {
+        var delayClass = "delay-" + (Math.min((idx + 1) * 100, 500));
+        var action = getNextAction(o);
+
+        var items = Array.isArray(o.items) ? o.items : [];
+        var pricedTotal = items.reduce(function (sum, it) {
+          if (it && it.lineTotal != null) {
+            return sum + (typeof it.lineTotal === "number" ? it.lineTotal : parseFloat(it.lineTotal) || 0);
+          }
+          return sum;
+        }, 0);
+
+        var createdAt = o.createdAt;
+        var itemFlags = markUpdated(items, createdAt);
+        var firstMoreInserted = false;
+
+        // Card
+        var wrap = document.createElement("div");
+        wrap.className = "p-6 hover:bg-surface-container-low transition-colors flex items-center gap-6 animate-fade-in-up " + delayClass;
+
+        var leftBlock =
+          '<div class="w-32 flex-shrink-0">' +
+          '<span class="text-[10px] font-bold uppercase tracking-widest text-outline block" style="">' +
+          (o.tableNumber != null ? ("BÀN SỐ " + o.tableNumber) : "CHƯA XÁC ĐỊNH") +
+          "</span>" +
+          '<h4 class="font-headline text-base font-bold text-primary" style="">#ORD-' + o.orderId + "</h4>" +
+          (o.createdAt ? '<span class="text-xs text-outline block" style="">' + formatTime(o.createdAt) + "</span>" : "") +
+          (o.hasMoreItems ? '<span class="text-[10px] text-secondary font-bold uppercase block opacity-80 mt-1">Gọi thêm</span>' : "") +
+          "</div>";
+
+        // Items list
+        var itemsHtml = '<div class="flex-grow flex flex-col gap-1">';
+        itemsHtml += '<div class="flex flex-col gap-2">';
+
+        // Divider + "Món được thêm" (lấy tinh thần animation/text từ example.txt)
+        itemFlags.forEach(function (itObj) {
+          if (itObj.isMore && !firstMoreInserted) {
+            itemsHtml +=
+              '<div class="my-2 px-3 py-1 bg-surface-container-lowest border border-outline-variant/20 rounded-xl">' +
+              '<p class="text-[10px] font-bold uppercase tracking-tight text-secondary">Món được thêm</p>' +
+              '</div>';
+            firstMoreInserted = true;
+          }
+          var it = itObj.item || {};
+          itemsHtml +=
+            '<div class="flex items-center justify-start gap-3 text-sm">' +
+            '<span class="font-medium">' + (it.quantity || 0) + "x</span>" +
+            '<span class="text-on-surface-variant">' + (it.productName || "") + "</span>" +
+            '</div>';
+        });
+
+        itemsHtml += "</div>";
+        itemsHtml += "</div>";
+
+        var rightTotal =
+          '<div class="w-32 text-right flex-shrink-0">' +
+          '<span class="font-headline font-bold text-lg text-primary block" style="">' +
+          formatVnd(pricedTotal) +
+          "</span>" +
+          "</div>";
+
+        var btnHtml = "";
+        if (action) {
+          var disabledAttr = action.disabled ? "true" : "false";
+          btnHtml =
+            '<button ' +
+            'class="main-action-btn btn-transition ' + action.btnClass + ' px-6 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 scale-95 hover:scale-100 active:opacity-80 transition-all whitespace-nowrap" ' +
+            'data-state="1" ' +
+            (action.disabled ? "disabled " : "") +
+            'onclick="' + (action.type === "confirm" ? "handleStaffConfirm(" + o.orderId + ")" : action.type === "payment" ? "handleStaffPayment(" + o.orderId + ")" : "") + '">' +
+            action.label +
+            "</button>";
+        }
+
+        var updatedAt = o.lastItemUpdatedAt;
+        var prev = lastSeenUpdatedAtByOrderId[o.orderId];
+        lastSeenUpdatedAtByOrderId[o.orderId] = updatedAt;
+
+        // If order got updated via "gọi thêm", gently animate by adding extra class
+        if (prev && updatedAt && prev !== updatedAt) {
+          wrap.className += " ring-2 ring-secondary";
+        }
+
+        wrap.innerHTML =
+          '<div class="flex items-center gap-6 w-full">' +
+          leftBlock +
+          itemsHtml +
+          rightTotal +
+          '<div class="flex-shrink-0 flex items-center gap-2">' + btnHtml + "</div>" +
+          "</div>";
+
+        container.appendChild(wrap);
+      });
+    }
+
+    function loadOrdersAndRender(withStatusAnimation) {
+      return fetch("/api/staff/queue", { credentials: "same-origin" })
+        .then(function (r) {
+          if (!r.ok) throw new Error("Không tải được hàng đợi");
+          return r.json();
+        })
+        .then(function (orders) {
+          allOrders = Array.isArray(orders) ? orders : [];
+          renderPage();
+        });
+    }
+
+    // Public for footer buttons
+    window.handlePagination = function (delta) {
+      if (delta == null) delta = 1;
+
+      var container = document.getElementById("order-list-container");
+      if (!container) return;
+
+      container.classList.remove("animate-slide-in");
+      container.classList.add("animate-slide-out");
+
+      pageIndex = (pageIndex + delta) % statusPages.length;
+      if (pageIndex < 0) pageIndex = statusPages.length - 1;
+
+      var btn = document.getElementById("staff-queue-page-btn");
+      if (btn) btn.innerText = String(pageIndex + 1);
+
+      setTimeout(function () {
+        container.classList.remove("animate-slide-out");
+        container.classList.add("animate-slide-in");
+        renderPage();
+      }, 300);
+    };
+
+    document.addEventListener("DOMContentLoaded", function () {
+      // Load lần đầu + polling để thấy "gọi thêm"
+      loadOrdersAndRender();
+      setInterval(function () {
+        // Render lại để cập nhật món mới (đơn có lastItemUpdatedAt sẽ có hiệu ứng)
+        loadOrdersAndRender();
+      }, 5000);
+    });
+  })();
 </script>
 </body></html>

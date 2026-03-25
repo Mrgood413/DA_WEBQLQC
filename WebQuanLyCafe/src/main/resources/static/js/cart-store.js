@@ -196,7 +196,9 @@
 	}
 
 	function canEditCart() {
-		return readCart().status === 0;
+		var status = readCart().status;
+		// Cho phép thêm món sau khi đơn đã được xác nhận (milestone-2).
+		return status === 0 || status === 2;
 	}
 
 	function setStatus(status) {

@@ -7,6 +7,5 @@ public enum OrderStatus {
 	PENDING,
 	PREPARING,
 	DONE,
-	/** Đã thanh toán (thay cho cột {@code paid} riêng). */
 	PAID
 }
