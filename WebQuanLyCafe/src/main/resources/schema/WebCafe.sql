@@ -50,7 +50,8 @@ CREATE TABLE cafe_tables (
 CREATE TABLE categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    image_url VARCHAR(255)
+    image_url VARCHAR(255),
+    is_hidden BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE products (

@@ -31,6 +31,10 @@ public class Category {
 	@Column(name = "image_url", length = 255)
 	private String imageUrl;
 
+	/** Ẩn khỏi thực đơn khách (menu API). */
+	@Column(name = "is_hidden")
+	private Boolean hidden = false;
+
 	@OneToMany(mappedBy = "category")
 	private List<Product> products = new ArrayList<>();
 }

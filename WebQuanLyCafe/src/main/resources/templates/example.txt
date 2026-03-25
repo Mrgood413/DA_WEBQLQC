@@ -3,7 +3,6 @@
 <html class="light" lang="vi"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Quản lý Thực đơn - The Artisanal Ledger</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -13,53 +12,53 @@
         theme: {
           extend: {
             colors: {
-              "outline-variant": "#d3c3c0",
-              "on-secondary-fixed": "#002204",
-              "on-surface": "#1e1c0e",
-              "primary-container": "#3e2723",
-              "on-surface-variant": "#504442",
-              "primary": "#271310",
-              "tertiary-fixed-dim": "#e4beb2",
-              "surface-container-highest": "#e9e2cc",
-              "on-secondary-fixed-variant": "#005312",
               "on-primary": "#ffffff",
-              "background": "#fff9ea",
-              "secondary-container": "#a0f399",
-              "inverse-primary": "#e3beb8",
-              "on-tertiary-fixed-variant": "#5b4137",
-              "inverse-surface": "#333121",
-              "surface-tint": "#745853",
-              "on-error": "#ffffff",
-              "surface-container-low": "#faf4dd",
-              "secondary": "#1b6d24",
-              "on-tertiary": "#ffffff",
-              "surface": "#fff9ea",
-              "error-container": "#ffdad6",
               "on-secondary-container": "#217128",
-              "on-primary-fixed": "#2b1613",
-              "primary-fixed": "#ffdad4",
-              "tertiary-container": "#3e271e",
-              "on-background": "#1e1c0e",
               "outline": "#827472",
-              "surface-container-lowest": "#ffffff",
-              "secondary-fixed": "#a3f69c",
-              "surface-dim": "#e0dac4",
-              "primary-fixed-dim": "#e3beb8",
-              "error": "#ba1a1a",
-              "on-secondary": "#ffffff",
-              "on-primary-container": "#ae8d87",
+              "on-tertiary": "#ffffff",
+              "on-error-container": "#93000a",
               "on-tertiary-container": "#ae8d81",
-              "surface-container": "#f5eed7",
-              "on-tertiary-fixed": "#2b160f",
-              "tertiary-fixed": "#ffdbce",
+              "on-surface-variant": "#504442",
+              "on-secondary-fixed-variant": "#005312",
+              "primary": "#271310",
               "tertiary": "#27130b",
-              "surface-container-high": "#efe8d2",
+              "error-container": "#ffdad6",
+              "tertiary-fixed-dim": "#e4beb2",
+              "surface-container": "#f5eed7",
+              "on-error": "#ffffff",
+              "primary-fixed": "#ffdad4",
+              "inverse-surface": "#333121",
               "surface-variant": "#e9e2cc",
               "secondary-fixed-dim": "#88d982",
-              "on-error-container": "#93000a",
+              "on-primary-fixed-variant": "#5b403c",
+              "secondary-fixed": "#a3f69c",
+              "tertiary-fixed": "#ffdbce",
+              "on-tertiary-fixed-variant": "#5b4137",
+              "surface-container-low": "#faf4dd",
+              "background": "#fff9ea",
+              "on-primary-container": "#ae8d87",
               "surface-bright": "#fff9ea",
+              "primary-container": "#3e2723",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-high": "#efe8d2",
+              "outline-variant": "#d3c3c0",
+              "on-primary-fixed": "#2b1613",
+              "primary-fixed-dim": "#e3beb8",
+              "inverse-primary": "#e3beb8",
+              "on-tertiary-fixed": "#2b160f",
+              "surface": "#fff9ea",
+              "tertiary-container": "#3e271e",
+              "on-surface": "#1e1c0e",
+              "secondary-container": "#a0f399",
+              "surface-tint": "#745853",
+              "secondary": "#1b6d24",
+              "on-secondary": "#ffffff",
               "inverse-on-surface": "#f8f1da",
-              "on-primary-fixed-variant": "#5b403c"
+              "error": "#ba1a1a",
+              "surface-container-highest": "#e9e2cc",
+              "on-secondary-fixed": "#002204",
+              "on-background": "#1e1c0e",
+              "surface-dim": "#e0dac4"
             },
             fontFamily: {
               "headline": ["Manrope"],
@@ -67,280 +66,398 @@
               "label": ["Inter"]
             },
             borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            animation: {
+              'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+            },
+            keyframes: {
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              }
+            }
           },
         },
       }
     </script>
 <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d3c3c0; border-radius: 10px; }
-    
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .animate-fade-in-up {
-            animation: fadeInUp 0.6s ease-out forwards;
-            opacity: 0;
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #fff9ea; color: #1e1c0e; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .font-headline { font-family: 'Manrope', sans-serif; }
+        details > summary::-webkit-details-marker { display: none; }
+        details[open] .expand-icon { transform: rotate(180deg); }
+        
+        .animate-fade-in-up { opacity: 0; }
         .delay-100 { animation-delay: 100ms; }
         .delay-200 { animation-delay: 200ms; }
         .delay-300 { animation-delay: 300ms; }
         .delay-400 { animation-delay: 400ms; }
-        .delay-500 { animation-delay: 500ms; }
-        .delay-600 { animation-delay: 600ms; }
-        .delay-700 { animation-delay: 700ms; }
+
+        @keyframes slideDownFadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-detail-show {
+            animation: slideDownFadeIn 0.3s ease-out forwards;
+        }
     </style>
 </head>
-<body class="bg-background font-body text-on-surface flex min-h-screen">
-<!-- SideNavBar Component -->
-<aside class="hidden md:flex flex-col h-full py-8 bg-[#f5eed7] dark:bg-[#271310] h-screen w-64 fixed left-0 top-0 z-50 shadow-xl dark:shadow-none font-inter text-sm font-medium transition-all duration-300 ease-in-out animate-fade-in-up">
+<body class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 border-r-0 bg-[#f5eed7] py-6 z-50 animate-fade-in-up">
 <div class="px-6 mb-10">
 <div class="flex items-center gap-3 mb-2">
 <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary">
 <span class="material-symbols-outlined">coffee</span>
 </div>
 <div>
-<h1 class="font-manrope font-bold text-lg text-[#271310] dark:text-[#f5eed7]">Artisanal Ledger</h1>
+<h1 class="font-manrope font-bold text-lg text-[#271310]">Artisanal Ledger</h1>
 <p class="text-[10px] uppercase tracking-widest opacity-60">Staff Portal</p>
 </div>
 </div>
 </div>
 <nav class="flex-1 space-y-1">
-<a class="text-[#3e2723] dark:text-[#f5eed7]/80 py-3 px-6 hover:translate-x-1 transition-transform flex items-center gap-4" href="#">
-<span class="material-symbols-outlined">receipt_long</span>
-<span>Orders</span>
+<a class="flex items-center px-4 py-3 mx-2 text-[#3e2723]/70 hover:text-[#271310] hover:bg-[#ffffff]/50 rounded-full transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="category">category</span>
+<span class="font-medium text-sm">Categories</span>
 </a>
-<a class="bg-[#ffffff] dark:bg-[#3e2723] text-[#271310] dark:text-[#ffffff] rounded-r-full py-3 px-6 shadow-sm flex items-center gap-4" href="#">
-<span class="material-symbols-outlined">restaurant_menu</span>
-<span>Menu</span>
+<a class="flex items-center px-4 py-3 mx-2 bg-[#ffffff] text-[#271310] rounded-full shadow-sm" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="group" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-medium text-sm">Staff</span>
+</a>
+<a class="flex items-center px-4 py-3 mx-2 text-[#3e2723]/70 hover:text-[#271310] hover:bg-[#ffffff]/50 rounded-full transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="payments">payments</span>
+<span class="font-medium text-sm">Revenue</span>
 </a>
 </nav>
-<div class="mt-auto px-6 pt-6 border-t border-outline-variant/20">
-<div class="space-y-1">
-<a class="text-error py-2 flex items-center gap-4 hover:opacity-70 transition-opacity" href="#">
-<span class="material-symbols-outlined">logout</span>
-<span>Logout</span>
+<div class="mt-auto px-2 space-y-1">
+<a class="flex items-center px-4 py-3 text-[#3e2723]/70 hover:text-[#271310] hover:bg-[#ffffff]/50 rounded-full transition-all" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="logout">logout</span>
+<span class="font-medium text-sm">Logout</span>
 </a>
 </div>
-</div>
 </aside>
+<!-- Main Content Canvas -->
 <main class="flex-1 md:ml-64 min-h-screen flex flex-col">
-<!-- TopAppBar Component -->
-<header class="bg-[#fff9ea] dark:bg-[#1e1c0e] docked full-width top-0 z-40 flex justify-between items-center w-full px-6 py-3 sticky animate-fade-in-up">
+<!-- TopAppBar -->
+<header class="bg-[#fff9ea] flex justify-between items-center w-full px-8 py-4 sticky top-0 z-40 animate-fade-in-up delay-100">
 <div class="flex items-center gap-6">
-<span class="md:hidden material-symbols-outlined text-primary cursor-pointer">menu</span>
-<div class="flex items-center gap-2">
-<h2 class="text-xl font-bold text-[#271310] dark:text-[#f5eed7] tracking-tight font-manrope">Quản lý Thực đơn</h2>
+<h2 class="text-xl font-bold text-[#271310] tracking-tight font-manrope">Quản lý Nhân viên</h2>
 </div>
+<div class="flex items-center gap-4 w-full max-w-xs">
+<div class="relative flex items-center w-full">
+<span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-xl">search</span>
+<input class="w-full pl-11 pr-4 py-2.5 bg-surface-container-low border border-outline-variant/10 rounded-xl text-sm font-body text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-on-surface-variant/50 shadow-sm" placeholder="Tìm kiếm nhân viên..." type="text"/>
 </div>
-<div class="flex items-center gap-4">
 </div>
 </header>
-<!-- Page Content -->
-<div class="p-6 md:p-8 space-y-8 max-w-7xl mx-auto w-full">
-<!-- Filters & Actions Bar -->
-<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 animate-fade-in-up delay-100">
-<div class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar">
-<button class="bg-secondary-container text-on-secondary-container px-6 py-2 rounded-full font-medium text-sm flex items-center gap-2 whitespace-nowrap">
-<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">grid_view</span>
-                        Tất cả món
-                    </button>
-<button class="bg-surface-container-high hover:bg-surface-container-highest transition-colors px-6 py-2 rounded-full font-medium text-sm flex items-center gap-2 whitespace-nowrap">
-<span class="material-symbols-outlined text-sm">coffee</span>
-                        Cà phê
-                    </button>
-<button class="bg-surface-container-high hover:bg-surface-container-highest transition-colors px-6 py-2 rounded-full font-medium text-sm flex items-center gap-2 whitespace-nowrap">
-<span class="material-symbols-outlined text-sm">bakery_dining</span>
-                        Bánh ngọt
-                    </button>
-<button class="bg-surface-container-high hover:bg-surface-container-highest transition-colors px-6 py-2 rounded-full font-medium text-sm flex items-center gap-2 whitespace-nowrap">
-<span class="material-symbols-outlined text-sm">emoji_food_beverage</span>
-                        Trà thảo mộc
-                    </button>
+<!-- Content Area -->
+<div class="p-8 max-w-7xl mx-auto w-full space-y-8">
+<!-- Dashboard Stats -->
+<div class="bg-primary-container p-8 rounded-2xl relative overflow-hidden group min-h-[160px] flex flex-col justify-center animate-fade-in-up delay-200">
+<div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+<div class="flex items-center gap-6">
+<div class="w-16 h-16 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container shadow-lg shadow-black/20">
+<span class="material-symbols-outlined text-3xl" data-icon="groups">groups</span>
 </div>
-<button class="bg-primary text-on-primary px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-xl hover:translate-y-[-2px] transition-all flex items-center justify-center gap-2">
-<span class="material-symbols-outlined">add_circle</span>
-                    Thêm món mới
-                </button>
-</div>
-<!-- Dashboard Stats Summary (Bento Style) -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in-up delay-200">
-<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10 flex flex-col justify-between py-10">
-<span class="text-on-surface-variant text-xs font-semibold uppercase tracking-wider">Tổng số món</span>
-<div class="mt-4 flex items-end gap-2">
-<span class="text-4xl font-bold font-manrope text-primary">42</span>
-<span class="text-secondary text-sm font-medium mb-1">+2 tháng này</span>
-</div>
-</div>
-<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10 flex flex-col justify-between py-10">
-<span class="text-on-surface-variant text-xs font-semibold uppercase tracking-wider">Đang phục vụ</span>
-<div class="mt-4 flex items-end gap-2">
-<span class="text-4xl font-bold font-manrope text-primary">38</span>
-<div class="w-2 h-2 rounded-full bg-secondary mb-2 animate-pulse"></div>
+<div>
+<p class="text-primary-fixed-dim text-sm font-medium uppercase tracking-wider mb-1">Tổng quan đội ngũ</p>
+<h2 class="text-primary-fixed text-4xl font-headline font-extrabold flex items-baseline gap-2">
+                            Tổng nhân sự: <span class="text-secondary-fixed text-5xl">24</span>
+</h2>
 </div>
 </div>
 </div>
-<!-- Menu Grid -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-<!-- Item Card 1 -->
-<div class="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col border border-outline-variant/5 py-10 animate-fade-in-up delay-300">
-<div class="relative h-48 overflow-hidden">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="creamy hot latte with intricate heart-shaped foam art in a ceramic mug on a wooden table" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkaPLvqGA-Eb3Srpv6PvP2hlTnS4Lyb9GPDlsOTmwpqRj_9ONFab9U96lCq4iHR9s0OCHM_CWFW03zgB1SreuntoQroOn8D7xNAxkgOEeKAv-97jfQ89WaAfJEYqZf-d7jsbHBVkbZUkC6urgoZT_fUICSRNcYZt-MXjC-KP_bGh8fiKSFbGvTvJXOxHwYLiu6AvhX3wvL-jYYAXtynwiuoh8vU7JmxIRkPAW_APYy9M-EK2qqlnnz6zdZpBn15GAo6RYSE1ROiaNi"/>
-<div class="absolute top-3 right-3 flex flex-col gap-2">
-<span class="bg-secondary text-on-secondary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Đang bán</span>
+<div class="absolute -right-16 -top-16 w-64 h-64 bg-primary-fixed/5 rounded-full group-hover:scale-110 transition-transform duration-700"></div>
+<div class="absolute -left-8 -bottom-8 w-32 h-32 bg-secondary-fixed/5 rounded-full"></div>
+</div>
+<!-- Staff Table Container -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm border border-outline-variant/10 animate-fade-in-up delay-300">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high">
+<th class="px-6 py-4 text-xs font-bold text-[#271310] uppercase tracking-wider">Tên đăng nhập</th>
+<th class="px-6 py-4 text-xs font-bold text-[#271310] uppercase tracking-wider">Mật khẩu</th>
+<th class="px-6 py-4 text-xs font-bold text-[#271310] uppercase tracking-wider">Họ và Tên</th>
+<th class="px-6 py-4 text-xs font-bold text-[#271310] uppercase tracking-wider">Số điện thoại</th>
+<th class="px-6 py-4 text-xs font-bold text-[#271310] uppercase tracking-wider">Giới tính</th>
+<th class="px-6 py-4 text-xs font-bold text-[#271310] uppercase tracking-wider">Tuổi</th>
+<th class="px-6 py-4 text-xs font-bold text-[#271310] uppercase tracking-wider">Thao tác</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4 text-sm font-medium text-[#271310]">minhanh.n</td>
+<td class="px-6 py-4 text-sm text-[#3e2723]">••••••••</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="text-sm font-semibold text-[#271310]">Nguyễn Minh Anh</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-[#3e2723]">0901 234 567</td>
+<td class="px-6 py-4 text-sm text-[#3e2723]">Nam</td>
+<td class="px-6 py-4 text-sm text-[#3e2723]">24</td>
+<td class="px-6 py-4">
+<button class="px-4 py-1.5 bg-primary text-on-primary text-xs font-semibold rounded-full hover:bg-primary/90 transition-colors shadow-sm flex items-center gap-1.5" onclick="const row = this.closest('tr').nextElementSibling; row.classList.toggle('hidden'); if(!row.classList.contains('hidden')) { row.querySelector('.animate-detail-show').style.animation = 'none'; row.offsetHeight; row.querySelector('.animate-detail-show').style.animation = ''; }">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+                                    Chi tiết
+                                </button>
+</td>
+</tr>
+<!-- Detail View for Row 1 -->
+<tr class="bg-surface-container-low/50 hidden">
+<td class="px-8 py-8 border-b border-outline-variant/10" colspan="7">
+<div class="max-w-5xl mx-auto space-y-6 animate-detail-show">
+<div class="flex items-center justify-between mb-2">
+<h3 class="text-lg font-headline font-bold text-primary">Lịch làm việc hàng tuần</h3>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-secondary"></span>
+<span class="text-xs font-medium opacity-70">Có ca</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-error"></span>
+<span class="text-xs font-medium opacity-70">Nghỉ</span>
 </div>
 </div>
-<div class="p-5 flex-1 flex flex-col">
-<div class="flex justify-between items-start mb-2">
-<h3 class="font-manrope font-bold text-primary group-hover:text-secondary transition-colors text-lg">Cà phê Muối</h3>
-<span class="font-bold text-primary">45.000đ</span>
 </div>
-<p class="text-on-surface-variant text-sm line-clamp-2 flex-1 mb-4">Cà phê pha phin truyền thống kết hợp lớp kem muối đặc trưng và ca cao.</p>
-<div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
-<div class="flex gap-2">
-<button class="p-2 rounded-full hover:bg-surface-container-high text-on-surface-variant transition-colors" title="Chỉnh sửa">
-<span class="material-symbols-outlined text-[20px]">edit</span>
+<!-- Schedule Grid -->
+<div class="grid grid-cols-7 gap-3">
+<!-- Each Day Column -->
+<div class="space-y-3">
+<div class="text-center pb-2 border-b border-outline-variant/20"><span class="text-xs font-bold uppercase tracking-tighter opacity-60">Thứ 2</span></div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
+<span class="text-[10px] font-semibold opacity-60">Sáng</span>
+<div class="w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></div>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
+<span class="text-[10px] font-semibold opacity-60">Chiều</span>
+<div class="w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></div>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
+<span class="text-[10px] font-semibold opacity-60">Tối</span>
+<div class="w-2.5 h-2.5 rounded-full bg-error shadow-sm"></div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="text-center pb-2 border-b border-outline-variant/20"><span class="text-xs font-bold uppercase tracking-tighter opacity-60">Thứ 3</span></div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
+<span class="text-[10px] font-semibold opacity-60">Sáng</span>
+<div class="w-2.5 h-2.5 rounded-full bg-error shadow-sm"></div>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
+<span class="text-[10px] font-semibold opacity-60">Chiều</span>
+<div class="w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></div>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
+<span class="text-[10px] font-semibold opacity-60">Tối</span>
+<div class="w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="text-center pb-2 border-b border-outline-variant/20"><span class="text-xs font-bold uppercase tracking-tighter opacity-60">Thứ 4</span></div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
+<span class="text-[10px] font-semibold opacity-60">Sáng</span>
+<div class="w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></div>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
+<span class="text-[10px] font-semibold opacity-60">Chiều</span>
+<div class="w-2.5 h-2.5 rounded-full bg-error shadow-sm"></div>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
+<span class="text-[10px] font-semibold opacity-60">Tối</span>
+<div class="w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="text-center pb-2 border-b border-outline-variant/20"><span class="text-xs font-bold uppercase tracking-tighter opacity-60">Thứ 5</span></div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
+<span class="text-[10px] font-semibold opacity-60">Sáng</span>
+<div class="w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></div>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
+<span class="text-[10px] font-semibold opacity-60">Chiều</span>
+<div class="w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></div>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
+<span class="text-[10px] font-semibold opacity-60">Tối</span>
+<div class="w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="text-center pb-2 border-b border-outline-variant/20"><span class="text-xs font-bold uppercase tracking-tighter opacity-60">Thứ 6</span></div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
+<span class="text-[10px] font-semibold opacity-60">Sáng</span>
+<div class="w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></div>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
+<span class="text-[10px] font-semibold opacity-60">Chiều</span>
+<div class="w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></div>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
+<span class="text-[10px] font-semibold opacity-60">Tối</span>
+<div class="w-2.5 h-2.5 rounded-full bg-error shadow-sm"></div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="text-center pb-2 border-b border-outline-variant/20"><span class="text-xs font-bold uppercase tracking-tighter opacity-60">Thứ 7</span></div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
+<span class="text-[10px] font-semibold opacity-60">Sáng</span>
+<div class="w-2.5 h-2.5 rounded-full bg-error shadow-sm"></div>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
+<span class="text-[10px] font-semibold opacity-60">Chiều</span>
+<div class="w-2.5 h-2.5 rounded-full bg-error shadow-sm"></div>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
+<span class="text-[10px] font-semibold opacity-60">Tối</span>
+<div class="w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="text-center pb-2 border-b border-outline-variant/20"><span class="text-xs font-bold uppercase tracking-tighter opacity-60">Chủ Nhật</span></div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
+<span class="text-[10px] font-semibold opacity-60">Sáng</span>
+<div class="w-2.5 h-2.5 rounded-full bg-error shadow-sm"></div>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
+<span class="text-[10px] font-semibold opacity-60">Chiều</span>
+<div class="w-2.5 h-2.5 rounded-full bg-error shadow-sm"></div>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
+<span class="text-[10px] font-semibold opacity-60">Tối</span>
+<div class="w-2.5 h-2.5 rounded-full bg-error shadow-sm"></div>
+</div>
+</div>
+</div>
+<!-- Status and Actions -->
+<div class="pt-6 border-t border-outline-variant/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-6">
+<div>
+<p class="text-[10px] uppercase font-bold tracking-widest opacity-60 mb-1">Trạng thái hiện tại</p>
+<span class="px-3 py-1 bg-secondary/10 text-secondary text-xs font-bold rounded-full">Đang làm việc</span>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="px-8 py-2.5 bg-primary text-on-primary text-sm font-bold rounded-xl hover:bg-primary/90 transition-all shadow-md shadow-primary/20 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">edit</span>
+                                                Chỉnh sửa hồ sơ
+                                            </button>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4 text-sm font-medium text-[#271310]">phuongthao.l</td>
+<td class="px-6 py-4 text-sm text-[#3e2723]">••••••••</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="text-sm font-semibold text-[#271310]">Lê Thị Phương Thảo</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-[#3e2723]">0902 345 678</td>
+<td class="px-6 py-4 text-sm text-[#3e2723]">Nữ</td>
+<td class="px-6 py-4 text-sm text-[#3e2723]">22</td>
+<td class="px-6 py-4">
+<button class="px-4 py-1.5 bg-primary text-on-primary text-xs font-semibold rounded-full hover:bg-primary/90 transition-colors shadow-sm flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+                                    Chi tiết
+                                </button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4 text-sm font-medium text-[#271310]">hoanglong.t</td>
+<td class="px-6 py-4 text-sm text-[#3e2723]">••••••••</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="text-sm font-semibold text-[#271310]">Trần Hoàng Long</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-[#3e2723]">0903 456 789</td>
+<td class="px-6 py-4 text-sm text-[#3e2723]">Nam</td>
+<td class="px-6 py-4 text-sm text-[#3e2723]">27</td>
+<td class="px-6 py-4">
+<button class="px-4 py-1.5 bg-primary text-on-primary text-xs font-semibold rounded-full hover:bg-primary/90 transition-colors shadow-sm flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+                                    Chi tiết
+                                </button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4 text-sm font-medium text-[#271310]">bichngoc.p</td>
+<td class="px-6 py-4 text-sm text-[#3e2723]">••••••••</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="text-sm font-semibold text-[#271310]">Phạm Bích Ngọc</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-[#3e2723]">0904 567 890</td>
+<td class="px-6 py-4 text-sm text-[#3e2723]">Nữ</td>
+<td class="px-6 py-4 text-sm text-[#3e2723]">21</td>
+<td class="px-6 py-4">
+<button class="px-4 py-1.5 bg-primary text-on-primary text-xs font-semibold rounded-full hover:bg-primary/90 transition-colors shadow-sm flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+                                    Chi tiết
+                                </button>
+</td>
+</tr>
+<!-- Skeleton Loading Row -->
+<tr class="animate-pulse opacity-60 bg-surface-container-low/30">
+<td class="px-6 py-4"><div class="h-4 w-16 bg-outline-variant/20 rounded"></div></td>
+<td class="px-6 py-4"><div class="h-4 w-20 bg-outline-variant/20 rounded"></div></td>
+<td class="px-6 py-4"><div class="flex items-center gap-3"><div class="h-4 w-32 bg-outline-variant/20 rounded-md"></div></div></td>
+<td class="px-6 py-4"><div class="h-4 w-24 bg-outline-variant/20 rounded"></div></td>
+<td class="px-6 py-4"><div class="h-4 w-12 bg-outline-variant/20 rounded"></div></td>
+<td class="px-6 py-4"><div class="h-4 w-8 bg-outline-variant/20 rounded"></div></td>
+<td class="px-6 py-4"><div class="h-7 w-24 bg-outline-variant/20 rounded-full"></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-6 py-4 flex items-center justify-between bg-surface-container-high/30">
+<p class="text-xs text-[#3e2723]/60">Hiển thị <span class="font-bold text-[#271310]">1 - 4</span> của <span class="font-bold text-[#271310]">24</span> nhân viên</p>
+<div class="flex gap-1">
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined text-sm" data-icon="chevron_left">chevron_left</span>
 </button>
-<div class="px-2 py-1 bg-surface-container-high rounded text-[10px] font-bold text-on-surface-variant flex items-center gap-1">
-<span class="opacity-60 uppercase tracking-tighter">SL:</span>
-<span>42</span>
-</div>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input checked="" class="sr-only peer" type="checkbox"/>
-<div class="w-11 h-6 bg-outline-variant/40 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
-<span class="ms-2 text-xs font-medium text-on-surface-variant">Hiện</span>
-</label>
-</div>
-</div>
-</div>
-<!-- Item Card 2 -->
-<div class="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col border border-outline-variant/5 py-10 animate-fade-in-up delay-400">
-<div class="relative h-48 overflow-hidden">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="selection of colorful French macarons on a minimalist marble platter with soft morning light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcQTPIHSLqgQEvthjFYlay9YSi3Bof8E11KHM7BqxN16i8LE67ObfaffngxdG627kWJ1vLiv1NNsekDufyAZWBfs4w5bTX4czeH0DG4Va3BGLnZyqGyGPStr7X1Ff-bQs6DJlpP31n1nhh2NCSt3-Da2jB8wUfeMbWevtCI6dyKfjYMqclSIucyEhKtgpM4Z7pzrHkq2VUYZAqN8vdviOzxPY57k0ePjiliZRjsw0mIRCXQqA34tOG_dI6EYmM5ipYlKDVTxVqjMkv"/>
-</div>
-<div class="p-5 flex-1 flex flex-col">
-<div class="flex justify-between items-start mb-2">
-<h3 class="font-manrope font-bold text-primary group-hover:text-secondary transition-colors text-lg">Bánh Croissant</h3>
-<span class="font-bold text-primary">35.000đ</span>
-</div>
-<p class="text-on-surface-variant text-sm line-clamp-2 flex-1 mb-4">Bánh sừng bò ngàn lớp thơm mùi bơ Pháp, nướng giòn rụm mỗi sáng.</p>
-<div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
-<div class="flex gap-2">
-<button class="p-2 rounded-full hover:bg-surface-container-high text-on-surface-variant transition-colors">
-<span class="material-symbols-outlined text-[20px]">edit</span>
-</button>
-<div class="px-2 py-1 bg-surface-container-high rounded text-[10px] font-bold text-on-surface-variant flex items-center gap-1">
-<span class="opacity-60 uppercase tracking-tighter">SL:</span>
-<span>15</span>
-</div>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input checked="" class="sr-only peer" type="checkbox"/>
-<div class="w-11 h-6 bg-outline-variant/40 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:bg-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
-<span class="ms-2 text-xs font-medium text-on-surface-variant">Hiện</span>
-</label>
-</div>
-</div>
-</div>
-<!-- Item Card 3 -->
-<div class="group bg-surface-container-lowest/50 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col border border-outline-variant/5 opacity-80 animate-fade-in-up delay-500">
-<div class="relative h-48 overflow-hidden grayscale">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="iced green tea latte in a tall glass with marble condensation and fresh mint leaves" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQgMsJkCAb-NSw9mPV4Oac4DkBO8OAvlxwnbMeSRudOyvGJisXyx1ja--PwnN0VNrNge5RCXzX-QwMVIqRmDd8DM23zudLFqors74ZnCkffm2yXEBCROWHN7SwdpWvUOkq5f09H7jshrMzzWcLV2Y88wD2cV7NeBghjZJMVsmnCK3vmUBiyKDK15lpzYgiAyEJkBya7f5Of11EIhzjz3sEyF34gpzGY-tcmzUAyCMHethWmng2qXTvFYhyu5sGb6dftVxXsW8B4Jp7"/>
-<div class="absolute top-3 right-3">
-<span class="bg-primary-container text-primary-fixed px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Tạm hết</span>
-</div>
-</div>
-<div class="p-5 flex-1 flex flex-col">
-<div class="flex justify-between items-start mb-2">
-<h3 class="font-manrope font-bold text-primary/60 group-hover:text-secondary transition-colors text-lg">Trà Matcha Đá</h3>
-<span class="font-bold text-primary/60">55.000đ</span>
-</div>
-<p class="text-on-surface-variant text-sm line-clamp-2 flex-1 mb-4">Bột trà xanh Nhật Bản nguyên chất hòa quyện cùng sữa tươi thanh trùng.</p>
-<div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
-<div class="flex gap-2">
-<button class="p-2 rounded-full hover:bg-surface-container-high text-on-surface-variant transition-colors">
-<span class="material-symbols-outlined text-[20px]">edit</span>
-</button>
-<div class="px-2 py-1 bg-error-container text-on-error-container rounded text-[10px] font-bold flex items-center gap-1">
-<span class="opacity-60 uppercase tracking-tighter">SL:</span>
-<span>0</span>
-</div>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input class="sr-only peer" type="checkbox"/>
-<div class="w-11 h-6 bg-outline-variant/40 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:bg-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
-<span class="ms-2 text-xs font-medium text-on-surface-variant">Ẩn</span>
-</label>
-</div>
-</div>
-</div>
-<!-- Item Card 4 -->
-<div class="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col border border-outline-variant/5 animate-fade-in-up delay-600">
-<div class="relative h-48 overflow-hidden">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="dense dark chocolate brownie with a flaky sea salt topping on a rustic ceramic plate" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyMS70pxevjQWt0EHUhvz6ixJsb7sR-DJqx7VkSkB4doQ6J2GkKk3W2UBtMLqlLxIyseoHcC8_up1V2T-i_DOIIEsceffM1HoYnetwbjeVHHfWggiOPd0u29gzEc8yo-wSP98-edoE_f-XUykgsGKcIzxEWR0fv0UsCy8-GtK1_OfBZu34sslqMT2FRbh6TQRp39gS-1zsPiruTvQVWqej3HMMDYLAC3XiMu7bFx8Cdx4PsEF-uQffCkFatOmQKqmpDAAW_kOlYmCM"/>
-</div>
-<div class="p-5 flex-1 flex flex-col">
-<div class="flex justify-between items-start mb-2">
-<h3 class="font-manrope font-bold text-primary group-hover:text-secondary transition-colors text-lg">Brownie Muối Biển</h3>
-<span class="font-bold text-primary">40.000đ</span>
-</div>
-<p class="text-on-surface-variant text-sm line-clamp-2 flex-1 mb-4">Sô-cô-la đen nguyên chất nướng chảy với điểm nhấn muối biển tinh khiết.</p>
-<div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
-<div class="flex gap-2">
-<button class="p-2 rounded-full hover:bg-surface-container-high text-on-surface-variant transition-colors">
-<span class="material-symbols-outlined text-[20px]">edit</span>
-</button>
-<div class="px-2 py-1 bg-surface-container-high rounded text-[10px] font-bold text-on-surface-variant flex items-center gap-1">
-<span class="opacity-60 uppercase tracking-tighter">SL:</span>
-<span>28</span>
-</div>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input checked="" class="sr-only peer" type="checkbox"/>
-<div class="w-11 h-6 bg-outline-variant/40 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:bg-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
-<span class="ms-2 text-xs font-medium text-on-surface-variant">Hiện</span>
-</label>
-</div>
-</div>
-</div>
-<!-- New Item Placeholder Button -->
-<button class="border-2 border-dashed border-outline-variant/40 rounded-xl h-full flex flex-col items-center justify-center p-8 gap-3 hover:bg-surface-container-low hover:border-primary/30 transition-all text-on-surface-variant hover:text-primary min-h-[400px] animate-fade-in-up delay-700">
-<span class="material-symbols-outlined text-4xl">add_circle</span>
-<span class="font-bold text-lg">Thêm món mới</span>
-<span class="text-xs opacity-60 text-center">Tải lên hình ảnh và nhập thông tin thực đơn của bạn</span>
+<button class="w-8 h-8 flex items-center justify-center rounded-full bg-[#271310] text-white text-xs font-bold">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container text-xs font-bold">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container text-xs font-bold">3</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
 </button>
 </div>
 </div>
-<!-- Pagination or Bottom Footer Info -->
-<footer class="mt-auto px-8 py-6 flex items-center justify-between border-t border-outline-variant/10 bg-surface-container-low/30 animate-fade-in-up delay-700">
-<p class="text-xs text-on-surface-variant font-medium">Đang hiển thị 1-8 trong số 42 món ăn</p>
-<div class="flex gap-2">
-<button class="p-2 rounded-lg bg-surface-container-high text-on-surface opacity-50 cursor-not-allowed">
-<span class="material-symbols-outlined">chevron_left</span>
-</button>
-<button class="px-4 py-2 rounded-lg bg-primary text-on-primary font-bold text-sm">1</button>
-<button class="px-4 py-2 rounded-lg bg-surface-container-high text-on-surface font-medium text-sm hover:bg-surface-container-highest transition-colors">2</button>
-<button class="px-4 py-2 rounded-lg bg-surface-container-high text-on-surface font-medium text-sm hover:bg-surface-container-highest transition-colors">3</button>
-<button class="p-2 rounded-lg bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-colors">
-<span class="material-symbols-outlined">chevron_right</span>
-</button>
 </div>
-</footer>
+</div>
 </main>
-<!-- FAB for Mobile View Only -->
-<button class="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-primary text-on-primary rounded-full shadow-2xl z-50 flex items-center justify-center scale-95 active:scale-90 transition-transform">
-<span class="material-symbols-outlined text-3xl">add</span>
-</button>
+<!-- Mobile BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-[#fff9ea] flex justify-around items-center py-3 border-t-0 shadow-[0_-4px_24px_rgba(30,28,14,0.06)] z-50 animate-fade-in-up delay-400">
+<a class="flex flex-col items-center gap-1 text-[#3e2723]/60" href="#">
+<span class="material-symbols-outlined" data-icon="category">category</span>
+<span class="text-[10px] font-medium">DM</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-[#271310]" href="#">
+<span class="material-symbols-outlined" data-icon="group" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="text-[10px] font-bold">Nhân viên</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-[#3e2723]/60" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="text-[10px] font-medium">Doanh thu</span>
+</a>
+</nav>
+<script>
+    document.querySelectorAll('[data-purpose="detail-toggle"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const detailRow = btn.closest('tr').nextElementSibling;
+            detailRow.classList.toggle('hidden');
+        });
+    });
+</script>
 </body></html>

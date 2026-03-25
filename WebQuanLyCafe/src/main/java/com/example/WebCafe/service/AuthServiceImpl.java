@@ -130,11 +130,12 @@ public class AuthServiceImpl implements AuthService {
 		Integer tableNumber = (Integer) session.getAttribute(SessionKeys.TABLE_NUMBER);
 
 		if (auth.getPrincipal() instanceof CustomerPrincipal cp) {
-			return Optional.of(new AuthMeResponse("CUSTOMER", null, cp.guestId(), roles, tableNumber));
+			return Optional.of(new AuthMeResponse("CUSTOMER", null, null, cp.guestId(), roles, tableNumber));
 		}
 		if (auth.getPrincipal() instanceof String username) {
 			String mode = roles.contains("ADMIN") ? "ADMIN" : roles.contains("STAFF") ? "STAFF" : "UNKNOWN";
-			return Optional.of(new AuthMeResponse(mode, username, null, roles, tableNumber));
+			String fullName = userRepository.findByUsername(username).map(User::getFullName).orElse(null);
+			return Optional.of(new AuthMeResponse(mode, username, fullName, null, roles, tableNumber));
 		}
 		return Optional.empty();
 	}

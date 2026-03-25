@@ -119,6 +119,10 @@
 </a>
 </nav>
 <div class="mt-auto px-6 pt-6 border-t border-outline-variant/20">
+<div class="mb-3">
+<p class="text-[10px] uppercase tracking-wider opacity-60">Đăng nhập</p>
+<p id="current-user-fullname" class="text-sm font-semibold text-[#271310] dark:text-[#f5eed7] truncate" title="">—</p>
+</div>
 <button type="button" id="btn-logout" class="text-error py-2 flex items-center gap-4 hover:opacity-70 transition-opacity w-full text-left">
 <span class="material-symbols-outlined">logout</span>
 <span>Logout</span>
@@ -249,6 +253,23 @@ Thêm món mới
     form: document.getElementById('product-form'),
     formError: document.getElementById('form-error')
   };
+
+  function loadCurrentUserDisplayName() {
+    fetch('/api/auth/me', { credentials: 'same-origin' })
+      .then(function (r) {
+        return r.ok ? r.json() : null;
+      })
+      .then(function (data) {
+        var el = document.getElementById('current-user-fullname');
+        if (!el || !data) return;
+        var name =
+          data.fullName && String(data.fullName).trim()
+            ? String(data.fullName).trim()
+            : data.username || '—';
+        el.textContent = name;
+        el.setAttribute('title', name);
+      });
+  }
 
   function fmtMoney(n) {
     if (n == null || n === '') return '0';
@@ -619,6 +640,7 @@ Thêm món mới
     });
   }
 
+  loadCurrentUserDisplayName();
   boot();
 })();
 </script>

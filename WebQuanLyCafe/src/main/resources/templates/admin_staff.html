@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary": "#ffffff",
+              "on-secondary-container": "#217128",
+              "outline": "#827472",
+              "on-tertiary": "#ffffff",
+              "on-error-container": "#93000a",
+              "on-tertiary-container": "#ae8d81",
+              "on-surface-variant": "#504442",
+              "on-secondary-fixed-variant": "#005312",
+              "primary": "#271310",
+              "tertiary": "#27130b",
+              "error-container": "#ffdad6",
+              "tertiary-fixed-dim": "#e4beb2",
+              "surface-container": "#f5eed7",
+              "on-error": "#ffffff",
+              "primary-fixed": "#ffdad4",
+              "inverse-surface": "#333121",
+              "surface-variant": "#e9e2cc",
+              "secondary-fixed-dim": "#88d982",
+              "on-primary-fixed-variant": "#5b403c",
+              "secondary-fixed": "#a3f69c",
+              "tertiary-fixed": "#ffdbce",
+              "on-tertiary-fixed-variant": "#5b4137",
+              "surface-container-low": "#faf4dd",
+              "background": "#fff9ea",
+              "on-primary-container": "#ae8d87",
+              "surface-bright": "#fff9ea",
+              "primary-container": "#3e2723",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-high": "#efe8d2",
+              "outline-variant": "#d3c3c0",
+              "on-primary-fixed": "#2b1613",
+              "primary-fixed-dim": "#e3beb8",
+              "inverse-primary": "#e3beb8",
+              "on-tertiary-fixed": "#2b160f",
+              "surface": "#fff9ea",
+              "tertiary-container": "#3e271e",
+              "on-surface": "#1e1c0e",
+              "secondary-container": "#a0f399",
+              "surface-tint": "#745853",
+              "secondary": "#1b6d24",
+              "on-secondary": "#ffffff",
+              "inverse-on-surface": "#f8f1da",
+              "error": "#ba1a1a",
+              "surface-container-highest": "#e9e2cc",
+              "on-secondary-fixed": "#002204",
+              "on-background": "#1e1c0e",
+              "surface-dim": "#e0dac4"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            animation: {
+              'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+            },
+            keyframes: {
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              }
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #fff9ea; color: #1e1c0e; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .font-headline { font-family: 'Manrope', sans-serif; }
+        details > summary::-webkit-details-marker { display: none; }
+        details[open] .expand-icon { transform: rotate(180deg); }
+        
+        .animate-fade-in-up { opacity: 0; }
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+        .delay-400 { animation-delay: 400ms; }
+
+        @keyframes slideDownFadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-detail-show {
+            animation: slideDownFadeIn 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 border-r-0 bg-[#f5eed7] py-6 z-50 animate-fade-in-up">
+<div class="px-6 mb-10">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined">coffee</span>
+</div>
+<div>
+<h1 class="font-manrope font-bold text-lg text-[#271310]">Artisanal Ledger</h1>
+<p class="text-[10px] uppercase tracking-widest opacity-60">Staff Portal</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center px-4 py-3 mx-2 text-[#3e2723]/70 hover:text-[#271310] hover:bg-[#ffffff]/50 rounded-full transition-all duration-200" href="/admin/category">
+<span class="material-symbols-outlined mr-3" data-icon="category">category</span>
+<span class="font-medium text-sm">Categories</span>
+</a>
+<a class="flex items-center px-4 py-3 mx-2 bg-[#ffffff] text-[#271310] rounded-full shadow-sm" href="/admin/staff">
+<span class="material-symbols-outlined mr-3" data-icon="group" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-medium text-sm">Staff</span>
+</a>
+<a class="flex items-center px-4 py-3 mx-2 text-[#3e2723]/70 hover:text-[#271310] hover:bg-[#ffffff]/50 rounded-full transition-all duration-200" href="#" title="Sắp có">
+<span class="material-symbols-outlined mr-3" data-icon="payments">payments</span>
+<span class="font-medium text-sm">Revenue</span>
+</a>
+</nav>
+<div class="mt-auto px-2 space-y-1">
+<div class="px-4 py-2 mb-1">
+<p class="text-[10px] uppercase tracking-wider opacity-60">Đăng nhập</p>
+<p id="current-user-fullname" class="text-sm font-semibold text-[#271310] truncate" title="">—</p>
+</div>
+<button type="button" id="admin-logout" class="flex items-center w-full px-4 py-3 text-[#3e2723]/70 hover:text-[#271310] hover:bg-[#ffffff]/50 rounded-full transition-all text-left">
+<span class="material-symbols-outlined mr-3" data-icon="logout">logout</span>
+<span class="font-medium text-sm">Logout</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-64 min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-[#fff9ea] flex justify-between items-center w-full px-8 py-4 sticky top-0 z-40 animate-fade-in-up delay-100">
+<div class="flex items-center gap-6">
+<h2 class="text-xl font-bold text-[#271310] tracking-tight font-manrope">Quản lý Nhân viên</h2>
+</div>
+<div class="flex items-center gap-4 w-full max-w-xs">
+<div class="relative flex items-center w-full">
+<span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-xl">search</span>
+<input id="staff-search" class="w-full pl-11 pr-4 py-2.5 bg-surface-container-low border border-outline-variant/10 rounded-xl text-sm font-body text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-on-surface-variant/50 shadow-sm" placeholder="Tìm kiếm nhân viên..." type="text"/>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="p-8 max-w-7xl mx-auto w-full space-y-8">
+<!-- Dashboard Stats -->
+<div class="bg-primary-container p-8 rounded-2xl relative overflow-hidden group min-h-[160px] flex flex-col justify-center animate-fade-in-up delay-200">
+<div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+<div class="flex items-center gap-6">
+<div class="w-16 h-16 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container shadow-lg shadow-black/20">
+<span class="material-symbols-outlined text-3xl" data-icon="groups">groups</span>
+</div>
+<div>
+<p class="text-primary-fixed-dim text-sm font-medium uppercase tracking-wider mb-1">Tổng quan đội ngũ</p>
+<h2 class="text-primary-fixed text-4xl font-headline font-extrabold flex items-baseline gap-2">
+                            Tổng nhân sự: <span id="staff-total-count" class="text-secondary-fixed text-5xl">0</span>
+</h2>
+</div>
+</div>
+</div>
+<div class="absolute -right-16 -top-16 w-64 h-64 bg-primary-fixed/5 rounded-full group-hover:scale-110 transition-transform duration-700"></div>
+<div class="absolute -left-8 -bottom-8 w-32 h-32 bg-secondary-fixed/5 rounded-full"></div>
+</div>
+<!-- Staff Table Container -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm border border-outline-variant/10 animate-fade-in-up delay-300">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high">
+<th class="px-6 py-4 text-xs font-bold text-[#271310] uppercase tracking-wider">Tên đăng nhập</th>
+<th class="px-6 py-4 text-xs font-bold text-[#271310] uppercase tracking-wider">Mật khẩu</th>
+<th class="px-6 py-4 text-xs font-bold text-[#271310] uppercase tracking-wider">Họ và Tên</th>
+<th class="px-6 py-4 text-xs font-bold text-[#271310] uppercase tracking-wider">Số điện thoại</th>
+<th class="px-6 py-4 text-xs font-bold text-[#271310] uppercase tracking-wider">Giới tính</th>
+<th class="px-6 py-4 text-xs font-bold text-[#271310] uppercase tracking-wider">Tuổi</th>
+<th class="px-6 py-4 text-xs font-bold text-[#271310] uppercase tracking-wider">Thao tác</th>
+</tr>
+</thead>
+<tbody id="staff-tbody" class="divide-y divide-outline-variant/10">
+<tr id="staff-loading-row" class="animate-pulse opacity-60 bg-surface-container-low/30">
+<td class="px-6 py-4" colspan="7"><div class="h-4 w-full max-w-md bg-outline-variant/20 rounded"></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-6 py-4 flex items-center justify-between bg-surface-container-high/30">
+<p id="staff-page-hint" class="text-xs text-[#3e2723]/60">Đang tải danh sách…</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Mobile BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-[#fff9ea] flex justify-around items-center py-3 border-t-0 shadow-[0_-4px_24px_rgba(30,28,14,0.06)] z-50 animate-fade-in-up delay-400">
+<a class="flex flex-col items-center gap-1 text-[#3e2723]/60" href="/admin/category">
+<span class="material-symbols-outlined" data-icon="category">category</span>
+<span class="text-[10px] font-medium">DM</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-[#271310]" href="/admin/staff">
+<span class="material-symbols-outlined" data-icon="group" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="text-[10px] font-bold">Nhân viên</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-[#3e2723]/60" href="#" title="Sắp có">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="text-[10px] font-medium">Doanh thu</span>
+</a>
+</nav>
+<!-- Modal: tạo / sửa nhân viên -->
+<div id="staff-modal-backdrop" class="fixed inset-0 bg-black/40 z-[200] hidden items-center justify-center p-4">
+  <div class="bg-surface rounded-xl shadow-2xl max-w-md w-full border border-outline-variant/20 p-6 max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between gap-3 mb-4">
+      <h3 id="staff-modal-title" class="font-manrope font-bold text-lg text-primary">Nhân viên</h3>
+      <button type="button" id="staff-modal-close" class="p-2 rounded-lg hover:bg-surface-container-high text-on-surface-variant">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <p id="staff-modal-error" class="hidden text-sm text-error mb-2" role="alert"></p>
+    <form id="staff-form" class="space-y-3 text-sm">
+      <input type="hidden" id="sf-user-id" value="" />
+      <div>
+        <label class="text-xs font-semibold text-on-surface-variant" for="sf-username">Tên đăng nhập</label>
+        <input id="sf-username" required class="mt-1 w-full rounded-lg border border-outline-variant/30 bg-surface-container-highest px-3 py-2" />
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-on-surface-variant" for="sf-password">Mật khẩu <span id="sf-password-hint" class="text-[10px] font-normal">(bắt buộc khi tạo mới)</span></label>
+        <input id="sf-password" type="password" autocomplete="new-password" class="mt-1 w-full rounded-lg border border-outline-variant/30 bg-surface-container-highest px-3 py-2" />
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-on-surface-variant" for="sf-fullname">Họ và tên</label>
+        <input id="sf-fullname" required class="mt-1 w-full rounded-lg border border-outline-variant/30 bg-surface-container-highest px-3 py-2" />
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-on-surface-variant" for="sf-phone">Số điện thoại</label>
+        <input id="sf-phone" class="mt-1 w-full rounded-lg border border-outline-variant/30 bg-surface-container-highest px-3 py-2" />
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-on-surface-variant" for="sf-gender">Giới tính</label>
+        <select id="sf-gender" required class="mt-1 w-full rounded-lg border border-outline-variant/30 bg-surface-container-highest px-3 py-2">
+          <option value="MALE">Nam</option>
+          <option value="FEMALE">Nữ</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-on-surface-variant" for="sf-age">Tuổi</label>
+        <input id="sf-age" type="number" min="0" class="mt-1 w-full rounded-lg border border-outline-variant/30 bg-surface-container-highest px-3 py-2" />
+      </div>
+      <div class="flex items-center gap-2">
+        <input id="sf-active" type="checkbox" class="rounded border-outline-variant" checked />
+        <label for="sf-active" class="text-on-surface-variant">Đang làm việc</label>
+      </div>
+      <div class="flex gap-2 pt-4">
+        <button type="submit" id="staff-modal-save" class="flex-1 bg-primary text-on-primary font-bold py-3 rounded-full">Lưu</button>
+        <button type="button" id="staff-modal-cancel" class="px-4 py-3 rounded-full border border-outline-variant">Hủy</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+(function () {
+  function esc(s) {
+    if (s == null) return "";
+    var d = document.createElement("div");
+    d.textContent = String(s);
+    return d.innerHTML;
+  }
+  function genderLabel(g) {
+    if (g === "MALE") return "Nam";
+    if (g === "FEMALE") return "Nữ";
+    return g || "—";
+  }
+  var allStaff = [];
+  var shiftDefinitions = [];
+  var shiftKeyToId = {};
+  var scheduleState = {};
+  var DAY_ORDER = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+  var DAY_LABEL = { MONDAY: "T2", TUESDAY: "T3", WEDNESDAY: "T4", THURSDAY: "T5", FRIDAY: "T6", SATURDAY: "T7", SUNDAY: "CN" };
+  var TIME_ORDER = ["MORNING", "AFTERNOON", "EVENING"];
+  var TIME_LABEL = { MORNING: "Sáng", AFTERNOON: "Chiều", EVENING: "Tối" };
+
+  function matchesSearch(s, q) {
+    if (!q) return true;
+    var t = (s.username + " " + (s.fullName || "") + " " + (s.phone || "")).toLowerCase();
+    return t.indexOf(q.toLowerCase()) >= 0;
+  }
+
+  function staffModalOpen(mode, staff) {
+    var backdrop = document.getElementById("staff-modal-backdrop");
+    var title = document.getElementById("staff-modal-title");
+    var err = document.getElementById("staff-modal-error");
+    var uid = document.getElementById("sf-user-id");
+    var pwd = document.getElementById("sf-password");
+    var hint = document.getElementById("sf-password-hint");
+    if (err) err.classList.add("hidden");
+    if (mode === "create") {
+      if (title) title.textContent = "Thêm nhân viên";
+      if (uid) uid.value = "";
+      if (hint) hint.textContent = "(bắt buộc)";
+      document.getElementById("sf-username").value = "";
+      pwd.value = "";
+      pwd.required = true;
+      document.getElementById("sf-fullname").value = "";
+      document.getElementById("sf-phone").value = "";
+      document.getElementById("sf-gender").value = "MALE";
+      document.getElementById("sf-age").value = "";
+      document.getElementById("sf-active").checked = true;
+    } else {
+      if (title) title.textContent = "Chỉnh sửa hồ sơ";
+      if (uid) uid.value = String(staff.userId);
+      if (hint) hint.textContent = "(để trống nếu giữ mật khẩu cũ)";
+      pwd.value = "";
+      pwd.required = false;
+      document.getElementById("sf-username").value = staff.username || "";
+      document.getElementById("sf-fullname").value = staff.fullName || "";
+      document.getElementById("sf-phone").value = staff.phone || "";
+      document.getElementById("sf-gender").value = staff.gender || "MALE";
+      document.getElementById("sf-age").value = staff.age != null ? staff.age : "";
+      document.getElementById("sf-active").checked = staff.active !== false;
+    }
+    if (backdrop) {
+      backdrop.classList.remove("hidden");
+      backdrop.classList.add("flex");
+    }
+  }
+  function staffModalClose() {
+    var backdrop = document.getElementById("staff-modal-backdrop");
+    if (backdrop) {
+      backdrop.classList.add("hidden");
+      backdrop.classList.remove("flex");
+    }
+  }
+
+  function buildScheduleHtml(userId) {
+    var ids = scheduleState[userId] || new Set();
+    var html =
+      '<div class="space-y-3"><p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Ca trong tuần — bấm ô để bật/tắt, sau đó Lưu lịch</p>' +
+      '<div class="grid grid-cols-7 gap-2 text-center">';
+    DAY_ORDER.forEach(function (day) {
+      html += '<div class="space-y-2"><div class="text-[10px] font-bold text-primary pb-1 border-b border-outline-variant/20">' + esc(DAY_LABEL[day]) + "</div>";
+      TIME_ORDER.forEach(function (tm) {
+        var key = day + "_" + tm;
+        var sid = shiftKeyToId[key];
+        if (sid == null) return;
+        var on = ids.has(sid);
+        html +=
+          '<button type="button" class="sched-cell w-full py-2 rounded-lg text-[10px] font-semibold border transition-colors ' +
+          (on ? "bg-secondary text-on-secondary border-secondary" : "bg-surface-container-lowest border-outline-variant/20 text-on-surface-variant") +
+          '" data-shift-id="' +
+          sid +
+          '">' +
+          esc(TIME_LABEL[tm]) +
+          "</button>";
+      });
+      html += "</div>";
+    });
+    html += "</div></div>";
+    return html;
+  }
+
+  function wireSchedule(host, userId) {
+    var uid = userId;
+    if (!scheduleState[uid]) scheduleState[uid] = new Set();
+    host.querySelectorAll(".sched-cell").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var id = parseInt(btn.getAttribute("data-shift-id"), 10);
+        if (scheduleState[uid].has(id)) {
+          scheduleState[uid].delete(id);
+          btn.className =
+            "sched-cell w-full py-2 rounded-lg text-[10px] font-semibold border transition-colors bg-surface-container-lowest border-outline-variant/20 text-on-surface-variant";
+        } else {
+          scheduleState[uid].add(id);
+          btn.className =
+            "sched-cell w-full py-2 rounded-lg text-[10px] font-semibold border transition-colors bg-secondary text-on-secondary border-secondary";
+        }
+      });
+    });
+    var saveBtn = host.querySelector(".btn-save-shifts");
+    if (saveBtn) {
+      saveBtn.addEventListener("click", function () {
+        var list = Array.from(scheduleState[uid]);
+        fetch("/api/admin/staff/" + uid + "/shifts", {
+          method: "PUT",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ shiftIds: list })
+        })
+          .then(function (r) {
+            if (!r.ok) return r.text().then(function (t) { throw new Error(t || "Lưu lịch thất bại"); });
+            alert("Đã lưu lịch làm.");
+          })
+          .catch(function (e) {
+            alert(e.message || "Lỗi");
+          });
+      });
+    }
+  }
+
+  function ensureSchedule(host, userId) {
+    if (host.dataset.ready === "1") return;
+    fetch("/api/admin/staff/" + userId + "/shifts", { credentials: "same-origin" })
+      .then(function (r) {
+        if (!r.ok) throw new Error("Không tải lịch");
+        return r.json();
+      })
+      .then(function (ids) {
+        scheduleState[userId] = new Set((ids || []).map(function (x) { return parseInt(x, 10); }));
+        host.innerHTML =
+          buildScheduleHtml(userId) +
+          '<div class="flex flex-wrap justify-end gap-3 pt-4 border-t border-outline-variant/10 mt-4">' +
+          '<button type="button" class="btn-save-shifts px-6 py-2 bg-secondary text-on-secondary text-sm font-bold rounded-full">Lưu lịch</button>' +
+          "</div>";
+        host.dataset.ready = "1";
+        wireSchedule(host, userId);
+      })
+      .catch(function () {
+        host.innerHTML = '<p class="text-error text-sm">Không tải được lịch.</p>';
+      });
+  }
+
+  function renderDetailRow(s) {
+    var active = s.active !== false;
+    var statusBadge = active
+      ? '<span class="px-3 py-1 bg-secondary/10 text-secondary text-xs font-bold rounded-full">Đang làm việc</span>'
+      : '<span class="px-3 py-1 bg-outline-variant/30 text-on-surface-variant text-xs font-bold rounded-full">Tạm ngưng</span>';
+    return (
+      '<tr class="staff-detail-row bg-surface-container-low/50 hidden" data-staff-json="">' +
+      '<td class="px-4 md:px-8 py-6 border-b border-outline-variant/10" colspan="7">' +
+      '<div class="max-w-5xl mx-auto space-y-4 animate-detail-show">' +
+      '<div class="flex flex-wrap items-center justify-between gap-4">' +
+      '<div class="flex flex-wrap gap-6">' +
+      '<div><p class="text-[10px] uppercase font-bold tracking-widest opacity-60 mb-1">Trạng thái</p>' +
+      statusBadge +
+      "</div>" +
+      '<div><p class="text-[10px] uppercase font-bold tracking-widest opacity-60 mb-1">Mã</p><span class="text-sm font-mono font-semibold text-primary">#' +
+      esc(s.userId) +
+      "</span></div></div>" +
+      '<button type="button" class="btn-edit-staff px-6 py-2 bg-primary text-on-primary text-sm font-bold rounded-xl shadow-md">Chỉnh sửa hồ sơ</button></div>' +
+      '<div class="schedule-host border border-outline-variant/10 rounded-xl p-4 bg-surface-container-lowest/50 min-h-[120px]" data-user-id="' +
+      esc(s.userId) +
+      '"><p class="text-xs text-on-surface-variant">Mở chi tiết để tải lịch…</p></div>' +
+      "</div></td></tr>"
+    );
+  }
+
+  function renderTable(list) {
+    var tbody = document.getElementById("staff-tbody");
+    var hint = document.getElementById("staff-page-hint");
+    var totalEl = document.getElementById("staff-total-count");
+    if (!tbody) return;
+    var loading = document.getElementById("staff-loading-row");
+    if (loading) loading.remove();
+    tbody.innerHTML = "";
+    if (totalEl) totalEl.textContent = String(allStaff.length);
+    if (hint) {
+      if (!allStaff.length) {
+        hint.innerHTML = "Chưa có nhân viên nào.";
+      } else if (!list.length) {
+        hint.innerHTML = "Không có nhân viên khớp tìm kiếm.";
+      } else {
+        hint.innerHTML =
+          'Hiển thị <span class="font-bold text-[#271310]">' +
+          list.length +
+          "</span> / " +
+          allStaff.length +
+          " nhân viên";
+      }
+    }
+    if (!list.length) {
+      var tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td class="px-6 py-8 text-center text-sm text-on-surface-variant" colspan="7">' +
+        (allStaff.length ? "Không có kết quả tìm kiếm." : "Không có dữ liệu.") +
+        "</td>";
+      tbody.appendChild(tr);
+    } else {
+      list.forEach(function (s) {
+        var tr = document.createElement("tr");
+        tr.className = "hover:bg-surface-container-low transition-colors";
+        tr.innerHTML =
+          '<td class="px-6 py-4 text-sm font-medium text-[#271310]">' + esc(s.username) + "</td>" +
+          '<td class="px-6 py-4 text-sm text-[#3e2723]">••••••••</td>' +
+          '<td class="px-6 py-4"><span class="text-sm font-semibold text-[#271310]">' + esc(s.fullName) + "</span></td>" +
+          '<td class="px-6 py-4 text-sm text-[#3e2723]">' + esc(s.phone || "—") + "</td>" +
+          '<td class="px-6 py-4 text-sm text-[#3e2723]">' + esc(genderLabel(s.gender)) + "</td>" +
+          '<td class="px-6 py-4 text-sm text-[#3e2723]">' + esc(s.age != null ? s.age : "—") + "</td>" +
+          '<td class="px-6 py-4 text-right">' +
+          '<button type="button" class="staff-detail-btn px-4 py-1.5 bg-primary text-on-primary text-xs font-semibold rounded-full hover:bg-primary/90 transition-colors shadow-sm inline-flex items-center gap-1.5">' +
+          '<span class="material-symbols-outlined text-[16px]">visibility</span> Chi tiết</button></td>';
+        tbody.appendChild(tr);
+        var tpl = document.createElement("template");
+        tpl.innerHTML = renderDetailRow(s).trim();
+        var innerDetail = tpl.content.firstChild;
+        innerDetail.setAttribute("data-staff-json", JSON.stringify(s));
+        tbody.appendChild(innerDetail);
+        tr.querySelector(".staff-detail-btn").addEventListener("click", function () {
+          innerDetail.classList.toggle("hidden");
+          if (!innerDetail.classList.contains("hidden")) {
+            var host = innerDetail.querySelector(".schedule-host");
+            if (host) ensureSchedule(host, s.userId);
+          }
+        });
+        innerDetail.querySelector(".btn-edit-staff").addEventListener("click", function () {
+          staffModalOpen("edit", s);
+        });
+      });
+    }
+    var sk = document.createElement("tr");
+    sk.id = "staff-skeleton-row";
+    sk.className = "animate-pulse cursor-pointer hover:bg-surface-container-low/80 transition-colors border-t-2 border-dashed border-outline-variant/30";
+    sk.innerHTML =
+      '<td class="px-6 py-6" colspan="7"><div class="flex items-center gap-4 justify-center text-on-surface-variant text-sm"><span class="material-symbols-outlined">person_add</span> Thêm nhân viên mới (lịch trống — chỉnh sau)</div></td>';
+    sk.addEventListener("click", function () {
+      staffModalOpen("create", null);
+    });
+    tbody.appendChild(sk);
+  }
+
+  function applyFilter() {
+    var q = (document.getElementById("staff-search") && document.getElementById("staff-search").value) || "";
+    var filtered = allStaff.filter(function (s) {
+      return matchesSearch(s, q.trim());
+    });
+    renderTable(filtered);
+  }
+
+  function loadShiftDefs() {
+    return fetch("/api/admin/shifts", { credentials: "same-origin" })
+      .then(function (r) {
+        if (!r.ok) return;
+        return r.json();
+      })
+      .then(function (data) {
+        shiftDefinitions = Array.isArray(data) ? data : [];
+        shiftKeyToId = {};
+        shiftDefinitions.forEach(function (sh) {
+          shiftKeyToId[sh.dayOfWeek + "_" + sh.shiftTime] = sh.id;
+        });
+      });
+  }
+
+  function load() {
+    fetch("/api/admin/staff", { credentials: "same-origin" })
+      .then(function (r) {
+        if (r.status === 401 || r.status === 403) {
+          window.location.href = "/login";
+          return null;
+        }
+        if (!r.ok) throw new Error("Không tải được danh sách nhân viên");
+        return r.json();
+      })
+      .then(function (data) {
+        if (!data) return;
+        allStaff = Array.isArray(data) ? data : [];
+        applyFilter();
+      })
+      .catch(function () {
+        var tbody = document.getElementById("staff-tbody");
+        var loading = document.getElementById("staff-loading-row");
+        if (loading) loading.remove();
+        if (tbody) {
+          tbody.innerHTML = '<tr><td class="px-6 py-8 text-center text-error text-sm" colspan="7">Không tải được dữ liệu. Vui lòng đăng nhập admin.</td></tr>';
+        }
+      });
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    fetch("/api/auth/me", { credentials: "same-origin" })
+      .then(function (r) {
+        return r.ok ? r.json() : null;
+      })
+      .then(function (data) {
+        var el = document.getElementById("current-user-fullname");
+        if (!el || !data) return;
+        var name =
+          data.fullName && String(data.fullName).trim()
+            ? String(data.fullName).trim()
+            : data.username || "—";
+        el.textContent = name;
+        el.setAttribute("title", name);
+      });
+    var search = document.getElementById("staff-search");
+    if (search) search.addEventListener("input", applyFilter);
+    var logout = document.getElementById("admin-logout");
+    if (logout) {
+      logout.addEventListener("click", function () {
+        fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" }).then(function () {
+          window.location.href = "/login";
+        }).catch(function () {
+          window.location.href = "/login";
+        });
+      });
+    }
+    document.getElementById("staff-modal-close").addEventListener("click", staffModalClose);
+    document.getElementById("staff-modal-cancel").addEventListener("click", staffModalClose);
+    document.getElementById("staff-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var errEl = document.getElementById("staff-modal-error");
+      var uid = document.getElementById("sf-user-id").value;
+      var ageStr = document.getElementById("sf-age").value;
+      var body = {
+        username: document.getElementById("sf-username").value.trim(),
+        password: document.getElementById("sf-password").value,
+        fullName: document.getElementById("sf-fullname").value.trim(),
+        phone: document.getElementById("sf-phone").value.trim() || null,
+        gender: document.getElementById("sf-gender").value,
+        age: ageStr === "" ? null : parseInt(ageStr, 10),
+        active: document.getElementById("sf-active").checked
+      };
+      if (errEl) errEl.classList.add("hidden");
+      if (!uid) {
+        if (!body.password) {
+          if (errEl) {
+            errEl.textContent = "Nhập mật khẩu cho tài khoản mới.";
+            errEl.classList.remove("hidden");
+          }
+          return;
+        }
+        fetch("/api/admin/staff", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        })
+          .then(function (r) {
+            if (!r.ok) return r.text().then(function (t) { throw new Error(t || "Không tạo được"); });
+            return r.json();
+          })
+          .then(function () {
+            staffModalClose();
+            load();
+          })
+          .catch(function (ex) {
+            if (errEl) {
+              errEl.textContent = ex.message || "Lỗi";
+              errEl.classList.remove("hidden");
+            }
+          });
+      } else {
+        if (!body.password || !String(body.password).trim()) delete body.password;
+        fetch("/api/admin/staff/" + uid, {
+          method: "PUT",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        })
+          .then(function (r) {
+            if (!r.ok) return r.text().then(function (t) { throw new Error(t || "Không cập nhật được"); });
+            staffModalClose();
+            load();
+          })
+          .catch(function (ex) {
+            if (errEl) {
+              errEl.textContent = ex.message || "Lỗi";
+              errEl.classList.remove("hidden");
+            }
+          });
+      }
+    });
+    loadShiftDefs().then(function () {
+      load();
+    });
+  });
+})();
+</script>
+</body></html>

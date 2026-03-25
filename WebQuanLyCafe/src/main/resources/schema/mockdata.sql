@@ -13,6 +13,7 @@ INSERT INTO users (username, password, full_name, phone) VALUES
 
 INSERT INTO staff (user_id, gender, age, is_active)
 SELECT id, 'MALE', 24, TRUE FROM users WHERE username = 'staff01';
+INSERT INTO staff (user_id, gender, age, is_active)
 SELECT id, 'FEMALE', 16, TRUE FROM users WHERE username = 'staff02';
 
 INSERT INTO admins (user_id)

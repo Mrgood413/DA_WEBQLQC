@@ -1,14 +1,19 @@
 package com.example.WebCafe.controller;
 
+import com.example.WebCafe.dto.request.AdminCategoryRequest;
 import com.example.WebCafe.dto.request.AdminProductRequest;
 import com.example.WebCafe.dto.request.RevenueQueryRequest;
+import com.example.WebCafe.dto.request.StaffShiftsUpdateRequest;
 import com.example.WebCafe.dto.request.StaffUpsertRequest;
+import com.example.WebCafe.dto.response.CategoryAdminResponse;
 import com.example.WebCafe.dto.response.ProductResponse;
 import com.example.WebCafe.dto.response.RevenueDashboardResponse;
+import com.example.WebCafe.dto.response.ShiftResponse;
 import com.example.WebCafe.dto.response.StaffListResponse;
 import com.example.WebCafe.service.AdminService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -63,15 +68,42 @@ public class AdminController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@GetMapping("/categories")
+	public List<CategoryAdminResponse> listCategories() {
+		return adminService.listCategories();
+	}
+
+	@PostMapping("/categories")
+	public ResponseEntity<CategoryAdminResponse> createCategory(@Valid @RequestBody AdminCategoryRequest request) {
+		CategoryAdminResponse body = adminService.createCategory(request);
+		return ResponseEntity.status(HttpStatus.CREATED).body(body);
+	}
+
+	@PutMapping("/categories/{id}")
+	public CategoryAdminResponse updateCategory(@PathVariable Integer id, @Valid @RequestBody AdminCategoryRequest request) {
+		return adminService.updateCategory(id, request);
+	}
+
+	@DeleteMapping("/categories/{id}")
+	public ResponseEntity<Void> deleteCategory(@PathVariable Integer id) {
+		adminService.deleteCategory(id);
+		return ResponseEntity.noContent().build();
+	}
+
+	@GetMapping("/shifts")
+	public List<ShiftResponse> listShifts() {
+		return adminService.listShiftDefinitions();
+	}
+
 	@GetMapping("/staff")
 	public List<StaffListResponse> listStaff() {
 		return adminService.listStaff();
 	}
 
 	@PostMapping("/staff")
-	public ResponseEntity<Void> createStaff(@Valid @RequestBody StaffUpsertRequest request) {
-		adminService.createStaff(request);
-		return ResponseEntity.noContent().build();
+	public ResponseEntity<StaffListResponse> createStaff(@Valid @RequestBody StaffUpsertRequest request) {
+		StaffListResponse body = adminService.createStaff(request);
+		return ResponseEntity.status(HttpStatus.CREATED).body(body);
 	}
 
 	@PutMapping("/staff/{userId}")
@@ -83,6 +115,18 @@ public class AdminController {
 	@DeleteMapping("/staff/{userId}")
 	public ResponseEntity<Void> deleteStaff(@PathVariable Integer userId) {
 		adminService.deleteStaff(userId);
+		return ResponseEntity.noContent().build();
+	}
+
+	@GetMapping("/staff/{userId}/shifts")
+	public List<Integer> getStaffShifts(@PathVariable Integer userId) {
+		return adminService.getStaffShiftIds(userId);
+	}
+
+	@PutMapping("/staff/{userId}/shifts")
+	public ResponseEntity<Void> replaceStaffShifts(@PathVariable Integer userId,
+			@RequestBody StaffShiftsUpdateRequest request) {
+		adminService.replaceStaffShifts(userId, request != null ? request : new StaffShiftsUpdateRequest(List.of()));
 		return ResponseEntity.noContent().build();
 	}
 

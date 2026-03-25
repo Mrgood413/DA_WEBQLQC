@@ -15,4 +15,9 @@ public class AdminPageController {
 	public String adminCategoryPage() {
 		return "admin_category";
 	}
+
+	@GetMapping("/admin/staff")
+	public String adminStaffPage() {
+		return "admin_staff";
+	}
 }

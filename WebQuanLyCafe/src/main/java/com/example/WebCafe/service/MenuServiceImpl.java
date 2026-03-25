@@ -22,6 +22,13 @@ public class MenuServiceImpl implements MenuService {
 	@Transactional(readOnly = true)
 	public List<ProductResponse> listMenuItems() {
 		return productRepository.findByAvailableTrueOrderByNameAsc().stream()
+				.filter(p -> {
+					Category c = p.getCategory();
+					if (c == null) {
+						return true;
+					}
+					return !Boolean.TRUE.equals(c.getHidden());
+				})
 				.map(this::toResponse)
 				.toList();
 	}
