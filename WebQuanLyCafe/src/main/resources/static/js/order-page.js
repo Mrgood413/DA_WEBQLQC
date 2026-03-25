@@ -142,6 +142,21 @@
 		});
 	}
 
+	function syncMilestoneInteractivity(cart) {
+		var milestones = getMilestones();
+		// Khách không được bấm milestone (UI chỉ cập nhật qua staff event/polling).
+		var lock = true;
+		milestones.forEach(function (m) {
+			if (!m || !m.el) return;
+			m.el.classList.toggle("pointer-events-none", lock);
+			m.el.classList.toggle("cursor-not-allowed", lock);
+			if (m.label) {
+				m.label.classList.toggle("pointer-events-none", lock);
+				m.label.classList.toggle("cursor-not-allowed", lock);
+			}
+		});
+	}
+
 	function playCancelAnimation(onComplete) {
 		var progressLine = document.getElementById("progressLine");
 		var milestones = getMilestones();
@@ -171,10 +186,7 @@
 		var hasItems = cart.items.length > 0;
 		var canAddMore = cart.status === 2 && hasItems;
 
-		button.disabled = !hasItems;
-		button.classList.toggle("opacity-50", !hasItems);
-		button.classList.toggle("cursor-not-allowed", !hasItems);
-		button.classList.remove("btn-ordered", "bg-secondary");
+		button.classList.remove("btn-ordered", "bg-secondary", "opacity-60");
 		if (addMoreBtn) {
 			addMoreBtn.disabled = !canAddMore;
 			addMoreBtn.classList.toggle("opacity-50", !canAddMore);
@@ -189,6 +201,26 @@
 				}
 			}
 		}
+
+		// Trạng thái 2/3 do nhân viên; khách không bấm nút chính (không reset milestone / giỏ).
+		if (cart.status === 2) {
+			button.disabled = true;
+			button.classList.add("opacity-60", "cursor-not-allowed");
+			button.classList.remove("opacity-50");
+			text.textContent = "ĐANG THỰC HIỆN...";
+			return;
+		}
+		if (cart.status === 3) {
+			button.disabled = true;
+			button.classList.add("opacity-60", "cursor-not-allowed");
+			button.classList.remove("opacity-50");
+			text.textContent = "ĐÃ HOÀN THÀNH";
+			return;
+		}
+
+		button.disabled = !hasItems;
+		button.classList.toggle("opacity-50", !hasItems);
+		button.classList.toggle("cursor-not-allowed", !hasItems);
 
 		if (!hasItems) {
 			text.textContent = "Chọn món ở thực đơn";
@@ -205,14 +237,6 @@
 			text.textContent = "HỦY ĐƠN";
 			return;
 		}
-
-		if (cart.status === 2) {
-			text.textContent = "ĐANG THỰC HIỆN...";
-			return;
-		}
-
-		button.classList.add("bg-secondary");
-		text.textContent = "HOÀN TẤT";
 	}
 
 	/**
@@ -246,6 +270,50 @@
 				// không làm gì, EventSource sẽ tự retry
 			};
 		} catch (err) {}
+	}
+
+	var orderStatusPollTimer = null;
+
+	function stopOrderStatusPolling() {
+		if (orderStatusPollTimer) {
+			clearInterval(orderStatusPollTimer);
+			orderStatusPollTimer = null;
+		}
+	}
+
+	function mapServerStatusToCart(status) {
+		var s = status == null ? "" : String(status);
+		if (s === "PENDING") return 1; // milestone-1
+		if (s === "PREPARING") return 2; // milestone-2
+		if (s === "DONE") return 3; // milestone-3
+		if (s === "PAID") return 3; // keep UI at DONE
+		return null;
+	}
+
+	function startOrderStatusPolling(orderId) {
+		if (!orderId) return;
+		stopOrderStatusPolling();
+		orderStatusPollTimer = setInterval(function () {
+			// Tối ưu: không cần poll khi đã ở DONE
+			var cart = window.WebCafeCart ? window.WebCafeCart.getCart() : null;
+			if (!cart) return;
+			if (cart.status >= 3) return;
+
+			apiJson("/api/customer/orders/" + orderId, { method: "GET" })
+				.then(function (res) {
+					if (!res || !res.status) return;
+					var next = mapServerStatusToCart(res.status);
+					if (next == null) return;
+					if (next !== cart.status) {
+						window.WebCafeCart.setStatus(next);
+						renderCart();
+					}
+					if (next >= 3) stopOrderStatusPolling();
+				})
+				.catch(function () {
+					// Không alert khi poll thất bại (có thể do 401 khi hết phiên)
+				});
+		}, 2500);
 	}
 
 	function changeCartItemQuantity(productId, delta) {
@@ -398,6 +466,7 @@
 
 		applyProgress(cart.status || 0);
 		updateButtonState(cart);
+		syncMilestoneInteractivity(cart);
 	}
 
 	function readStoredTableNumber() {
@@ -451,16 +520,32 @@
 
 		fetchTableNumber(renderCart);
 
+		// Chặn click milestone (khách không thao tác milestone).
+		getMilestones().forEach(function (m) {
+			if (!m || !m.el) return;
+			function blockIfLocked(e) {
+				e.preventDefault();
+				e.stopPropagation();
+			}
+			m.el.addEventListener("click", blockIfLocked);
+			if (m.label) m.label.addEventListener("click", blockIfLocked);
+		});
+
 		var storedOrderId = null;
 		try {
 			storedOrderId = parseInt(window.localStorage.getItem(ORDER_ID_KEY), 10);
 		} catch (e) {}
 		if (storedOrderId && !isNaN(storedOrderId)) {
 			subscribeOrderEvents(storedOrderId);
+			startOrderStatusPolling(storedOrderId);
 		}
 
 		mainOrderBtn.addEventListener("click", function () {
 			var cart = window.WebCafeCart.getCart();
+			// Không còn hành động "HOÀN TẤT" reset giỏ / milestone (trạng thái 2–3 do nhân viên).
+			if (cart.status === 2 || cart.status === 3) {
+				return;
+			}
 			if (!cart.items.length) {
 				window.location.href = "/menu";
 				return;
@@ -490,6 +575,7 @@
 						window.localStorage.removeItem(SENT_ITEMS_KEY);
 						window.localStorage.removeItem(MORE_SNAPSHOT_KEY);
 						window.localStorage.removeItem(ORDER_ID_KEY);
+						stopOrderStatusPolling();
 						writeMorePending(false);
 						window.WebCafeCart.setStatus(0);
 						renderCart();
@@ -497,17 +583,6 @@
 				}).catch(function (err) {
 					alert(err && err.message ? err.message : "Không thể hủy đơn");
 				});
-				return;
-			}
-
-			if (cart.status === 3) {
-				// Hoàn tất: reset toàn bộ baseline
-				window.localStorage.removeItem(SENT_ITEMS_KEY);
-				window.localStorage.removeItem(MORE_SNAPSHOT_KEY);
-				window.localStorage.removeItem(ORDER_ID_KEY);
-				writeMorePending(false);
-				window.WebCafeCart.clearCart();
-				renderCart();
 				return;
 			}
 
@@ -529,6 +604,7 @@
 					if (res && res.id != null) {
 						window.localStorage.setItem(ORDER_ID_KEY, String(res.id));
 						subscribeOrderEvents(res.id);
+						startOrderStatusPolling(res.id);
 					}
 
 					// Snapshot các món ban đầu khi đặt đơn

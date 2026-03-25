@@ -32,13 +32,16 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	private final CafeOrderRepository cafeOrderRepository;
 	private final CafeTableRepository cafeTableRepository;
 	private final ProductRepository productRepository;
+	private final StaffQueueUpdateEventService staffQueueUpdateEventService;
 
 	public CustomerOrderServiceImpl(CafeOrderRepository cafeOrderRepository,
 			CafeTableRepository cafeTableRepository,
-			ProductRepository productRepository) {
+			ProductRepository productRepository,
+			StaffQueueUpdateEventService staffQueueUpdateEventService) {
 		this.cafeOrderRepository = cafeOrderRepository;
 		this.cafeTableRepository = cafeTableRepository;
 		this.productRepository = productRepository;
+		this.staffQueueUpdateEventService = staffQueueUpdateEventService;
 	}
 
 	private Integer getTableNumber(HttpSession session) {
@@ -174,6 +177,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		}
 
 		CafeOrder saved = cafeOrderRepository.save(o);
+		staffQueueUpdateEventService.emitQueueUpdated();
 		return toDetail(saved);
 	}
 
@@ -214,6 +218,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		}
 
 		CafeOrder saved = cafeOrderRepository.save(order);
+		staffQueueUpdateEventService.emitQueueUpdated();
 		return toDetail(saved);
 	}
 
@@ -231,5 +236,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Không thể hủy đơn lúc này");
 		}
 		cafeOrderRepository.delete(o);
+		staffQueueUpdateEventService.emitQueueUpdated();
 	}
 }

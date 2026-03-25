@@ -13,6 +13,7 @@ INSERT INTO users (username, password, full_name, phone) VALUES
 
 INSERT INTO staff (user_id, gender, age, is_active)
 SELECT id, 'MALE', 24, TRUE FROM users WHERE username = 'staff01';
+SELECT id, 'FEMALE', 16, TRUE FROM users WHERE username = 'staff02';
 
 INSERT INTO admins (user_id)
 SELECT id FROM users WHERE username = 'admin01';
@@ -32,12 +33,12 @@ INSERT INTO products (name, description, price, image_url, quantity, is_availabl
 ('Latte', 'Espresso và sữa tươi, lớp sữa mịn', 45000.00, 'https://images.unsplash.com/photo-1509042239860-f550ce710b93', 120, TRUE, 1),
 ('Bạc xỉu', 'Cà phê sữa ít đá, vị ngọt vừa', 32000.00, 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735', 180, TRUE, 1),
 ('Trà đào cam sả', 'Trà đen, đào, cam, sả', 39000.00, 'https://images.unsplash.com/photo-1556679343-c7306c1976bc', 100, TRUE, 2),
-('Trà sữa ô long', 'Ô long, sữa, trân châu', 42000.00, 'https://images.unsplash.com/photo-1558857563-c0c9d9a8e7d7', 90, TRUE, 2),
+('Trà sữa ô long', 'Ô long, sữa, trân châu', 42000.00, 'https://images.unsplash.com/photo-1743310835056-5c6b110158be?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 90, TRUE, 2),
 ('Trà matcha latte', 'Matcha Nhật, sữa', 48000.00, 'https://images.unsplash.com/photo-1515823064-d6e0c04616a7', 80, TRUE, 2),
 ('Croissant bơ', 'Bánh sừng bò Pháp', 35000.00, 'https://images.unsplash.com/photo-1509440159596-0249088772ff', 50, TRUE, 3),
 ('Tiramisu', 'Bánh tiramisu cổ điển', 55000.00, 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9', 40, TRUE, 3),
 ('Cold brew', 'Cà phê ủ lạnh 12h', 40000.00, 'https://images.unsplash.com/photo-1461988320302-91bde64fc8e4', 70, TRUE, 4),
-('Nước cam ép', 'Cam tươi ép', 35000.00, 'https://images.unsplash.com/photo-1571689930408-1bde7a67cfd1', 60, TRUE, 4);
+('Nước cam ép', 'Cam tươi ép', 35000.00, 'https://images.unsplash.com/photo-1631018572225-67bec2d7aa38?q=80&w=686&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 60, TRUE, 4);
 
 -- ========== Bàn (cafe_tables) ==========
 INSERT INTO cafe_tables (table_number, status) VALUES

@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.time.LocalDateTime;
@@ -35,17 +36,20 @@ public class StaffServiceImpl implements StaffService {
 	private final CafeOrderRepository cafeOrderRepository;
 	private final PaymentRepository paymentRepository;
 	private final OrderMilestoneEventService orderMilestoneEventService;
+	private final StaffQueueUpdateEventService staffQueueUpdateEventService;
 
 	public StaffServiceImpl(ProductRepository productRepository,
 			CategoryRepository categoryRepository,
 			CafeOrderRepository cafeOrderRepository,
 			PaymentRepository paymentRepository,
-			OrderMilestoneEventService orderMilestoneEventService) {
+			OrderMilestoneEventService orderMilestoneEventService,
+			StaffQueueUpdateEventService staffQueueUpdateEventService) {
 		this.productRepository = productRepository;
 		this.categoryRepository = categoryRepository;
 		this.cafeOrderRepository = cafeOrderRepository;
 		this.paymentRepository = paymentRepository;
 		this.orderMilestoneEventService = orderMilestoneEventService;
+		this.staffQueueUpdateEventService = staffQueueUpdateEventService;
 	}
 
 	@Override
@@ -120,17 +124,21 @@ public class StaffServiceImpl implements StaffService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<OrderQueueResponse> listQueue() {
-		return cafeOrderRepository.findAll().stream()
-				.filter(o -> o.getStatus() == OrderStatus.PENDING
-						|| o.getStatus() == OrderStatus.PREPARING
-						|| o.getStatus() == OrderStatus.DONE
-						|| o.getStatus() == OrderStatus.PAID)
-				.sorted(Comparator.comparing(CafeOrder::getId).reversed())
+		Collection<OrderStatus> statuses = List.of(
+				OrderStatus.PENDING,
+				OrderStatus.PREPARING,
+				OrderStatus.DONE,
+				OrderStatus.PAID
+		);
+		// Join fetch để tránh N+1 khi render queue.
+		return cafeOrderRepository.findQueueOrdersWithDetails(statuses)
+				.stream()
 				.map(this::toQueue)
 				.toList();
 	}
 
 	@Override
+	@Transactional
 	public void confirmOrder(Integer orderId) {
 		CafeOrder o = cafeOrderRepository.findById(orderId)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy order"));
@@ -151,9 +159,11 @@ public class StaffServiceImpl implements StaffService {
 		o.setStatus(next);
 		cafeOrderRepository.save(o);
 		orderMilestoneEventService.emitMilestone(orderId, milestone);
+		staffQueueUpdateEventService.emitQueueUpdated();
 	}
 
 	@Override
+	@Transactional
 	public void recordPayment(Integer orderId, PaymentRequest request) {
 		CafeOrder o = cafeOrderRepository.findById(orderId)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy order"));
@@ -176,6 +186,7 @@ public class StaffServiceImpl implements StaffService {
 
 		o.setStatus(OrderStatus.PAID);
 		cafeOrderRepository.save(o);
+		staffQueueUpdateEventService.emitQueueUpdated();
 	}
 
 	private OrderQueueResponse toQueue(CafeOrder o) {

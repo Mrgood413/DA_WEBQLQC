@@ -7,6 +7,7 @@ import com.example.WebCafe.dto.response.CategoryOptionResponse;
 import com.example.WebCafe.dto.response.OrderQueueResponse;
 import com.example.WebCafe.dto.response.ProductResponse;
 import com.example.WebCafe.service.StaffService;
+import com.example.WebCafe.service.StaffQueueUpdateEventService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 
@@ -28,9 +30,11 @@ import java.util.List;
 public class StaffController {
 
 	private final StaffService staffService;
+	private final StaffQueueUpdateEventService staffQueueUpdateEventService;
 
-	public StaffController(StaffService staffService) {
+	public StaffController(StaffService staffService, StaffQueueUpdateEventService staffQueueUpdateEventService) {
 		this.staffService = staffService;
+		this.staffQueueUpdateEventService = staffQueueUpdateEventService;
 	}
 
 	@GetMapping("/products")
@@ -57,6 +61,11 @@ public class StaffController {
 	@GetMapping("/queue")
 	public List<OrderQueueResponse> queue() {
 		return staffService.listQueue();
+	}
+
+	@GetMapping("/queue/events")
+	public SseEmitter queueEvents() {
+		return staffQueueUpdateEventService.register();
 	}
 
 	@PostMapping("/orders/{orderId}/confirm")
