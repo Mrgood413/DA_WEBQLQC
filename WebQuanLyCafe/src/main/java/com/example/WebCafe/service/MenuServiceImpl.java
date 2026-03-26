@@ -37,6 +37,7 @@ public class MenuServiceImpl implements MenuService {
 		Category c = p.getCategory();
 		Integer categoryId = c != null ? c.getId() : null;
 		String categoryName = c != null ? c.getName() : null;
+		String categoryImageUrl = c != null ? c.getImageUrl() : null;
 		return new ProductResponse(
 				p.getId(),
 				p.getName(),
@@ -46,6 +47,7 @@ public class MenuServiceImpl implements MenuService {
 				p.getQuantity(),
 				p.getAvailable(),
 				categoryId,
-				categoryName);
+				categoryName,
+				categoryImageUrl);
 	}
 }

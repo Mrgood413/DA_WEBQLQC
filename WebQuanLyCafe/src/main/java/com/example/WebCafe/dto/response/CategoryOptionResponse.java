@@ -1,4 +1,4 @@
 package com.example.WebCafe.dto.response;
 
-public record CategoryOptionResponse(Integer id, String name) {
+public record CategoryOptionResponse(Integer id, String name, String imageUrl) {
 }

@@ -74,7 +74,7 @@
 					};
 				})
 				.filter(Boolean),
-			status: Math.max(0, Math.min(3, parseInt(cart.status, 10) || 0)),
+			status: Math.max(0, Math.min(4, parseInt(cart.status, 10) || 0)),
 			placedAt: cart.placedAt || null,
 			updatedAt: cart.updatedAt || null
 		};
@@ -197,13 +197,13 @@
 
 	function canEditCart() {
 		var status = readCart().status;
-		// Cho phép thêm món sau khi đơn đã được xác nhận (milestone-2).
-		return status === 0 || status === 2;
+		// Giỏ chỉnh được ở menu khi chưa gửi, hoặc khi đang pha chế / hoàn thành chưa thanh toán (gọi thêm).
+		return status === 0 || status === 2 || status === 3;
 	}
 
 	function setStatus(status) {
 		var cart = readCart();
-		cart.status = Math.max(0, Math.min(3, parseInt(status, 10) || 0));
+		cart.status = Math.max(0, Math.min(4, parseInt(status, 10) || 0));
 		if (cart.status > 0 && !cart.placedAt) {
 			cart.placedAt = nowIso();
 		}

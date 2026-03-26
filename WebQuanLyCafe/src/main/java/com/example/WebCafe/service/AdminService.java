@@ -5,6 +5,7 @@ import com.example.WebCafe.dto.request.AdminProductRequest;
 import com.example.WebCafe.dto.request.RevenueQueryRequest;
 import com.example.WebCafe.dto.request.StaffShiftsUpdateRequest;
 import com.example.WebCafe.dto.request.StaffUpsertRequest;
+import com.example.WebCafe.dto.response.AdminDashboardTodayResponse;
 import com.example.WebCafe.dto.response.CategoryAdminResponse;
 import com.example.WebCafe.dto.response.ProductResponse;
 import com.example.WebCafe.dto.response.RevenueDashboardResponse;
@@ -50,4 +51,6 @@ public interface AdminService {
 	RevenueDashboardResponse revenue(RevenueQueryRequest query);
 
 	byte[] exportRevenueExcel(RevenueQueryRequest query);
+
+	AdminDashboardTodayResponse dashboardToday();
 }

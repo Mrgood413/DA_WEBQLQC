@@ -21,10 +21,10 @@ SELECT id FROM users WHERE username = 'admin01';
 
 -- ========== Danh mục ==========
 INSERT INTO categories (name, image_url) VALUES
-('Cà phê', 'https://images.unsplash.com/photo-1517701604599-bb29b565090c'),
-('Trà', 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085'),
-('Bánh ngọt', 'https://images.unsplash.com/photo-1509042239860-f550ce710b93'),
-('Đồ uống khác', 'https://images.unsplash.com/photo-1461988320302-91bde64fc8e4');
+('Cà phê', 'https://cdn-icons-png.flaticon.com/128/16228/16228473.png'),
+('Trà', 'https://cdn-icons-png.flaticon.com/128/15150/15150965.png'),
+('Bánh ngọt', 'https://cdn-icons-png.flaticon.com/128/792/792815.png'),
+('Đồ uống khác', 'https://cdn-icons-png.flaticon.com/128/814/814644.png');
 
 -- ========== Sản phẩm ==========
 -- category_id: 1=Cà phê, 2=Trà, 3=Bánh ngọt, 4=Đồ uống khác

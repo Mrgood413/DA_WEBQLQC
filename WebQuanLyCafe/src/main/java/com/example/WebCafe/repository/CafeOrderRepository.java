@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -27,4 +28,11 @@ public interface CafeOrderRepository extends JpaRepository<CafeOrder, Integer> {
 		order by o.id desc
 	""")
 	List<CafeOrder> findQueueOrdersWithDetails(@Param("statuses") Collection<OrderStatus> statuses);
+
+	@Query("""
+		select count(o)
+		from CafeOrder o
+		where o.createdAt >= :from and o.createdAt < :to
+	""")
+	long countCreatedAtBetween(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
 }

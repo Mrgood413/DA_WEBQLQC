@@ -71,6 +71,7 @@
               'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
               'bounce-once': 'bounceOnce 0.5s cubic-bezier(0.36, 0, 0.66, -0.56) alternate',
               'glow': 'glow 1.5s ease-in-out infinite alternate',
+              'success-pulse': 'successPulse 0.8s ease-out',
             },
             keyframes: {
               fadeInUp: {
@@ -85,6 +86,11 @@
               glow: {
                 'from': { 'box-shadow': '0 0 5px rgba(27, 109, 36, 0.2), 0 0 10px rgba(27, 109, 36, 0.1)' },
                 'to': { 'box-shadow': '0 0 15px rgba(27, 109, 36, 0.6), 0 0 25px rgba(27, 109, 36, 0.4)' }
+              },
+              successPulse: {
+                '0%': { transform: 'scale(1)', 'box-shadow': '0 0 0 0 rgba(27, 109, 36, 0.7)' },
+                '70%': { transform: 'scale(1.1)', 'box-shadow': '0 0 0 20px rgba(27, 109, 36, 0)' },
+                '100%': { transform: 'scale(1)', 'box-shadow': '0 0 0 0 rgba(27, 109, 36, 0)' }
               }
             }
           },
@@ -168,33 +174,40 @@
 </div>
 <div class="bg-surface-container-high rounded-2xl p-6 md:p-8 relative overflow-hidden shadow-sm animate-card delay-1">
 <!-- Progress Bar -->
-<div class="relative mb-16 mt-4">
+<div class="relative mb-20 mt-4">
 <!-- Progress Container -->
 <div class="absolute top-1/2 left-0 right-0 h-1 bg-surface-variant -translate-y-1/2 rounded-full overflow-hidden">
 <!-- Dynamic Progress Line -->
 <div class="h-full bg-secondary w-0 progress-line-animate" id="progressLine"></div>
 </div>
-<div class="relative flex justify-between items-center px-6">
+<div class="relative flex justify-between items-center px-2 md:px-4">
 <!-- Step 1: Xác nhận đơn -->
-<div class="flex flex-col items-center">
+<div class="flex flex-col items-center relative">
 <div class="w-10 h-10 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center shadow-lg z-10 transition-all duration-300" id="milestone-1">
 <span class="material-symbols-outlined text-lg">check_circle</span>
 </div>
-<span class="absolute top-12 text-[10px] font-bold uppercase tracking-tight opacity-40 whitespace-nowrap milestone-label transition-all duration-300">Xác nhận đơn</span>
+<span class="absolute top-12 text-[9px] md:text-[10px] font-bold uppercase tracking-tight opacity-40 whitespace-nowrap milestone-label transition-all duration-300 text-center max-w-[4.5rem] md:max-w-none">Xác nhận đơn</span>
 </div>
 <!-- Step 2: Đang chuẩn bị -->
-<div class="flex flex-col items-center">
+<div class="flex flex-col items-center relative">
 <div class="w-10 h-10 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center shadow-lg z-10 transition-all duration-300" id="milestone-2">
 <span class="material-symbols-outlined text-lg">restaurant</span>
 </div>
-<span class="absolute top-12 text-[10px] font-bold uppercase tracking-tight opacity-40 whitespace-nowrap milestone-label transition-all duration-300">Đang chuẩn bị</span>
+<span class="absolute top-12 text-[9px] md:text-[10px] font-bold uppercase tracking-tight opacity-40 whitespace-nowrap milestone-label transition-all duration-300 text-center max-w-[4.5rem] md:max-w-none">Đang chuẩn bị</span>
 </div>
 <!-- Step 3: Hoàn thành -->
-<div class="flex flex-col items-center">
+<div class="flex flex-col items-center relative">
 <div class="w-10 h-10 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center shadow-lg z-10 transition-all duration-300" id="milestone-3">
 <span class="material-symbols-outlined text-lg">celebration</span>
 </div>
-<span class="absolute top-12 text-[10px] font-bold uppercase tracking-tight opacity-40 whitespace-nowrap milestone-label transition-all duration-300">Hoàn thành</span>
+<span class="absolute top-12 text-[9px] md:text-[10px] font-bold uppercase tracking-tight opacity-40 whitespace-nowrap milestone-label transition-all duration-300 text-center max-w-[4.5rem] md:max-w-none">Hoàn thành</span>
+</div>
+<!-- Step 4: Đã thanh toán -->
+<div class="flex flex-col items-center relative">
+<div class="w-10 h-10 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center shadow-lg z-10 transition-all duration-300" id="milestone-4">
+<span class="material-symbols-outlined text-lg">payments</span>
+</div>
+<span class="absolute top-12 text-[9px] md:text-[10px] font-bold uppercase tracking-tight opacity-40 whitespace-nowrap milestone-label transition-all duration-300 text-center max-w-[4.5rem] md:max-w-none">Đã thanh toán</span>
 </div>
 </div>
 </div>
@@ -219,28 +232,20 @@
 <span class="material-symbols-outlined">add_circle</span>
 <span id="add-more-btn-text">Gọi thêm</span>
             </button>
-<p class="text-[10px] text-center text-on-surface-variant italic">Không thể hủy đơn sau khi barista đã bắt đầu thực hiện.</p>
+<p class="text-[10px] text-center text-on-surface-variant italic">Sau khi đã thanh toán, không thể gọi thêm món. Không thể hủy đơn sau khi barista đã bắt đầu thực hiện.</p>
 </div>
 </section>
 </main>
-<!-- Bottom Navigation Bar (Mobile) -->
-<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 lg:hidden bg-white/80 dark:bg-[#1e1c0e]/80 backdrop-blur-xl border-t border-outline-variant/10 font-inter text-[10px] font-medium uppercase tracking-tighter animate-card delay-4">
-<a class="flex flex-col items-center justify-center text-on-surface-variant p-3 active:scale-90 duration-200" href="/menu">
-<span class="material-symbols-outlined mb-1">menu_book</span>
-<span>Thực đơn</span>
-</a>
-<div class="flex flex-col items-center justify-center bg-primary text-on-primary rounded-2xl p-3 mb-1 active:scale-90 duration-200 shadow-md">
-<div class="relative">
-<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">shopping_bag</span>
-<span id="mobile-cart-count" class="absolute -top-1 -right-2 bg-secondary text-on-secondary text-[8px] px-1 rounded-full font-bold">0</span>
+<footer class="w-full py-8 px-6 flex flex-col md:flex-row justify-between items-center gap-4 bg-[#f5eed7] dark:bg-[#271310] text-[#3e2723] dark:text-[#f5eed7] font-['Inter'] text-sm font-medium animate-card delay-4">
+<div class="flex gap-6 items-center">
+<span class="opacity-70">© 2024 The Artisanal Ledger</span>
+<div class="flex gap-4">
+<a class="opacity-70 hover:underline hover:text-[#271310] dark:hover:text-white transition-opacity duration-300" href="#">Privacy Policy</a>
+<a class="opacity-70 hover:underline hover:text-[#271310] dark:hover:text-white transition-opacity duration-300" href="#">Contact Support</a>
 </div>
-<span>Giỏ hàng</span>
 </div>
-<div class="flex flex-col items-center justify-center text-on-surface-variant p-3 active:scale-90 duration-200">
-<span class="material-symbols-outlined mb-1">person</span>
-<span>Cá nhân</span>
-</div>
-</nav>
+</footer>
+<script src="/js/customer-session.js"></script>
 <script src="/js/cart-store.js"></script>
 <script src="/js/order-page.js"></script>
 </body></html>

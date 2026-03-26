@@ -69,6 +69,18 @@
 		return names;
 	}
 
+	function getCategoryImageByName(name) {
+		var target = String(name || "").trim();
+		if (!target) return "";
+		for (var i = 0; i < allProducts.length; i += 1) {
+			var p = allProducts[i];
+			if ((p.categoryName || "").trim() === target && p.categoryImageUrl) {
+				return String(p.categoryImageUrl).trim();
+			}
+		}
+		return "";
+	}
+
 	function filteredProducts() {
 		return allProducts.filter(function (p) {
 			if (activeCategory !== "all" && (p.categoryName || "") !== activeCategory) return false;
@@ -286,11 +298,19 @@
 					? "bg-secondary-container text-on-secondary-container font-semibold"
 					: "text-on-surface hover:bg-surface-container font-medium");
 			button.setAttribute("data-cat", item.value);
-			button.innerHTML = item.value === "all"
-				? '<span class="material-symbols-outlined text-lg">grid_view</span><span class="truncate">' +
-				  escapeHtml(item.name) +
-				  "</span>"
-				: '<span class="truncate">' + escapeHtml(item.name) + "</span>";
+			if (item.value === "all") {
+				button.innerHTML =
+					'<span class="material-symbols-outlined text-lg">grid_view</span><span class="truncate">' +
+					escapeHtml(item.name) +
+					"</span>";
+			} else {
+				var iconUrl = getCategoryImageByName(item.name);
+				button.innerHTML =
+					(iconUrl
+						? '<img src="' + escapeHtml(iconUrl) + '" alt="" class="w-6 h-6 rounded-full object-cover bg-surface-container shrink-0"/>'
+						: '<span class="material-symbols-outlined text-lg">category</span>') +
+					'<span class="truncate">' + escapeHtml(item.name) + "</span>";
+			}
 			button.addEventListener("click", function () {
 				activeCategory = item.value;
 				renderCategories();
@@ -313,6 +333,7 @@
 	}
 
 	document.addEventListener("DOMContentLoaded", function () {
+		function bootMenuPage() {
 		var searchInput = document.getElementById("menu-search-input");
 		var cartButton = document.getElementById("cart-summary-button");
 
@@ -357,5 +378,15 @@
 				document.getElementById("menu-loading").classList.add("hidden");
 				showError(e.message || "Lỗi mạng");
 			});
+		}
+
+		var sessionPromise = window.WebCafeCustomerSession && window.WebCafeCustomerSession.ensure
+			? window.WebCafeCustomerSession.ensure()
+			: Promise.resolve();
+		sessionPromise.then(function () {
+			bootMenuPage();
+		}).catch(function () {
+			bootMenuPage();
+		});
 	});
 })();

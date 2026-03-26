@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html class="light" lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin Dashboard - The Artisanal Ledger</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary": "#ffffff",
+              "on-secondary-container": "#217128",
+              "outline": "#827472",
+              "on-tertiary": "#ffffff",
+              "on-error-container": "#93000a",
+              "on-tertiary-container": "#ae8d81",
+              "on-surface-variant": "#504442",
+              "on-secondary-fixed-variant": "#005312",
+              "primary": "#271310",
+              "tertiary": "#27130b",
+              "error-container": "#ffdad6",
+              "tertiary-fixed-dim": "#e4beb2",
+              "surface-container": "#f5eed7",
+              "on-error": "#ffffff",
+              "primary-fixed": "#ffdad4",
+              "inverse-surface": "#333121",
+              "surface-variant": "#e9e2cc",
+              "secondary-fixed-dim": "#88d982",
+              "on-primary-fixed-variant": "#5b403c",
+              "secondary-fixed": "#a3f69c",
+              "tertiary-fixed": "#ffdbce",
+              "on-tertiary-fixed-variant": "#5b4137",
+              "surface-container-low": "#faf4dd",
+              "background": "#fff9ea",
+              "on-primary-container": "#ae8d87",
+              "surface-bright": "#fff9ea",
+              "primary-container": "#3e2723",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-high": "#efe8d2",
+              "outline-variant": "#d3c3c0",
+              "on-primary-fixed": "#2b1613",
+              "primary-fixed-dim": "#e3beb8",
+              "inverse-primary": "#e3beb8",
+              "on-tertiary-fixed": "#2b160f",
+              "surface": "#fff9ea",
+              "tertiary-container": "#3e271e",
+              "on-surface": "#1e1c0e",
+              "secondary-container": "#a0f399",
+              "surface-tint": "#745853",
+              "secondary": "#1b6d24",
+              "on-secondary": "#ffffff",
+              "inverse-on-surface": "#f8f1da",
+              "error": "#ba1a1a",
+              "surface-container-highest": "#e9e2cc",
+              "on-secondary-fixed": "#002204",
+              "on-background": "#1e1c0e",
+              "surface-dim": "#e0dac4"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            animation: {
+              "fade-in-up": "fadeInUp 0.6s ease-out forwards"
+            },
+            keyframes: {
+              fadeInUp: {
+                "0%": { opacity: "0", transform: "translateY(20px)" },
+                "100%": { opacity: "1", transform: "translateY(0)" }
+              }
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: "Inter", sans-serif; background-color: #fff9ea; color: #1e1c0e; }
+        .material-symbols-outlined { font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24; }
+        .font-headline { font-family: "Manrope", sans-serif; }
+        .animate-fade-in-up { opacity: 0; }
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+        .delay-400 { animation-delay: 400ms; }
+    </style>
+</head>
+<body class="min-h-screen">
+<aside class="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 border-r-0 bg-[#f5eed7] py-6 z-50 animate-fade-in-up">
+<div class="px-6 mb-10">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined">coffee</span>
+</div>
+<div>
+<h1 class="font-manrope font-bold text-lg text-[#271310]">Artisanal Ledger</h1>
+<p class="text-[10px] uppercase tracking-widest opacity-60">Staff Portal</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center px-4 py-3 mx-2 bg-[#ffffff] text-[#271310] rounded-full shadow-sm" href="/admin/dashboard">
+<span class="material-symbols-outlined mr-3" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-medium text-sm">Dashboard</span>
+</a>
+<a class="flex items-center px-4 py-3 mx-2 text-[#3e2723]/70 hover:text-[#271310] hover:bg-[#ffffff]/50 rounded-full transition-all duration-200" href="/admin/category">
+<span class="material-symbols-outlined mr-3">category</span>
+<span class="font-medium text-sm">Categories</span>
+</a>
+<a class="flex items-center px-4 py-3 mx-2 text-[#3e2723]/70 hover:text-[#271310] hover:bg-[#ffffff]/50 rounded-full transition-all duration-200" href="/admin/staff">
+<span class="material-symbols-outlined mr-3">group</span>
+<span class="font-medium text-sm">Staff</span>
+</a>
+<a class="flex items-center px-4 py-3 mx-2 text-[#3e2723]/70 hover:text-[#271310] hover:bg-[#ffffff]/50 rounded-full transition-all duration-200" href="/admin/revenue">
+<span class="material-symbols-outlined mr-3">payments</span>
+<span class="font-medium text-sm">Revenue</span>
+</a>
+</nav>
+<div class="mt-auto px-2 space-y-1">
+<div class="px-4 py-2 mb-1">
+<p class="text-[10px] uppercase tracking-wider opacity-60">Đăng nhập</p>
+<p id="current-user-fullname" class="text-sm font-semibold text-[#271310] truncate" title="">—</p>
+</div>
+<button type="button" id="admin-logout" class="flex items-center w-full px-4 py-3 text-[#3e2723]/70 hover:text-[#271310] hover:bg-[#ffffff]/50 rounded-full transition-all text-left">
+<span class="material-symbols-outlined mr-3">logout</span>
+<span class="font-medium text-sm">Logout</span>
+</button>
+</div>
+</aside>
+
+<main class="md:ml-64 min-h-screen">
+<header class="bg-[#fff9ea] flex justify-between items-center w-full px-6 md:px-8 py-4 sticky top-0 z-40 animate-fade-in-up delay-100">
+<div class="flex items-center gap-6">
+<h2 class="text-xl font-bold text-[#271310] tracking-tight font-manrope">Dashboard Hôm Nay</h2>
+</div>
+<button type="button" id="btn-refresh-dashboard" class="flex items-center gap-2 px-4 py-2 rounded-lg border border-outline-variant/30 text-sm font-semibold hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined text-lg">refresh</span>
+Làm mới
+</button>
+</header>
+
+<section class="p-6 md:p-8 space-y-6">
+<p id="dashboard-error" class="hidden text-sm text-error" role="alert"></p>
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/20 p-6 animate-fade-in-up delay-500">
+<h3 class="text-lg font-headline font-bold text-primary mb-2">Nhân viên có ca trong ngày</h3>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="text-on-surface-variant text-[10px] font-bold uppercase tracking-widest">
+<tr>
+<th class="py-3 pr-2">STT</th>
+<th class="py-3 pr-2">Nhân viên</th>
+<th class="py-3 pr-2">SĐT</th>
+<th class="py-3 pr-2">Tuổi</th>
+<th class="py-3 pr-2">Giới tính</th>
+<th class="py-3 pr-2">Ca hôm nay</th>
+</tr>
+</thead>
+<tbody id="staff-today-tbody" class="text-sm">
+<tr><td colspan="6" class="py-10 text-center text-on-surface-variant">Đang tải...</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/20 p-6 animate-fade-in-up delay-400">
+<h3 class="text-lg font-headline font-bold text-primary mb-2">Ghi chú dữ liệu</h3>
+<p class="text-sm text-on-surface-variant">
+Dữ liệu lấy từ API <code>/api/admin/dashboard/today</code>.
+</p>
+</div>
+</section>
+</main>
+
+<script>
+(function () {
+  function setUser() {
+    fetch("/api/auth/me", { credentials: "same-origin" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        var el = document.getElementById("current-user-fullname");
+        if (!el || !data) return;
+        var name = data.fullName && String(data.fullName).trim() ? String(data.fullName).trim() : (data.username || "—");
+        el.textContent = name;
+        el.setAttribute("title", name);
+      });
+  }
+
+  function render(data) {
+    renderStaffToday(Array.isArray(data.staffToday) ? data.staffToday : []);
+  }
+
+  function renderStaffToday(list) {
+    var tbody = document.getElementById("staff-today-tbody");
+    if (!tbody) return;
+    if (!Array.isArray(list) || list.length === 0) {
+      tbody.innerHTML =
+        '<tr><td colspan="6" class="py-10 text-center text-on-surface-variant">Chưa có nhân viên được gán ca trong ngày hôm nay.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = list
+      .map(function (row, idx) {
+        var fullName = row.fullName || "—";
+        var phone = row.phone || "—";
+        var age = row.age != null ? String(row.age) : "—";
+        var gender = row.gender || "—";
+        var shiftLabels = Array.isArray(row.shiftLabels) ? row.shiftLabels.join(", ") : "";
+        if (!shiftLabels) shiftLabels = "—";
+        return (
+          '<tr class="border-b border-outline-variant/5 hover:bg-surface-container-lowest/50">' +
+          '<td class="py-4 pr-2 text-on-surface-variant">' +
+          String(idx + 1) +
+          "</td>" +
+          '<td class="py-4 pr-2 font-medium text-primary">' +
+          fullName +
+          "</td>" +
+          '<td class="py-4 pr-2">' +
+          phone +
+          "</td>" +
+          '<td class="py-4 pr-2">' +
+          age +
+          "</td>" +
+          '<td class="py-4 pr-2">' +
+          gender +
+          "</td>" +
+          '<td class="py-4 pr-2">' +
+          shiftLabels +
+          "</td>" +
+          "</tr>"
+        );
+      })
+      .join("");
+  }
+
+  function loadDashboard() {
+    var err = document.getElementById("dashboard-error");
+    err.classList.add("hidden");
+    err.textContent = "";
+    fetch("/api/admin/dashboard/today", { credentials: "same-origin" })
+      .then(function (r) {
+        if (r.status === 401 || r.status === 403) {
+          window.location.href = "/login";
+          return null;
+        }
+        if (!r.ok) throw new Error("API dashboard chưa sẵn sàng");
+        return r.json();
+      })
+      .then(function (data) {
+        if (!data) return;
+        render(data);
+      })
+      .catch(function () {
+        render({ activeStaffCount: 0, ordersToday: 0, revenueToday: 0 });
+        err.textContent = "Chưa tải được dữ liệu dashboard. Có thể API /api/admin/dashboard/today chưa được triển khai.";
+        err.classList.remove("hidden");
+      });
+  }
+
+  document.getElementById("btn-refresh-dashboard").addEventListener("click", loadDashboard);
+  document.getElementById("admin-logout").addEventListener("click", function () {
+    fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" })
+      .then(function () { window.location.href = "/login"; })
+      .catch(function () { window.location.href = "/login"; });
+  });
+
+  setUser();
+  loadDashboard();
+})();
+</script>
+</body>
+</html>

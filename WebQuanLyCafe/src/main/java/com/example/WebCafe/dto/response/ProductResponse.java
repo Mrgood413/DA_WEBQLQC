@@ -11,6 +11,7 @@ public record ProductResponse(
 		Integer quantity,
 		Boolean available,
 		Integer categoryId,
-		String categoryName
+		String categoryName,
+		String categoryImageUrl
 ) {
 }

@@ -82,7 +82,7 @@ public class StaffServiceImpl implements StaffService {
 	public List<CategoryOptionResponse> listCategories() {
 		return categoryRepository.findAll().stream()
 				.sorted(Comparator.comparing(Category::getName))
-				.map(c -> new CategoryOptionResponse(c.getId(), c.getName()))
+				.map(c -> new CategoryOptionResponse(c.getId(), c.getName(), c.getImageUrl()))
 				.toList();
 	}
 
@@ -230,6 +230,7 @@ public class StaffServiceImpl implements StaffService {
 
 		o.setStatus(OrderStatus.PAID);
 		cafeOrderRepository.save(o);
+		orderMilestoneEventService.emitMilestone(orderId, 4);
 		staffQueueUpdateEventService.emitQueueUpdated();
 	}
 
@@ -282,6 +283,7 @@ public class StaffServiceImpl implements StaffService {
 		Category c = p.getCategory();
 		Integer categoryId = c != null ? c.getId() : null;
 		String categoryName = c != null ? c.getName() : null;
+		String categoryImageUrl = c != null ? c.getImageUrl() : null;
 		return new ProductResponse(
 				p.getId(),
 				p.getName(),
@@ -291,6 +293,7 @@ public class StaffServiceImpl implements StaffService {
 				p.getQuantity(),
 				p.getAvailable(),
 				categoryId,
-				categoryName);
+				categoryName,
+				categoryImageUrl);
 	}
 }

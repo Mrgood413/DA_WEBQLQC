@@ -5,6 +5,8 @@ import com.example.WebCafe.dto.request.AdminProductRequest;
 import com.example.WebCafe.dto.request.RevenueQueryRequest;
 import com.example.WebCafe.dto.request.StaffShiftsUpdateRequest;
 import com.example.WebCafe.dto.request.StaffUpsertRequest;
+import com.example.WebCafe.dto.response.AdminDashboardTodayResponse;
+import com.example.WebCafe.dto.response.AdminStaffShiftTodayRow;
 import com.example.WebCafe.dto.response.CategoryAdminResponse;
 import com.example.WebCafe.dto.response.ProductResponse;
 import com.example.WebCafe.dto.response.RevenueByProductRow;
@@ -22,6 +24,8 @@ import com.example.WebCafe.model.enums.ShiftTime;
 import com.example.WebCafe.model.enums.Weekday;
 import com.example.WebCafe.repository.AdminRepository;
 import com.example.WebCafe.repository.CategoryRepository;
+import com.example.WebCafe.repository.CafeOrderRepository;
+import com.example.WebCafe.repository.PaymentRepository;
 import com.example.WebCafe.repository.ProductRepository;
 import com.example.WebCafe.repository.ShiftRepository;
 import com.example.WebCafe.repository.StaffRepository;
@@ -35,7 +39,13 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -48,11 +58,13 @@ public class AdminServiceImpl implements AdminService {
 	private final PasswordEncoder passwordEncoder;
 	private final ShiftRepository shiftRepository;
 	private final StaffShiftRepository staffShiftRepository;
+	private final CafeOrderRepository cafeOrderRepository;
+	private final PaymentRepository paymentRepository;
 
 	public AdminServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository,
 			StaffRepository staffRepository, UserRepository userRepository, AdminRepository adminRepository,
-			PasswordEncoder passwordEncoder, ShiftRepository shiftRepository,
-			StaffShiftRepository staffShiftRepository) {
+			PasswordEncoder passwordEncoder, ShiftRepository shiftRepository, StaffShiftRepository staffShiftRepository,
+			CafeOrderRepository cafeOrderRepository, PaymentRepository paymentRepository) {
 		this.productRepository = productRepository;
 		this.categoryRepository = categoryRepository;
 		this.staffRepository = staffRepository;
@@ -61,6 +73,8 @@ public class AdminServiceImpl implements AdminService {
 		this.passwordEncoder = passwordEncoder;
 		this.shiftRepository = shiftRepository;
 		this.staffShiftRepository = staffShiftRepository;
+		this.cafeOrderRepository = cafeOrderRepository;
+		this.paymentRepository = paymentRepository;
 	}
 
 	@Override
@@ -270,6 +284,71 @@ public class AdminServiceImpl implements AdminService {
 		throw new UnsupportedOperationException("Xuất Excel — triển khai ở bước service tiếp theo");
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public AdminDashboardTodayResponse dashboardToday() {
+		LocalDate today = LocalDate.now();
+		Weekday weekday = Weekday.valueOf(today.getDayOfWeek().name());
+		LocalDateTime from = today.atStartOfDay();
+		LocalDateTime to = from.plusDays(1);
+
+		// Nhân viên có ca trong ngày hôm nay
+		var staffShifts = staffShiftRepository.findByShiftDayOfWeek(weekday);
+		Map<Integer, Staff> staffById = new LinkedHashMap<>();
+		Map<Integer, Set<ShiftTime>> shiftTimesByStaffId = new LinkedHashMap<>();
+
+		for (var ss : staffShifts) {
+			if (ss == null || ss.getStaff() == null || ss.getShift() == null) continue;
+			Staff staff = ss.getStaff();
+			// Chỉ tính nhân viên đang hoạt động
+			if (Boolean.FALSE.equals(staff.getActive())) continue;
+			Integer staffId = staff.getUserId();
+			if (staffId == null) continue;
+			staffById.putIfAbsent(staffId, staff);
+			shiftTimesByStaffId.computeIfAbsent(staffId, k -> new HashSet<>()).add(ss.getShift().getShiftTime());
+		}
+
+		List<AdminStaffShiftTodayRow> staffToday = shiftTimesByStaffId.entrySet().stream()
+				.map(e -> {
+					Integer staffId = e.getKey();
+					Staff staff = staffById.get(staffId);
+					var user = staff != null ? staff.getUser() : null;
+					Set<ShiftTime> times = e.getValue();
+
+					var labels = times.stream()
+							.sorted(Comparator.comparingInt(ShiftTime::ordinal))
+							.map(this::shiftLabelVi)
+							.toList();
+
+					return new AdminStaffShiftTodayRow(
+							staffId,
+							user != null ? user.getUsername() : null,
+							user != null ? user.getFullName() : null,
+							user != null ? user.getPhone() : null,
+							staff != null ? staff.getAge() : null,
+							staff != null && staff.getGender() != null ? staff.getGender().name() : null,
+							staff != null ? staff.getActive() : null,
+							labels);
+				})
+				.toList();
+
+		long activeStaffCount = staffToday.size();
+
+		long ordersToday = cafeOrderRepository.countCreatedAtBetween(from, to);
+		BigDecimal revenueToday = paymentRepository.sumRevenuePaidAtBetween(from, to);
+
+		return new AdminDashboardTodayResponse(activeStaffCount, ordersToday, revenueToday, staffToday);
+	}
+
+	private String shiftLabelVi(ShiftTime time) {
+		if (time == null) return "";
+		return switch (time) {
+			case MORNING -> "Sáng";
+			case AFTERNOON -> "Chiều";
+			case EVENING -> "Tối";
+		};
+	}
+
 	private CategoryAdminResponse toCategoryAdmin(Category c) {
 		long cnt = productRepository.countByCategory_Id(c.getId());
 		return new CategoryAdminResponse(
@@ -284,6 +363,7 @@ public class AdminServiceImpl implements AdminService {
 		Category c = p.getCategory();
 		Integer categoryId = c != null ? c.getId() : null;
 		String categoryName = c != null ? c.getName() : null;
+		String categoryImageUrl = c != null ? c.getImageUrl() : null;
 		return new ProductResponse(
 				p.getId(),
 				p.getName(),
@@ -293,7 +373,8 @@ public class AdminServiceImpl implements AdminService {
 				p.getQuantity(),
 				p.getAvailable(),
 				categoryId,
-				categoryName);
+				categoryName,
+				categoryImageUrl);
 	}
 
 	private StaffListResponse toStaffRow(Staff s) {

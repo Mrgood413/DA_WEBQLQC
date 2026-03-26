@@ -147,9 +147,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		CafeOrder o = cafeOrderRepository.findByIdAndTable_TableNumber(orderId, tableNumber)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy order"));
 
-		// Chờ nhân viên xác nhận => chỉ cho "gọi thêm" khi đã vào milestone-2 (PREPARING)
-		if (o.getStatus() != OrderStatus.PREPARING) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Chưa thể gọi thêm món");
+		// Gọi thêm khi đang pha chế hoặc đã hoàn thành món; sau khi thanh toán (PAID) không thêm được nữa
+		if (o.getStatus() != OrderStatus.PREPARING && o.getStatus() != OrderStatus.DONE) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Không thể gọi thêm món");
 		}
 
 		Product p = productRepository.findById(request.productId())

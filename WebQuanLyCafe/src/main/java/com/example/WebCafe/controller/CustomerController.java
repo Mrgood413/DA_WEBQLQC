@@ -100,7 +100,7 @@ public class CustomerController {
 	}
 
 	/**
-	 * SSE stream: milestone-2/3 khi staff xác nhận.
+	 * SSE stream: milestone 2–3 khi staff xác nhận, milestone 4 khi thanh toán.
 	 */
 	@GetMapping("/orders/{orderId}/events")
 	public SseEmitter events(@PathVariable Integer orderId) {

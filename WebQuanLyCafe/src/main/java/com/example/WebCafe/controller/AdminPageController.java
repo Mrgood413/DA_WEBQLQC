@@ -8,7 +8,12 @@ public class AdminPageController {
 
 	@GetMapping("/admin")
 	public String adminHome() {
-		return "redirect:/admin/category";
+		return "redirect:/admin/dashboard";
+	}
+
+	@GetMapping("/admin/dashboard")
+	public String adminDashboardPage() {
+		return "admin_dashboard";
 	}
 
 	@GetMapping("/admin/category")

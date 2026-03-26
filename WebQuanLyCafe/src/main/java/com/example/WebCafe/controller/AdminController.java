@@ -5,6 +5,7 @@ import com.example.WebCafe.dto.request.AdminProductRequest;
 import com.example.WebCafe.dto.request.RevenueQueryRequest;
 import com.example.WebCafe.dto.request.StaffShiftsUpdateRequest;
 import com.example.WebCafe.dto.request.StaffUpsertRequest;
+import com.example.WebCafe.dto.response.AdminDashboardTodayResponse;
 import com.example.WebCafe.dto.response.CategoryAdminResponse;
 import com.example.WebCafe.dto.response.ProductResponse;
 import com.example.WebCafe.dto.response.RevenueDashboardResponse;
@@ -142,5 +143,10 @@ public class AdminController {
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"revenue.xlsx\"")
 				.contentType(MediaType.APPLICATION_OCTET_STREAM)
 				.body(data);
+	}
+
+	@GetMapping("/dashboard/today")
+	public AdminDashboardTodayResponse dashboardToday() {
+		return adminService.dashboardToday();
 	}
 }

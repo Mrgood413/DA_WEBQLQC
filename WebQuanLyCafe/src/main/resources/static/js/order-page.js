@@ -8,7 +8,8 @@
 	var MORE_PENDING_KEY = "webcafe.morePending";
 	var MORE_SNAPSHOT_KEY = "webcafe.moreSnapshot";
 
-	var STATUS_WIDTHS = ["0%", "12%", "50%", "100%"];
+	/** index = cart.status: 0…4 (4 bước milestone + trạng thái ban đầu) */
+	var STATUS_WIDTHS = ["0%", "25%", "50%", "75%", "100%"];
 	var PLACEHOLDER_IMG =
 		"data:image/svg+xml," +
 		encodeURIComponent(
@@ -124,6 +125,10 @@
 			{
 				el: document.getElementById("milestone-3"),
 				label: document.getElementById("milestone-3").parentElement.querySelector(".milestone-label")
+			},
+			{
+				el: document.getElementById("milestone-4"),
+				label: document.getElementById("milestone-4").parentElement.querySelector(".milestone-label")
 			}
 		];
 	}
@@ -131,15 +136,31 @@
 	function applyProgress(state) {
 		var progressLine = document.getElementById("progressLine");
 		var milestones = getMilestones();
+		var s = Math.max(0, Math.min(4, parseInt(state, 10) || 0));
 
-		progressLine.style.width = STATUS_WIDTHS[state] || "0%";
+		progressLine.style.width = STATUS_WIDTHS[s] || "0%";
 		milestones.forEach(function (milestone, index) {
-			var active = index < state;
-			milestone.el.classList.toggle("milestone-active", active);
-			milestone.label.classList.toggle("opacity-40", !active);
-			milestone.label.classList.toggle("text-secondary", active);
-			milestone.label.classList.toggle("opacity-100", active);
+			var active = index < s;
+			if (milestone.el) {
+				milestone.el.classList.remove("animate-bounce-once", "animate-success-pulse");
+				milestone.el.classList.toggle("milestone-active", active);
+			}
+			if (milestone.label) {
+				milestone.label.classList.toggle("opacity-40", !active);
+				milestone.label.classList.toggle("text-secondary", active);
+				milestone.label.classList.toggle("opacity-100", active);
+			}
 		});
+		if (s >= 1 && s <= 4) {
+			var idx = s - 1;
+			var m = milestones[idx];
+			if (m && m.el) {
+				window.requestAnimationFrame(function () {
+					if (s === 4) m.el.classList.add("animate-success-pulse");
+					else m.el.classList.add("animate-bounce-once");
+				});
+			}
+		}
 	}
 
 	function syncMilestoneInteractivity(cart) {
@@ -165,9 +186,13 @@
 
 		milestones.forEach(function (milestone, index) {
 			window.setTimeout(function () {
-				milestone.el.classList.remove("milestone-active", "animate-bounce-once");
-				milestone.label.classList.add("opacity-40");
-				milestone.label.classList.remove("text-secondary", "opacity-100");
+				if (milestone.el) {
+					milestone.el.classList.remove("milestone-active", "animate-bounce-once", "animate-success-pulse");
+				}
+				if (milestone.label) {
+					milestone.label.classList.add("opacity-40");
+					milestone.label.classList.remove("text-secondary", "opacity-100");
+				}
 			}, index * 100);
 		});
 
@@ -184,7 +209,7 @@
 		var addMoreBtn = document.getElementById("add-more-btn");
 		var addMoreTextEl = document.getElementById("add-more-btn-text");
 		var hasItems = cart.items.length > 0;
-		var canAddMore = cart.status === 2 && hasItems;
+		var canAddMore = (cart.status === 2 || cart.status === 3) && hasItems;
 
 		button.classList.remove("btn-ordered", "bg-secondary", "opacity-60");
 		if (addMoreBtn) {
@@ -193,7 +218,7 @@
 			addMoreBtn.classList.toggle("cursor-not-allowed", !canAddMore);
 
 			if (addMoreTextEl) {
-				if (cart.status === 2) {
+				if (cart.status === 2 || cart.status === 3) {
 					var morePending = readMorePending();
 					addMoreTextEl.textContent = morePending ? "Gửi thêm" : "Gọi thêm";
 				} else {
@@ -202,7 +227,7 @@
 			}
 		}
 
-		// Trạng thái 2/3 do nhân viên; khách không bấm nút chính (không reset milestone / giỏ).
+		// Trạng thái 2–4 do nhân viên / thanh toán; khách không bấm nút chính để đổi milestone.
 		if (cart.status === 2) {
 			button.disabled = true;
 			button.classList.add("opacity-60", "cursor-not-allowed");
@@ -215,6 +240,13 @@
 			button.classList.add("opacity-60", "cursor-not-allowed");
 			button.classList.remove("opacity-50");
 			text.textContent = "ĐÃ HOÀN THÀNH";
+			return;
+		}
+		if (cart.status === 4) {
+			button.disabled = true;
+			button.classList.add("opacity-60", "cursor-not-allowed");
+			button.classList.remove("opacity-50");
+			text.textContent = "ĐÃ THANH TOÁN";
 			return;
 		}
 
@@ -246,10 +278,10 @@
 	function applyStaffMilestone(milestone) {
 		var next = parseInt(milestone, 10);
 		if (isNaN(next)) return;
-		if (next < 2 || next > 3) return; // milestone-2/3 only
+		if (next < 2 || next > 4) return;
 		window.WebCafeCart.setStatus(next);
-		if (next === 3) {
-			// Khi xong: không còn gọi thêm
+		// Sau khi thanh toán (milestone 4): không còn gọi thêm
+		if (next === 4) {
 			writeMorePending(false);
 			window.localStorage.removeItem(MORE_SNAPSHOT_KEY);
 			window.localStorage.removeItem(SENT_ITEMS_KEY);
@@ -286,7 +318,7 @@
 		if (s === "PENDING") return 1; // milestone-1
 		if (s === "PREPARING") return 2; // milestone-2
 		if (s === "DONE") return 3; // milestone-3
-		if (s === "PAID") return 3; // keep UI at DONE
+		if (s === "PAID") return 4;
 		return null;
 	}
 
@@ -294,10 +326,9 @@
 		if (!orderId) return;
 		stopOrderStatusPolling();
 		orderStatusPollTimer = setInterval(function () {
-			// Tối ưu: không cần poll khi đã ở DONE
 			var cart = window.WebCafeCart ? window.WebCafeCart.getCart() : null;
 			if (!cart) return;
-			if (cart.status >= 3) return;
+			if (cart.status >= 4) return;
 
 			apiJson("/api/customer/orders/" + orderId, { method: "GET" })
 				.then(function (res) {
@@ -308,7 +339,7 @@
 						window.WebCafeCart.setStatus(next);
 						renderCart();
 					}
-					if (next >= 3) stopOrderStatusPolling();
+					if (next >= 4) stopOrderStatusPolling();
 				})
 				.catch(function () {
 					// Không alert khi poll thất bại (có thể do 401 khi hết phiên)
@@ -424,7 +455,7 @@
 			d.remove();
 		});
 
-		var morePending = cart.status === 2 && readMorePending();
+		var morePending = (cart.status === 2 || cart.status === 3) && readMorePending();
 		var baselineMap = morePending ? readItemQtyMap(MORE_SNAPSHOT_KEY) : readItemQtyMap(SENT_ITEMS_KEY);
 		if (morePending && (!baselineMap || Object.keys(baselineMap).length === 0)) {
 			baselineMap = getCartItemQtyMap(cart);
@@ -515,6 +546,7 @@
 	}
 
 	document.addEventListener("DOMContentLoaded", function () {
+		function bootOrderPage() {
 		var mainOrderBtn = document.getElementById("mainOrderBtn");
 		var addMoreBtn = document.getElementById("add-more-btn");
 
@@ -543,7 +575,7 @@
 		mainOrderBtn.addEventListener("click", function () {
 			var cart = window.WebCafeCart.getCart();
 			// Không còn hành động "HOÀN TẤT" reset giỏ / milestone (trạng thái 2–3 do nhân viên).
-			if (cart.status === 2 || cart.status === 3) {
+			if (cart.status === 2 || cart.status === 3 || cart.status === 4) {
 				return;
 			}
 			if (!cart.items.length) {
@@ -622,7 +654,7 @@
 
 		addMoreBtn.addEventListener("click", function () {
 			var cart = window.WebCafeCart.getCart();
-			if (cart.status !== 2) return;
+			if (cart.status !== 2 && cart.status !== 3) return;
 			if (!cart.items.length) {
 				window.location.href = "/menu";
 				return;
@@ -688,6 +720,16 @@
 		window.addEventListener("storage", function (event) {
 			if (event.key && event.key !== "webcafe.cart") return;
 			renderCart();
+		});
+		}
+
+		var sessionPromise = window.WebCafeCustomerSession && window.WebCafeCustomerSession.ensure
+			? window.WebCafeCustomerSession.ensure()
+			: Promise.resolve();
+		sessionPromise.then(function () {
+			bootOrderPage();
+		}).catch(function () {
+			bootOrderPage();
 		});
 	});
 })();

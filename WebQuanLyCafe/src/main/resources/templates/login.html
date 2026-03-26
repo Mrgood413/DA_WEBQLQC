@@ -311,7 +311,7 @@
         body: JSON.stringify({ mode: 'ADMIN', username: username, password: password })
       });
       if (adminRes.ok) {
-        window.location.href = '/admin/category';
+        window.location.href = '/admin/dashboard';
         return;
       }
 
