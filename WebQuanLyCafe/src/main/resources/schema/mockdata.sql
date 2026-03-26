@@ -53,3 +53,100 @@ INSERT INTO cafe_tables (table_number, status) VALUES
 (8, 'EMPTY'),
 (9, 'EMPTY'),
 (10, 'EMPTY');
+
+--cái này đang test không cần chạy copy cái trên chạy thôi
+USE WebCafe;
+
+-- =========================
+-- 1. CUSTOMERS
+-- =========================
+INSERT INTO users (username, password, full_name, phone, created_at) VALUES
+('cust01', '$2b$10$ZcGXIBExA3Ssv88VsoosOerIi9JVzzO/rWTmPjk20NxdjQ3DwYReO', 'Le Van A', '0902000001', NOW() - INTERVAL 2 DAY),
+('cust02', '$2b$10$ZcGXIBExA3Ssv88VsoosOerIi9JVzzO/rWTmPjk20NxdjQ3DwYReO', 'Pham Thi B', '0902000002', NOW() - INTERVAL 1 DAY),
+('cust03', '$2b$10$ZcGXIBExA3Ssv88VsoosOerIi9JVzzO/rWTmPjk20NxdjQ3DwYReO', 'Hoang Van C', '0902000003', NOW() - INTERVAL 3 HOUR);
+
+INSERT INTO customers (user_id, address, is_active)
+SELECT id, '123 Nguyen Trai, HCM', TRUE FROM users WHERE username = 'cust01';
+
+INSERT INTO customers (user_id, address, is_active)
+SELECT id, '456 Le Loi, HCM', TRUE FROM users WHERE username = 'cust02';
+
+INSERT INTO customers (user_id, address, is_active)
+SELECT id, '789 Tran Hung Dao, HCM', TRUE FROM users WHERE username = 'cust03';
+
+
+-- =========================
+-- 2. ORDERS (timeline thật)
+-- =========================
+INSERT INTO orders (table_id, status, created_at) VALUES
+(1, 'PENDING', NOW() - INTERVAL 20 MINUTE),
+(2, 'PREPARING', NOW() - INTERVAL 15 MINUTE),
+(3, 'DONE', NOW() - INTERVAL 40 MINUTE),
+(4, 'PAID', NOW() - INTERVAL 1 HOUR),
+(5, 'PAID', NOW() - INTERVAL 25 MINUTE);
+
+
+-- =========================
+-- 3. ORDER ITEMS
+-- =========================
+INSERT INTO order_items (order_id, product_id, quantity, price, updated) VALUES
+-- Order 1
+(1, 1, 2, 29000, NOW() - INTERVAL 19 MINUTE),
+(1, 5, 1, 39000, NOW() - INTERVAL 18 MINUTE),
+
+-- Order 2
+(2, 2, 1, 35000, NOW() - INTERVAL 14 MINUTE),
+(2, 3, 1, 45000, NOW() - INTERVAL 13 MINUTE),
+
+-- Order 3
+(3, 4, 2, 32000, NOW() - INTERVAL 35 MINUTE),
+(3, 8, 1, 35000, NOW() - INTERVAL 34 MINUTE),
+
+-- Order 4
+(4, 1, 1, 29000, NOW() - INTERVAL 55 MINUTE),
+(4, 10, 1, 40000, NOW() - INTERVAL 50 MINUTE),
+
+-- Order 5 (delivery)
+(5, 6, 2, 42000, NOW() - INTERVAL 20 MINUTE),
+(5, 9, 1, 55000, NOW() - INTERVAL 19 MINUTE);
+
+
+-- =========================
+-- 4. PAYMENTS
+-- =========================
+INSERT INTO payments (order_id, method, total_amount, paid_at) VALUES
+(4, 'CASH', 69000, NOW() - INTERVAL 45 MINUTE),
+(5, 'BANKING', 139000, NOW() - INTERVAL 10 MINUTE);
+
+
+-- =========================
+-- 5. DELIVERIES
+-- =========================
+INSERT INTO deliveries (order_id, payment_id, customer_id, status, created_at, delivered_at)
+VALUES
+-- Đang giao
+(
+    5,
+    (SELECT id FROM payments WHERE order_id = 5),
+    (SELECT user_id FROM customers WHERE user_id = (SELECT id FROM users WHERE username = 'cust01')),
+    'SHIPPING',
+    NOW() - INTERVAL 10 MINUTE,
+    NULL
+),
+
+-- Đã giao
+(
+    4,
+    (SELECT id FROM payments WHERE order_id = 4),
+    (SELECT user_id FROM customers WHERE user_id = (SELECT id FROM users WHERE username = 'cust02')),
+    'DELIVERED',
+    NOW() - INTERVAL 40 MINUTE,
+    NOW() - INTERVAL 5 MINUTE
+);
+
+
+-- =========================
+-- 6. TABLE STATUS (sync thực tế)
+-- =========================
+UPDATE cafe_tables SET status = 'OCCUPIED' WHERE id IN (1,2,3);
+UPDATE cafe_tables SET status = 'EMPTY' WHERE id IN (4,5);
