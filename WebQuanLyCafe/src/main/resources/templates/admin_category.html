@@ -49,6 +49,16 @@
         .stagger-5 { animation-delay: 0.5s; }
         .stagger-6 { animation-delay: 0.6s; }
         .stagger-7 { animation-delay: 0.7s; }
+        @keyframes adminContentIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes adminContentOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+        .admin-content-enter { animation: adminContentIn 0.22s ease-out both; }
+        .admin-content-leave { animation: adminContentOut 0.18s ease-in both; }
     </style>
 <script id="tailwind-config">
         tailwind.config = {
@@ -239,6 +249,29 @@
 </div>
 <script>
 (function () {
+  function setupAdminContentTransition() {
+    var main = document.querySelector("main");
+    if (!main) return;
+    var mark = null;
+    try {
+      mark = window.sessionStorage.getItem("webcafe.admin.transition");
+      window.sessionStorage.removeItem("webcafe.admin.transition");
+    } catch (e) {}
+    if (mark === "1") {
+      main.classList.add("admin-content-enter");
+    }
+    var links = document.querySelectorAll('a[href^="/admin/"]');
+    Array.prototype.forEach.call(links, function (a) {
+      a.addEventListener("click", function (e) {
+        var href = a.getAttribute("href");
+        if (!href || href === window.location.pathname) return;
+        e.preventDefault();
+        main.classList.add("admin-content-leave");
+        try { window.sessionStorage.setItem("webcafe.admin.transition", "1"); } catch (err) {}
+        setTimeout(function () { window.location.href = href; }, 180);
+      });
+    });
+  }
   var PLACEHOLDER =
     "data:image/svg+xml," +
     encodeURIComponent(
@@ -439,6 +472,7 @@
       });
   }
   document.addEventListener("DOMContentLoaded", function () {
+    setupAdminContentTransition();
     fetch("/api/auth/me", { credentials: "same-origin" })
       .then(function (r) {
         return r.ok ? r.json() : null;

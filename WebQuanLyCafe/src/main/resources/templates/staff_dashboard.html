@@ -83,6 +83,16 @@
             animation: fadeInUp 0.6s ease-out forwards;
             opacity: 0;
         }
+        @keyframes staffContentIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes staffContentOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+        .staff-content-enter { animation: staffContentIn 0.22s ease-out both; }
+        .staff-content-leave { animation: staffContentOut 0.18s ease-in both; }
     </style>
 </head>
 <body class="flex min-h-screen">
@@ -140,6 +150,29 @@
 </main>
 <script>
 (function () {
+  function setupStaffContentTransition() {
+    var main = document.querySelector('main');
+    if (!main) return;
+    var mark = null;
+    try {
+      mark = window.sessionStorage.getItem('webcafe.staff.transition');
+      window.sessionStorage.removeItem('webcafe.staff.transition');
+    } catch (e) {}
+    if (mark === '1') {
+      main.classList.add('staff-content-enter');
+    }
+    var links = document.querySelectorAll('a[href^="/staff/"]');
+    Array.prototype.forEach.call(links, function (a) {
+      a.addEventListener('click', function (e) {
+        var href = a.getAttribute('href');
+        if (!href || href === window.location.pathname) return;
+        e.preventDefault();
+        main.classList.add('staff-content-leave');
+        try { window.sessionStorage.setItem('webcafe.staff.transition', '1'); } catch (err) {}
+        setTimeout(function () { window.location.href = href; }, 180);
+      });
+    });
+  }
   var API = { shifts: '/api/staff/me/shifts', logout: '/api/auth/logout', me: '/api/auth/me' };
   var DAYS = [
     { key: 'MONDAY', title: 'Thứ 2' },
@@ -254,6 +287,7 @@
     });
   });
 
+  setupStaffContentTransition();
   loadCurrentUserDisplayName();
   loadSchedule();
 })();

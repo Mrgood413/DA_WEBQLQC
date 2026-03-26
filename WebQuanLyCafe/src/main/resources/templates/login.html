@@ -82,6 +82,14 @@
 .glass-panel {
     backdrop-filter: blur(12px);
     background-color: rgba(255, 249, 234, 0.85)
+    }
+@keyframes loginLeave {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to { opacity: 0; transform: translateY(-8px) scale(0.99); }
+    }
+.login-leave {
+    animation: loginLeave 220ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    pointer-events: none;
     }</style>
 </head>
 <body class="bg-background font-body text-on-background min-h-screen flex flex-col">
@@ -91,10 +99,10 @@
 <div class="w-full max-w-md">
 <!-- Brand Anchor (Simplified for Login Context) -->
 <div class="mb-10 text-center">
-<h1 class="font-headline font-extrabold text-4xl text-surface tracking-widest uppercase" style="">
+<h1 class="font-headline font-extrabold text-4xl text-surface tracking-widest uppercase">
                     Artisanal Ledger
                 </h1>
-<p class="font-body text-surface-container-high text-sm mt-2 opacity-90" style="">Nghệ thuật Thủ công cho Cà phê Mỗi ngày</p>
+<p class="font-body text-surface-container-high text-sm mt-2 opacity-90">Nghệ thuật Thủ công cho Cà phê Mỗi ngày</p>
 </div>
 <!-- Login Card -->
 <div class="glass-panel rounded-xl shadow-[0_24px_48px_rgba(30,28,14,0.15)] overflow-hidden border border-white/20">
@@ -143,7 +151,7 @@
 </label>
 </div>
 <div class="text-sm text-on-surface-variant">
-<span>Chưa có tài khoản?</span>
+<span>hãy đăng ký tài khoản để giao hàng</span>
 <a href="/register" class="ml-1 font-semibold text-secondary hover:text-on-secondary-fixed-variant transition-colors">Đăng ký</a>
 </div>
 <!-- Submit Action -->
@@ -229,6 +237,32 @@
   document.getElementById('btn-back-login').addEventListener('click', showLoginFlow);
   document.getElementById('btn-back-from-footer').addEventListener('click', showLoginFlow);
 
+  var isRedirecting = false;
+  function redirectWithAuthAnimation(targetUrl, opts) {
+    if (isRedirecting) return;
+    isRedirecting = true;
+    var options = opts || {};
+    try {
+      if (options.customerSwipeDirection) {
+        window.sessionStorage.setItem('webcafe.pageSwipeDirection', options.customerSwipeDirection);
+      }
+      if (options.staffTransition) {
+        window.sessionStorage.setItem('webcafe.staff.transition', '1');
+      }
+      if (options.adminTransition) {
+        window.sessionStorage.setItem('webcafe.admin.transition', '1');
+      }
+    } catch (ignore) {}
+    document.body.classList.add('login-leave');
+    window.setTimeout(function () {
+      window.location.href = targetUrl;
+    }, 220);
+  }
+
+  function redirectToMenuWithSwipe() {
+    redirectWithAuthAnimation('/menu', { customerSwipeDirection: 'left' });
+  }
+
   document.getElementById('btn-confirm-table').addEventListener('click', async function () {
     var raw = document.getElementById('tableNumber').value;
     var num = parseInt(raw, 10);
@@ -267,7 +301,7 @@
       try {
         window.localStorage.setItem('webcafe.tableNumber', String(num));
       } catch (ignore) {}
-      window.location.href = '/menu';
+      redirectToMenuWithSwipe();
     } catch (e) {
       tableMsg.textContent = (e && e.message) ? e.message : 'Có lỗi xảy ra.';
       tableMsg.classList.remove('hidden');
@@ -304,7 +338,7 @@
         body: JSON.stringify({ mode: 'CUSTOMER', username: username, password: password })
       });
       if (customerRes.ok) {
-        window.location.href = '/menu';
+        redirectToMenuWithSwipe();
         return;
       }
 
@@ -315,7 +349,7 @@
         body: JSON.stringify({ mode: 'STAFF', username: username, password: password })
       });
       if (staffRes.ok) {
-        window.location.href = '/staff/dashboard';
+        redirectWithAuthAnimation('/staff/dashboard', { staffTransition: true });
         return;
       }
 
@@ -326,7 +360,7 @@
         body: JSON.stringify({ mode: 'ADMIN', username: username, password: password })
       });
       if (adminRes.ok) {
-        window.location.href = '/admin/dashboard';
+        redirectWithAuthAnimation('/admin/dashboard', { adminTransition: true });
         return;
       }
 

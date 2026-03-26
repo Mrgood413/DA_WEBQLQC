@@ -112,10 +112,44 @@
 						localStorage.removeItem("webcafe.morePending");
 						localStorage.removeItem("webcafe.moreSnapshot");
 					} catch (e) {}
-					window.location.href = "/login";
+					navigateWithSwipe("/login", "right");
 				});
 			});
 		}
+	}
+
+	function setupPageSwipeTransitions() {
+		var direction = null;
+		try {
+			direction = window.sessionStorage.getItem("webcafe.pageSwipeDirection");
+			window.sessionStorage.removeItem("webcafe.pageSwipeDirection");
+		} catch (e) {}
+		if (direction === "left") {
+			document.body.classList.add("page-swipe-in-from-right");
+		} else if (direction === "right") {
+			document.body.classList.add("page-swipe-in-from-left");
+		}
+
+		var navLinks = document.querySelectorAll('a[href="/menu"], a[href="/order"]');
+		Array.prototype.forEach.call(navLinks, function (link) {
+			link.addEventListener("click", function (e) {
+				var href = link.getAttribute("href");
+				if (!href) return;
+				e.preventDefault();
+				navigateWithSwipe(href, href === "/menu" ? "right" : "left");
+			});
+		});
+	}
+
+	function navigateWithSwipe(url, direction) {
+		var leaveClass = direction === "right" ? "page-swipe-out-to-right" : "page-swipe-out-to-left";
+		try {
+			window.sessionStorage.setItem("webcafe.pageSwipeDirection", direction === "right" ? "right" : "left");
+		} catch (e) {}
+		document.body.classList.add(leaveClass);
+		window.setTimeout(function () {
+			window.location.href = url;
+		}, 220);
 	}
 
 	function getSelectedPaymentMethod() {
@@ -695,6 +729,7 @@
 		function bootOrderPage() {
 		var mainOrderBtn = document.getElementById("mainOrderBtn");
 		var addMoreBtn = document.getElementById("add-more-btn");
+		setupPageSwipeTransitions();
 		setupUserHeader();
 		function setupGuestOrderTracking() {
 			var storedOrderId = null;
@@ -755,7 +790,7 @@
 			var cart = window.WebCafeCart.getCart();
 			if (isAccountCustomer) {
 				if (!cart.items.length) {
-					window.location.href = "/menu";
+					navigateWithSwipe("/menu", "right");
 					return;
 				}
 				var payload = {
@@ -785,7 +820,7 @@
 				return;
 			}
 			if (!cart.items.length) {
-				window.location.href = "/menu";
+				navigateWithSwipe("/menu", "right");
 				return;
 			}
 
@@ -867,7 +902,7 @@
 			var cart = window.WebCafeCart.getCart();
 			if (cart.status !== 2 && cart.status !== 3) return;
 			if (!cart.items.length) {
-				window.location.href = "/menu";
+				navigateWithSwipe("/menu", "right");
 				return;
 			}
 
@@ -880,7 +915,7 @@
 				}
 				writeItemQtyMap(MORE_SNAPSHOT_KEY, sentMap);
 				writeMorePending(true);
-				window.location.href = "/menu";
+				navigateWithSwipe("/menu", "right");
 				return;
 			}
 

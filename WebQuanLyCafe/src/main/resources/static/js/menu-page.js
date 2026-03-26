@@ -362,16 +362,51 @@
 						localStorage.removeItem("webcafe.orderId");
 						localStorage.removeItem("webcafe.tableNumber");
 					} catch (e) {}
-					window.location.href = "/login";
+					navigateWithSwipe("/login", "left");
 				});
 			});
 		}
+	}
+
+	function setupPageSwipeTransitions() {
+		var direction = null;
+		try {
+			direction = window.sessionStorage.getItem("webcafe.pageSwipeDirection");
+			window.sessionStorage.removeItem("webcafe.pageSwipeDirection");
+		} catch (e) {}
+		if (direction === "left") {
+			document.body.classList.add("page-swipe-in-from-right");
+		} else if (direction === "right") {
+			document.body.classList.add("page-swipe-in-from-left");
+		}
+
+		var navLinks = document.querySelectorAll('a[href="/menu"], a[href="/order"]');
+		Array.prototype.forEach.call(navLinks, function (link) {
+			link.addEventListener("click", function (e) {
+				var href = link.getAttribute("href");
+				if (!href) return;
+				e.preventDefault();
+				navigateWithSwipe(href, href === "/order" ? "left" : "right");
+			});
+		});
+	}
+
+	function navigateWithSwipe(url, direction) {
+		var leaveClass = direction === "right" ? "page-swipe-out-to-right" : "page-swipe-out-to-left";
+		try {
+			window.sessionStorage.setItem("webcafe.pageSwipeDirection", direction === "right" ? "right" : "left");
+		} catch (e) {}
+		document.body.classList.add(leaveClass);
+		window.setTimeout(function () {
+			window.location.href = url;
+		}, 220);
 	}
 
 	document.addEventListener("DOMContentLoaded", function () {
 		function bootMenuPage() {
 		var searchInput = document.getElementById("menu-search-input");
 		var cartButton = document.getElementById("cart-summary-button");
+		setupPageSwipeTransitions();
 		setupUserHeader();
 
 		if (searchInput) {
@@ -383,7 +418,7 @@
 
 		if (cartButton) {
 			cartButton.addEventListener("click", function () {
-				window.location.href = "/order";
+				navigateWithSwipe("/order", "left");
 			});
 		}
 

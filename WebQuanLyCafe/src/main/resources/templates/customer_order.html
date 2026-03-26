@@ -131,6 +131,26 @@
         .milestone-active .material-symbols-outlined {
             font-variation-settings: 'FILL' 1;
         }
+        @keyframes pageSwipeInFromRight {
+            from { transform: translateX(24px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes pageSwipeInFromLeft {
+            from { transform: translateX(-24px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes pageSwipeOutToLeft {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(-24px); opacity: 0; }
+        }
+        @keyframes pageSwipeOutToRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(24px); opacity: 0; }
+        }
+        .page-swipe-in-from-right { animation: pageSwipeInFromRight 0.22s ease-out both; }
+        .page-swipe-in-from-left { animation: pageSwipeInFromLeft 0.22s ease-out both; }
+        .page-swipe-out-to-left { animation: pageSwipeOutToLeft 0.22s ease-in both; }
+        .page-swipe-out-to-right { animation: pageSwipeOutToRight 0.22s ease-in both; }
     </style>
 </head>
 <body class="bg-background text-on-background font-body selection:bg-secondary-container selection:text-on-secondary-container min-h-screen animate-fade-in-up">

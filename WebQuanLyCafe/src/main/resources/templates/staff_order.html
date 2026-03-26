@@ -153,6 +153,16 @@
   .delay-300 { animation-delay: 300ms; }
   .delay-400 { animation-delay: 400ms; }
   .delay-500 { animation-delay: 500ms; }
+  @keyframes staffContentIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes staffContentOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-10px); }
+  }
+  .staff-content-enter { animation: staffContentIn 0.22s ease-out both; }
+  .staff-content-leave { animation: staffContentOut 0.18s ease-in both; }
 </style></head>
 <body class="bg-surface text-on-surface">
 <!-- SideNavBar Component -->
@@ -362,6 +372,29 @@
 <script>
   (function () {
     "use strict";
+    function setupStaffContentTransition() {
+      var main = document.querySelector("main");
+      if (!main) return;
+      var mark = null;
+      try {
+        mark = window.sessionStorage.getItem("webcafe.staff.transition");
+        window.sessionStorage.removeItem("webcafe.staff.transition");
+      } catch (e) {}
+      if (mark === "1") {
+        main.classList.add("staff-content-enter");
+      }
+      var links = document.querySelectorAll('a[href^="/staff/"]');
+      Array.prototype.forEach.call(links, function (a) {
+        a.addEventListener("click", function (e) {
+          var href = a.getAttribute("href");
+          if (!href || href === window.location.pathname) return;
+          e.preventDefault();
+          main.classList.add("staff-content-leave");
+          try { window.sessionStorage.setItem("webcafe.staff.transition", "1"); } catch (err) {}
+          setTimeout(function () { window.location.href = href; }, 180);
+        });
+      });
+    }
 
     // "Tab" theo trang: 4 trạng thái + 1 tab lọc "gọi thêm"
     var statusPages = ["PENDING", "PREPARING", "DONE", "PAID", "MORE"];
@@ -685,6 +718,7 @@
     }
 
     document.addEventListener("DOMContentLoaded", function () {
+      setupStaffContentTransition();
       fetch("/api/auth/me", { credentials: "same-origin" })
         .then(function (r) {
           return r.ok ? r.json() : null;
