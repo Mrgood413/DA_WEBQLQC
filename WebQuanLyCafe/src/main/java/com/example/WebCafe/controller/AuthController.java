@@ -1,6 +1,7 @@
 package com.example.WebCafe.controller;
 
 import com.example.WebCafe.dto.request.LoginRequest;
+import com.example.WebCafe.dto.request.RegisterCustomerRequest;
 import com.example.WebCafe.dto.response.AuthMeResponse;
 import com.example.WebCafe.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,6 +41,12 @@ public class AuthController {
 	@GetMapping("/login")
 	public String loginPage() {
 		return "login";
+	}
+
+	/** Trang đăng ký khách hàng. */
+	@GetMapping("/register")
+	public String registerPage() {
+		return "register";
 	}
 
 	/**
@@ -84,5 +91,12 @@ public class AuthController {
 		return authService.getCurrentUser(session)
 				.map(ResponseEntity::ok)
 				.orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+	}
+
+	@PostMapping("/api/auth/register")
+	@ResponseBody
+	public ResponseEntity<Void> register(@Valid @RequestBody RegisterCustomerRequest request) {
+		authService.registerCustomer(request);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 }

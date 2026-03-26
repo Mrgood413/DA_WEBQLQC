@@ -24,6 +24,13 @@ CREATE TABLE admins (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+CREATE TABLE customers (
+    user_id INT PRIMARY KEY,
+    address VARCHAR(255) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
 CREATE TABLE shifts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     day_of_week ENUM(
@@ -93,6 +100,19 @@ CREATE TABLE payments (
     total_amount DECIMAL(10,2) NOT NULL,
     paid_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (order_id) REFERENCES orders(id)
+);
+
+CREATE TABLE deliveries (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL UNIQUE,
+    payment_id INT UNIQUE,
+    customer_id INT NOT NULL,
+    status ENUM('PENDING','CONFIRMED','SHIPPING','DELIVERED','CANCELLED') NOT NULL DEFAULT 'PENDING',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    delivered_at TIMESTAMP NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(id),
+    FOREIGN KEY (payment_id) REFERENCES payments(id),
+    FOREIGN KEY (customer_id) REFERENCES customers(user_id)
 );
 
 INSERT INTO shifts (day_of_week, shift_time) VALUES

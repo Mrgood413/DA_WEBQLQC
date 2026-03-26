@@ -2,6 +2,7 @@ package com.example.WebCafe.repository;
 
 import com.example.WebCafe.model.CafeOrder;
 import com.example.WebCafe.model.enums.OrderStatus;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,6 +18,9 @@ public interface CafeOrderRepository extends JpaRepository<CafeOrder, Integer> {
 	List<CafeOrder> findByTable_TableNumberOrderByIdDesc(Integer tableNumber);
 
 	java.util.Optional<CafeOrder> findByIdAndTable_TableNumber(Integer orderId, Integer tableNumber);
+
+	@EntityGraph(attributePaths = { "items", "items.product" })
+	java.util.Optional<CafeOrder> findWithItemsById(Integer id);
 
 	@Query("""
 		select distinct o

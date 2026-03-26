@@ -144,9 +144,10 @@
 </nav>
 </div>
 <div class="flex items-center gap-4">
-<button class="active:scale-95 transition-transform">
-<span class="material-symbols-outlined text-[#271310] dark:text-[#f5eed7] text-2xl">account_circle</span>
-</button>
+<span id="current-username" class="hidden sm:inline text-sm font-semibold text-[#271310] dark:text-[#f5eed7]">Khách</span>
+<button id="logout-btn" class="px-3 py-2 rounded-full bg-surface-container text-sm font-semibold text-[#271310] hover:bg-surface-container-high transition-colors">
+                Logout
+            </button>
 </div>
 <div class="absolute bottom-0 left-0 bg-[#f5eed7] dark:bg-[#271310] h-[1px] w-full"></div>
 </header>
@@ -165,7 +166,7 @@
 </header>
 <!-- Order Status Section -->
 <section>
-<div class="flex items-end justify-between mb-6">
+<div id="order-status-header" class="flex items-end justify-between mb-6">
 <h2 class="font-headline text-2xl font-bold text-primary">Trạng thái đơn hàng</h2>
 <div class="text-right">
 <p id="order-code" class="text-xs text-on-surface-variant">—</p>
@@ -174,7 +175,7 @@
 </div>
 <div class="bg-surface-container-high rounded-2xl p-6 md:p-8 relative overflow-hidden shadow-sm animate-card delay-1">
 <!-- Progress Bar -->
-<div class="relative mb-20 mt-4">
+<div id="milestone-block" class="relative mb-20 mt-4">
 <!-- Progress Container -->
 <div class="absolute top-1/2 left-0 right-0 h-1 bg-surface-variant -translate-y-1/2 rounded-full overflow-hidden">
 <!-- Dynamic Progress Line -->
@@ -225,9 +226,42 @@
 <span id="mainOrderBtnText" class="relative z-10">Đặt đơn</span>
 </button>
 </div>
+
+<!-- Checkout cho customer account -->
+<div id="customer-checkout-box" class="mt-6 hidden">
+<div class="space-y-4 rounded-xl bg-surface-container-lowest p-4 border border-outline-variant/30">
+<div>
+<p class="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2">Phương thức thanh toán</p>
+<div class="flex gap-4">
+<label class="flex items-center gap-2 text-sm">
+<input type="radio" name="paymentMethod" value="CASH" checked>
+<span>Tiền mặt</span>
+</label>
+<label class="flex items-center gap-2 text-sm">
+<input type="radio" name="paymentMethod" value="BANKING">
+<span>Chuyển khoản</span>
+</label>
+</div>
+</div>
+<div>
+<label for="delivery-address-input" class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Địa chỉ giao hàng</label>
+<textarea id="delivery-address-input" rows="3" class="mt-2 w-full rounded-xl bg-surface-container-high border-none focus:ring-2 focus:ring-secondary text-sm" placeholder="Nhập địa chỉ nhận hàng"></textarea>
+</div>
+<label class="flex items-start gap-2 text-sm">
+<input id="use-profile-address" type="checkbox" class="mt-1">
+<span id="use-profile-address-label">Sử dụng địa chỉ của bạn</span>
+</label>
+<div id="delivery-history-box" class="pt-2">
+<p class="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2">Lịch sử giao hàng của bạn</p>
+<div id="delivery-history-list" class="space-y-2 text-sm text-on-surface-variant">
+<p>Chưa có đơn giao hàng.</p>
+</div>
+</div>
+</div>
+</div>
 </div>
 <!-- Call to Action Section -->
-<div class="mt-8 space-y-4 animate-card delay-2">
+<div id="add-more-section" class="mt-8 space-y-4 animate-card delay-2">
 <button id="add-more-btn" class="w-full bg-primary text-on-primary py-5 rounded-2xl text-base font-extrabold uppercase tracking-widest hover:shadow-xl active:scale-[0.99] transition-all flex items-center justify-center gap-3">
 <span class="material-symbols-outlined">add_circle</span>
 <span id="add-more-btn-text">Gọi thêm</span>

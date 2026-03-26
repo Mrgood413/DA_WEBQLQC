@@ -20,13 +20,13 @@ public class MenuController {
 	/** Trang thực đơn (sau khi khách đã chọn bàn). */
 	@GetMapping("/menu")
 	public String menuPage() {
-		return "menu";
+		return "customer_menu";
 	}
 
 	/** Trang theo dõi đơn hàng. */
 	@GetMapping("/order")
 	public String orderPage() {
-		return "ordder";
+		return "customer_order";
 	}
 
 	/** Danh sách món cho trang menu (JSON). */

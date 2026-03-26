@@ -1,7 +1,6 @@
 package com.example.WebCafe.model;
 
-import com.example.WebCafe.model.enums.OrderStatus;
-import jakarta.persistence.CascadeType;
+import com.example.WebCafe.model.enums.DeliveryStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,7 +11,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -20,37 +18,38 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-@Table(name = "orders")
+@Table(name = "deliveries")
 @Getter
 @Setter
 @NoArgsConstructor
-public class CafeOrder {
+public class Delivery {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "order_id", nullable = false, unique = true)
+	private CafeOrder order;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "payment_id", unique = true)
+	private Payment payment;
+
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "table_id")
-	private CafeTable table;
+	@JoinColumn(name = "customer_id", nullable = false)
+	private Customer customer;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private OrderStatus status = OrderStatus.PENDING;
+	private DeliveryStatus status = DeliveryStatus.PENDING;
 
 	@Column(name = "created_at", insertable = false, updatable = false)
 	private LocalDateTime createdAt;
 
-	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<OrderItem> items = new ArrayList<>();
-
-	@OneToMany(mappedBy = "order")
-	private List<Payment> payments = new ArrayList<>();
-
-	@OneToOne(mappedBy = "order", fetch = FetchType.LAZY)
-	private Delivery delivery;
+	@Column(name = "delivered_at")
+	private LocalDateTime deliveredAt;
 }
+

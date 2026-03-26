@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html class="light" lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Đăng ký tài khoản - Artisanal Ledger</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#271310",
+              "primary-container": "#3e2723",
+              "secondary": "#1b6d24",
+              "surface": "#fff9ea",
+              "surface-container-highest": "#e9e2cc",
+              "surface-container-low": "#faf4dd",
+              "on-surface": "#1e1c0e",
+              "on-surface-variant": "#504442",
+              "error": "#ba1a1a"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { font-family: "Inter", sans-serif; background-color: #fff9ea; color: #1e1c0e; }
+        .material-symbols-outlined { font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6">
+<main class="w-full max-w-xl bg-white/70 rounded-2xl p-8 shadow-xl">
+<div class="mb-6">
+<h1 class="font-headline text-3xl font-extrabold text-primary">Đăng ký tài khoản khách hàng</h1>
+<p class="text-sm text-on-surface-variant mt-2">Tạo tài khoản để lưu thông tin và địa chỉ giao hàng.</p>
+</div>
+
+<form id="register-form" class="space-y-4">
+<div>
+<label class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Tên đăng nhập</label>
+<input id="username" type="text" maxlength="50" required class="mt-1 w-full rounded-lg border border-surface-container-highest bg-surface px-3 py-2"/>
+</div>
+<div>
+<label class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Mật khẩu</label>
+<input id="password" type="password" maxlength="255" required class="mt-1 w-full rounded-lg border border-surface-container-highest bg-surface px-3 py-2"/>
+</div>
+<div>
+<label class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Họ tên</label>
+<input id="fullName" type="text" maxlength="100" required class="mt-1 w-full rounded-lg border border-surface-container-highest bg-surface px-3 py-2"/>
+</div>
+<div>
+<label class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Số điện thoại</label>
+<input id="phone" type="text" maxlength="20" class="mt-1 w-full rounded-lg border border-surface-container-highest bg-surface px-3 py-2"/>
+</div>
+<div>
+<label class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Địa chỉ</label>
+<textarea id="address" rows="3" maxlength="255" required class="mt-1 w-full rounded-lg border border-surface-container-highest bg-surface px-3 py-2"></textarea>
+</div>
+
+<p id="register-message" class="hidden text-sm"></p>
+
+<button type="submit" class="w-full rounded-full bg-primary text-white py-3 font-bold hover:bg-primary-container transition-colors">
+Đăng ký
+</button>
+</form>
+
+<div class="mt-5 text-sm text-center text-on-surface-variant">
+Đã có tài khoản?
+<a href="/login" class="text-secondary font-semibold hover:underline">Đăng nhập</a>
+</div>
+</main>
+
+<script>
+(function () {
+  var form = document.getElementById("register-form");
+  var msg = document.getElementById("register-message");
+
+  function showMessage(text, isError) {
+    msg.textContent = text;
+    msg.classList.remove("hidden");
+    msg.classList.remove("text-error", "text-secondary");
+    msg.classList.add(isError ? "text-error" : "text-secondary");
+  }
+
+  async function parseErr(res) {
+    var text = await res.text();
+    try {
+      var j = JSON.parse(text);
+      return j && j.message ? j.message : "Đăng ký thất bại.";
+    } catch (e) {
+      return "Đăng ký thất bại.";
+    }
+  }
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    msg.classList.add("hidden");
+    var body = {
+      username: document.getElementById("username").value.trim(),
+      password: document.getElementById("password").value,
+      fullName: document.getElementById("fullName").value.trim(),
+      phone: document.getElementById("phone").value.trim(),
+      address: document.getElementById("address").value.trim()
+    };
+
+    if (!body.username || !body.password || !body.fullName || !body.address) {
+      showMessage("Vui lòng nhập đầy đủ các trường bắt buộc.", true);
+      return;
+    }
+
+    try {
+      var res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) {
+        throw new Error(await parseErr(res));
+      }
+      showMessage("Đăng ký thành công. Đang chuyển về trang đăng nhập...", false);
+      setTimeout(function () {
+        window.location.href = "/login";
+      }, 900);
+    } catch (err) {
+      showMessage(err && err.message ? err.message : "Có lỗi xảy ra.", true);
+    }
+  });
+})();
+</script>
+</body>
+</html>
+

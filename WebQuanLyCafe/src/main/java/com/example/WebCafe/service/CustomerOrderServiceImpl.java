@@ -7,19 +7,32 @@ import com.example.WebCafe.dto.response.OrderSummaryResponse;
 import com.example.WebCafe.dto.response.OrderItemResponse;
 import com.example.WebCafe.model.CafeOrder;
 import com.example.WebCafe.model.CafeTable;
+import com.example.WebCafe.model.Customer;
+import com.example.WebCafe.model.Delivery;
 import com.example.WebCafe.model.OrderItem;
+import com.example.WebCafe.model.Payment;
 import com.example.WebCafe.model.Product;
+import com.example.WebCafe.model.User;
+import com.example.WebCafe.model.enums.DeliveryStatus;
 import com.example.WebCafe.model.enums.OrderStatus;
+import com.example.WebCafe.model.enums.PaymentMethod;
 import com.example.WebCafe.repository.CafeOrderRepository;
 import com.example.WebCafe.repository.CafeTableRepository;
+import com.example.WebCafe.repository.CustomerRepository;
+import com.example.WebCafe.repository.DeliveryRepository;
+import com.example.WebCafe.repository.PaymentRepository;
 import com.example.WebCafe.repository.ProductRepository;
+import com.example.WebCafe.repository.UserRepository;
 import com.example.WebCafe.security.SessionKeys;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,15 +46,27 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	private final CafeTableRepository cafeTableRepository;
 	private final ProductRepository productRepository;
 	private final StaffQueueUpdateEventService staffQueueUpdateEventService;
+	private final UserRepository userRepository;
+	private final CustomerRepository customerRepository;
+	private final DeliveryRepository deliveryRepository;
+	private final PaymentRepository paymentRepository;
 
 	public CustomerOrderServiceImpl(CafeOrderRepository cafeOrderRepository,
 			CafeTableRepository cafeTableRepository,
 			ProductRepository productRepository,
-			StaffQueueUpdateEventService staffQueueUpdateEventService) {
+			StaffQueueUpdateEventService staffQueueUpdateEventService,
+			UserRepository userRepository,
+			CustomerRepository customerRepository,
+			DeliveryRepository deliveryRepository,
+			PaymentRepository paymentRepository) {
 		this.cafeOrderRepository = cafeOrderRepository;
 		this.cafeTableRepository = cafeTableRepository;
 		this.productRepository = productRepository;
 		this.staffQueueUpdateEventService = staffQueueUpdateEventService;
+		this.userRepository = userRepository;
+		this.customerRepository = customerRepository;
+		this.deliveryRepository = deliveryRepository;
+		this.paymentRepository = paymentRepository;
 	}
 
 	private Integer getTableNumber(HttpSession session) {
@@ -57,6 +82,16 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 			case DONE -> "Hoàn thành";
 			case PAID -> "Đã thanh toán";
 		};
+	}
+
+	private Customer resolveLoggedCustomerOrNull() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth == null || !(auth.getPrincipal() instanceof String username)) {
+			return null;
+		}
+		User user = userRepository.findByUsername(username).orElse(null);
+		if (user == null) return null;
+		return customerRepository.findById(user.getId()).orElse(null);
 	}
 
 	private OrderDetailResponse toDetail(CafeOrder o) {
@@ -185,19 +220,46 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	@Transactional
 	public OrderDetailResponse confirmOrder(Integer orderId, ConfirmOrderRequest request, HttpSession session) {
 		Integer tableNumber = getTableNumber(session);
-		if (tableNumber == null) {
+		Customer loggedCustomer = resolveLoggedCustomerOrNull();
+		boolean isDeliveryFlow = tableNumber == null && loggedCustomer != null;
+		if (tableNumber == null && !isDeliveryFlow) {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Chưa chọn bàn");
 		}
 		if (request == null || request.items() == null || request.items().isEmpty()) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Giỏ hàng trống");
 		}
+		PaymentMethod paymentMethod = null;
+		String deliveryAddress = null;
+		if (isDeliveryFlow) {
+			String methodRaw = request.paymentMethod() == null ? "" : request.paymentMethod().trim();
+			if (methodRaw.isEmpty()) {
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Vui lòng chọn phương thức thanh toán");
+			}
+			try {
+				paymentMethod = PaymentMethod.valueOf(methodRaw);
+			} catch (IllegalArgumentException ex) {
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Phương thức thanh toán không hợp lệ");
+			}
 
-		CafeTable table = cafeTableRepository.findByTableNumber(tableNumber)
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Bàn không tồn tại"));
+			boolean useProfileAddress = Boolean.TRUE.equals(request.useProfileAddress());
+			deliveryAddress = useProfileAddress ? loggedCustomer.getAddress()
+					: (request.address() == null ? "" : request.address().trim());
+			if (deliveryAddress.isEmpty()) {
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Vui lòng nhập địa chỉ giao hàng");
+			}
+		}
 
-		// Nếu đã có order còn trạng thái chờ nhân viên xác nhận => xóa để tạo mới
-		List<CafeOrder> existingPending = cafeOrderRepository.findByTable_TableNumberAndStatus(tableNumber, OrderStatus.PENDING);
-		existingPending.forEach(cafeOrderRepository::delete);
+		CafeTable table = null;
+		if (tableNumber != null) {
+			table = cafeTableRepository.findByTableNumber(tableNumber)
+					.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Bàn không tồn tại"));
+		}
+
+		// Nếu là khách tại quán: đã có order PENDING của bàn thì xóa để tạo mới.
+		if (tableNumber != null) {
+			List<CafeOrder> existingPending = cafeOrderRepository.findByTable_TableNumberAndStatus(tableNumber, OrderStatus.PENDING);
+			existingPending.forEach(cafeOrderRepository::delete);
+		}
 
 		CafeOrder order = new CafeOrder();
 		order.setTable(table);
@@ -218,6 +280,31 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		}
 
 		CafeOrder saved = cafeOrderRepository.save(order);
+		if (isDeliveryFlow) {
+			// Workflow CUSTOMER delivery: order -> payment -> delivery
+			BigDecimal totalAmount = saved.getItems().stream()
+					.map(oi -> oi.getPrice().multiply(BigDecimal.valueOf(oi.getQuantity())))
+					.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+			Payment payment = new Payment();
+			payment.setOrder(saved);
+			payment.setMethod(paymentMethod);
+			payment.setTotalAmount(totalAmount);
+			Payment savedPayment = paymentRepository.save(payment);
+
+			// Nếu customer nhập địa chỉ mới thì cập nhật hồ sơ để các đơn sau có thể dùng lại.
+			if (deliveryAddress != null && !deliveryAddress.equals(loggedCustomer.getAddress())) {
+				loggedCustomer.setAddress(deliveryAddress);
+				customerRepository.save(loggedCustomer);
+			}
+
+			Delivery delivery = new Delivery();
+			delivery.setOrder(saved);
+			delivery.setPayment(savedPayment);
+			delivery.setCustomer(loggedCustomer);
+			delivery.setStatus(DeliveryStatus.PENDING);
+			deliveryRepository.save(delivery);
+		}
 		staffQueueUpdateEventService.emitQueueUpdated();
 		return toDetail(saved);
 	}

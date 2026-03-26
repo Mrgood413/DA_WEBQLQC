@@ -114,9 +114,10 @@
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
 <input id="menu-search-input" class="pl-10 pr-4 py-2 rounded-full bg-surface-container border-none focus:ring-2 focus:ring-secondary text-sm w-64" placeholder="Tìm kiếm món ăn..." type="text"/>
 </div>
-<button class="active:scale-95 transition-transform">
-<span class="material-symbols-outlined text-[#271310] dark:text-[#f5eed7] text-2xl">account_circle</span>
-</button>
+<span id="current-username" class="hidden sm:inline text-sm font-semibold text-[#271310] dark:text-[#f5eed7]">Khách</span>
+<button id="logout-btn" class="px-3 py-2 rounded-full bg-surface-container text-sm font-semibold text-[#271310] hover:bg-surface-container-high transition-colors">
+                Logout
+            </button>
 </div>
 <div class="absolute bottom-0 left-0 bg-[#f5eed7] dark:bg-[#271310] h-[1px] w-full"></div>
 </header>

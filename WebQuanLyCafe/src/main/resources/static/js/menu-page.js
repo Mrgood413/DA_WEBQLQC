@@ -332,10 +332,47 @@
 		el.textContent = "";
 	}
 
+	function setupUserHeader() {
+		var userEl = document.getElementById("current-username");
+		var logoutBtn = document.getElementById("logout-btn");
+
+		fetch("/api/auth/me", { credentials: "same-origin" })
+			.then(function (r) {
+				if (!r.ok) return null;
+				return r.json();
+			})
+			.then(function (me) {
+				if (!userEl) return;
+				if (me && me.username) userEl.textContent = me.username;
+				else if (me && me.fullName) userEl.textContent = me.fullName;
+				else userEl.textContent = "Khách";
+			})
+			.catch(function () {
+				if (userEl) userEl.textContent = "Khách";
+			});
+
+		if (logoutBtn) {
+			logoutBtn.addEventListener("click", function () {
+				fetch("/api/auth/logout", {
+					method: "POST",
+					credentials: "same-origin"
+				}).finally(function () {
+					try {
+						localStorage.removeItem("webcafe.cart");
+						localStorage.removeItem("webcafe.orderId");
+						localStorage.removeItem("webcafe.tableNumber");
+					} catch (e) {}
+					window.location.href = "/login";
+				});
+			});
+		}
+	}
+
 	document.addEventListener("DOMContentLoaded", function () {
 		function bootMenuPage() {
 		var searchInput = document.getElementById("menu-search-input");
 		var cartButton = document.getElementById("cart-summary-button");
+		setupUserHeader();
 
 		if (searchInput) {
 			searchInput.addEventListener("input", function () {

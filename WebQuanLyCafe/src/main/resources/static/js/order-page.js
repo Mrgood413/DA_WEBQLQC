@@ -7,6 +7,8 @@
 	var SENT_ITEMS_KEY = "webcafe.sentItems";
 	var MORE_PENDING_KEY = "webcafe.morePending";
 	var MORE_SNAPSHOT_KEY = "webcafe.moreSnapshot";
+	var isAccountCustomer = false;
+	var accountProfile = null;
 
 	/** index = cart.status: 0…4 (4 bước milestone + trạng thái ban đầu) */
 	var STATUS_WIDTHS = ["0%", "25%", "50%", "75%", "100%"];
@@ -43,10 +45,11 @@
 	}
 
 	function getTableLabel(tableNumber) {
+		if (isAccountCustomer) return "Đơn giao hàng";
 		if (tableNumber != null && tableNumber !== "") {
 			return "Bàn " + tableNumber;
 		}
-		return "Chưa chọn bàn";
+		return "Đơn hàng";
 	}
 
 	function safeJsonParse(raw, fallback) {
@@ -78,6 +81,137 @@
 				return data;
 			});
 		});
+	}
+
+	function setupUserHeader() {
+		var userEl = document.getElementById("current-username");
+		var logoutBtn = document.getElementById("logout-btn");
+
+		apiJson("/api/auth/me", { method: "GET" })
+			.then(function (me) {
+				if (!userEl) return;
+				if (me && me.username) userEl.textContent = me.username;
+				else if (me && me.fullName) userEl.textContent = me.fullName;
+				else userEl.textContent = "Khách";
+			})
+			.catch(function () {
+				if (userEl) userEl.textContent = "Khách";
+			});
+
+		if (logoutBtn) {
+			logoutBtn.addEventListener("click", function () {
+				fetch("/api/auth/logout", {
+					method: "POST",
+					credentials: "same-origin"
+				}).finally(function () {
+					try {
+						localStorage.removeItem("webcafe.cart");
+						localStorage.removeItem("webcafe.orderId");
+						localStorage.removeItem("webcafe.tableNumber");
+						localStorage.removeItem("webcafe.sentItems");
+						localStorage.removeItem("webcafe.morePending");
+						localStorage.removeItem("webcafe.moreSnapshot");
+					} catch (e) {}
+					window.location.href = "/login";
+				});
+			});
+		}
+	}
+
+	function getSelectedPaymentMethod() {
+		var checked = document.querySelector('input[name="paymentMethod"]:checked');
+		return checked ? checked.value : "";
+	}
+
+	function getDeliveryAddressInput() {
+		var input = document.getElementById("delivery-address-input");
+		return input ? String(input.value || "").trim() : "";
+	}
+
+	function isUseProfileAddressChecked() {
+		var cb = document.getElementById("use-profile-address");
+		return !!(cb && cb.checked);
+	}
+
+	function applyAccountCustomerLayout() {
+		var statusHeader = document.getElementById("order-status-header");
+		var milestone = document.getElementById("milestone-block");
+		var addMoreSection = document.getElementById("add-more-section");
+		var checkoutBox = document.getElementById("customer-checkout-box");
+		if (statusHeader) statusHeader.classList.toggle("hidden", isAccountCustomer);
+		if (milestone) milestone.classList.toggle("hidden", isAccountCustomer);
+		if (addMoreSection) addMoreSection.classList.toggle("hidden", isAccountCustomer);
+		if (checkoutBox) checkoutBox.classList.toggle("hidden", !isAccountCustomer);
+
+		var label = document.getElementById("use-profile-address-label");
+		if (label && accountProfile && accountProfile.fullName) {
+			label.textContent = "Sử dụng địa chỉ của bạn (" + accountProfile.fullName + ")";
+		}
+	}
+
+	function formatDateTime(isoString) {
+		if (!isoString) return "Vừa tạo";
+		var d = new Date(isoString);
+		if (isNaN(d.getTime())) return "Vừa tạo";
+		return d.toLocaleString("vi-VN", {
+			year: "numeric",
+			month: "2-digit",
+			day: "2-digit",
+			hour: "2-digit",
+			minute: "2-digit",
+			hour12: false
+		});
+	}
+
+	function mapDeliveryStatusLabel(status) {
+		var s = status == null ? "" : String(status);
+		if (s === "PENDING") return "Chờ xác nhận";
+		if (s === "CONFIRMED") return "Đã xác nhận";
+		if (s === "SHIPPING") return "Đang giao";
+		if (s === "DELIVERED") return "Đã giao";
+		if (s === "CANCELLED") return "Đã hủy";
+		return s || "—";
+	}
+
+	function mapPaymentMethodLabel(method) {
+		var m = method == null ? "" : String(method);
+		if (m === "CASH") return "Tiền mặt";
+		if (m === "BANKING") return "Chuyển khoản";
+		return m || "—";
+	}
+
+	function renderDeliveryHistory(deliveries) {
+		var listEl = document.getElementById("delivery-history-list");
+		if (!listEl) return;
+		var arr = Array.isArray(deliveries) ? deliveries : [];
+		if (!arr.length) {
+			listEl.innerHTML = "<p>Chưa có đơn giao hàng.</p>";
+			return;
+		}
+		listEl.innerHTML = arr.map(function (d) {
+			var items = Array.isArray(d.orderedItems) ? d.orderedItems : [];
+			var itemsText = items.length ? items.join(", ") : "—";
+			return (
+				'<div class="rounded-xl bg-surface-container-high px-3 py-2">' +
+				'<p class="font-semibold text-on-surface">Đơn #' + (d.orderId == null ? "—" : d.orderId) + "</p>" +
+				'<p class="text-xs">Phương thức thanh toán: ' + escapeHtml(mapPaymentMethodLabel(d.paymentMethod)) + "</p>" +
+				'<p class="text-xs">Địa chỉ: ' + escapeHtml(d.address || "—") + "</p>" +
+				'<p class="text-xs">Món đã đặt: ' + escapeHtml(itemsText) + "</p>" +
+				'<p class="text-xs">Tạo lúc: ' + escapeHtml(formatDateTime(d.createdAt)) + "</p>" +
+				"</div>"
+			);
+		}).join("");
+	}
+
+	function loadDeliveryHistory() {
+		if (!isAccountCustomer) return Promise.resolve();
+		return apiJson("/api/customer/deliveries", { method: "GET" })
+			.then(function (rows) {
+				renderDeliveryHistory(rows);
+			})
+			.catch(function () {
+				renderDeliveryHistory([]);
+			});
 	}
 
 	function readItemQtyMap(storageKey) {
@@ -210,6 +344,16 @@
 		var addMoreTextEl = document.getElementById("add-more-btn-text");
 		var hasItems = cart.items.length > 0;
 		var canAddMore = (cart.status === 2 || cart.status === 3) && hasItems;
+
+		if (isAccountCustomer) {
+			if (addMoreBtn) addMoreBtn.disabled = true;
+			button.disabled = !hasItems;
+			button.classList.remove("btn-ordered", "opacity-60");
+			button.classList.toggle("opacity-50", !hasItems);
+			button.classList.toggle("cursor-not-allowed", !hasItems);
+			text.textContent = hasItems ? "Đặt hàng" : "Chọn món ở thực đơn";
+			return;
+		}
 
 		button.classList.remove("btn-ordered", "bg-secondary", "opacity-60");
 		if (addMoreBtn) {
@@ -429,7 +573,7 @@
 
 		orderCodeEl.textContent = getTableLabel(tableNumberCache);
 		orderTimeEl.textContent = formatTime(cart.placedAt);
-		countBadgeEl.textContent = totals.itemCount;
+		if (countBadgeEl) countBadgeEl.textContent = totals.itemCount;
 		totalEl.textContent = formatVnd(totals.total);
 		if (headerTotalEl) headerTotalEl.textContent = formatVnd(totals.total);
 
@@ -439,7 +583,7 @@
 				'<p class="text-sm font-medium">Giỏ hàng của bạn đang trống.</p>' +
 				'<p class="text-xs mt-2">Quay lại trang thực đơn để thêm món.</p>' +
 				"</div>";
-			applyProgress(0);
+			if (!isAccountCustomer) applyProgress(0);
 			updateButtonState(cart);
 			return;
 		}
@@ -495,9 +639,11 @@
 			}
 		});
 
-		applyProgress(cart.status || 0);
+		if (!isAccountCustomer) {
+			applyProgress(cart.status || 0);
+			syncMilestoneInteractivity(cart);
+		}
 		updateButtonState(cart);
-		syncMilestoneInteractivity(cart);
 	}
 
 	function readStoredTableNumber() {
@@ -549,8 +695,50 @@
 		function bootOrderPage() {
 		var mainOrderBtn = document.getElementById("mainOrderBtn");
 		var addMoreBtn = document.getElementById("add-more-btn");
+		setupUserHeader();
+		function setupGuestOrderTracking() {
+			var storedOrderId = null;
+			try {
+				storedOrderId = parseInt(window.localStorage.getItem(ORDER_ID_KEY), 10);
+			} catch (e) {}
+			if (storedOrderId && !isNaN(storedOrderId)) {
+				subscribeOrderEvents(storedOrderId);
+				startOrderStatusPolling(storedOrderId);
+			}
+		}
 
-		fetchTableNumber(renderCart);
+		apiJson("/api/customer/profile", { method: "GET" })
+			.then(function (profile) {
+				accountProfile = profile || null;
+				isAccountCustomer = !!accountProfile;
+				var useProfile = document.getElementById("use-profile-address");
+				var addrInput = document.getElementById("delivery-address-input");
+				if (useProfile && addrInput) {
+					useProfile.addEventListener("change", function () {
+						var lock = !!useProfile.checked;
+						addrInput.disabled = lock;
+						if (lock && accountProfile && accountProfile.address) {
+							addrInput.value = accountProfile.address;
+						}
+					});
+				}
+			})
+			.catch(function () {
+				isAccountCustomer = false;
+				accountProfile = null;
+			})
+			.finally(function () {
+				applyAccountCustomerLayout();
+				if (isAccountCustomer) {
+					tableNumberCache = null;
+					stopOrderStatusPolling();
+					renderCart();
+					loadDeliveryHistory();
+					return;
+				}
+				setupGuestOrderTracking();
+				fetchTableNumber(renderCart);
+			});
 
 		// Chặn click milestone (khách không thao tác milestone).
 		getMilestones().forEach(function (m) {
@@ -563,17 +751,35 @@
 			if (m.label) m.label.addEventListener("click", blockIfLocked);
 		});
 
-		var storedOrderId = null;
-		try {
-			storedOrderId = parseInt(window.localStorage.getItem(ORDER_ID_KEY), 10);
-		} catch (e) {}
-		if (storedOrderId && !isNaN(storedOrderId)) {
-			subscribeOrderEvents(storedOrderId);
-			startOrderStatusPolling(storedOrderId);
-		}
-
 		mainOrderBtn.addEventListener("click", function () {
 			var cart = window.WebCafeCart.getCart();
+			if (isAccountCustomer) {
+				if (!cart.items.length) {
+					window.location.href = "/menu";
+					return;
+				}
+				var payload = {
+					items: cart.items.map(function (it) {
+						return { productId: it.id, quantity: it.quantity };
+					}),
+					paymentMethod: getSelectedPaymentMethod(),
+					address: getDeliveryAddressInput(),
+					useProfileAddress: isUseProfileAddressChecked()
+				};
+				apiJson("/api/customer/orders/0/confirm", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(payload)
+				}).then(function () {
+					window.WebCafeCart.clearCart();
+					renderCart();
+					loadDeliveryHistory();
+					alert("Đặt hàng thành công");
+				}).catch(function (err) {
+					alert(err && err.message ? err.message : "Không thể đặt hàng");
+				});
+				return;
+			}
 			// Không còn hành động "HOÀN TẤT" reset giỏ / milestone (trạng thái 2–3 do nhân viên).
 			if (cart.status === 2 || cart.status === 3 || cart.status === 4) {
 				return;
@@ -631,7 +837,12 @@
 				apiJson("/api/customer/orders/0/confirm", {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ items: orderItems })
+					body: JSON.stringify({
+						items: orderItems,
+						paymentMethod: null,
+						address: null,
+						useProfileAddress: false
+					})
 				}).then(function (res) {
 					if (res && res.id != null) {
 						window.localStorage.setItem(ORDER_ID_KEY, String(res.id));

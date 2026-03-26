@@ -3,10 +3,21 @@ package com.example.WebCafe.controller;
 import com.example.WebCafe.dto.request.AddCartItemRequest;
 import com.example.WebCafe.dto.request.ConfirmOrderRequest;
 import com.example.WebCafe.dto.request.SetTableRequest;
+import com.example.WebCafe.dto.response.CustomerDeliveryResponse;
+import com.example.WebCafe.dto.response.CustomerProfileResponse;
 import com.example.WebCafe.dto.response.CustomerTableResponse;
 import com.example.WebCafe.dto.response.OrderDetailResponse;
 import com.example.WebCafe.dto.response.OrderSummaryResponse;
 import com.example.WebCafe.dto.response.ProductResponse;
+import com.example.WebCafe.model.Customer;
+import com.example.WebCafe.model.Delivery;
+import com.example.WebCafe.model.Payment;
+import com.example.WebCafe.model.User;
+import com.example.WebCafe.repository.CafeOrderRepository;
+import com.example.WebCafe.repository.CustomerRepository;
+import com.example.WebCafe.repository.DeliveryRepository;
+import com.example.WebCafe.repository.PaymentRepository;
+import com.example.WebCafe.repository.UserRepository;
 import com.example.WebCafe.service.CustomerOrderService;
 import com.example.WebCafe.service.CustomerSessionService;
 import com.example.WebCafe.service.MenuService;
@@ -36,14 +47,29 @@ public class CustomerController {
 	private final MenuService menuService;
 	private final CustomerOrderService customerOrderService;
 	private final OrderMilestoneEventService orderMilestoneEventService;
+	private final UserRepository userRepository;
+	private final CustomerRepository customerRepository;
+	private final DeliveryRepository deliveryRepository;
+	private final PaymentRepository paymentRepository;
+	private final CafeOrderRepository cafeOrderRepository;
 
 	public CustomerController(CustomerSessionService customerSessionService, MenuService menuService,
 			CustomerOrderService customerOrderService,
-			OrderMilestoneEventService orderMilestoneEventService) {
+			OrderMilestoneEventService orderMilestoneEventService,
+			UserRepository userRepository,
+			CustomerRepository customerRepository,
+			DeliveryRepository deliveryRepository,
+			PaymentRepository paymentRepository,
+			CafeOrderRepository cafeOrderRepository) {
 		this.customerSessionService = customerSessionService;
 		this.menuService = menuService;
 		this.customerOrderService = customerOrderService;
 		this.orderMilestoneEventService = orderMilestoneEventService;
+		this.userRepository = userRepository;
+		this.customerRepository = customerRepository;
+		this.deliveryRepository = deliveryRepository;
+		this.paymentRepository = paymentRepository;
+		this.cafeOrderRepository = cafeOrderRepository;
 	}
 
 	@PostMapping("/table")
@@ -60,6 +86,79 @@ public class CustomerController {
 	@GetMapping("/menu")
 	public List<ProductResponse> menu() {
 		return menuService.listMenuItems();
+	}
+
+	@GetMapping("/profile")
+	public CustomerProfileResponse profile() {
+		var auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+		if (auth == null || !(auth.getPrincipal() instanceof String username)) {
+			throw new org.springframework.web.server.ResponseStatusException(
+					org.springframework.http.HttpStatus.BAD_REQUEST,
+					"Chế độ khách không có hồ sơ tài khoản");
+		}
+		User user = userRepository.findByUsername(username)
+				.orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
+						org.springframework.http.HttpStatus.NOT_FOUND, "Không tìm thấy người dùng"));
+		Customer customer = customerRepository.findById(user.getId())
+				.orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
+						org.springframework.http.HttpStatus.NOT_FOUND, "Không tìm thấy hồ sơ khách hàng"));
+		return new CustomerProfileResponse(user.getUsername(), user.getFullName(), customer.getAddress());
+	}
+
+	@GetMapping("/deliveries")
+	public List<CustomerDeliveryResponse> deliveries() {
+		var auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+		if (auth == null || !(auth.getPrincipal() instanceof String username)) {
+			throw new org.springframework.web.server.ResponseStatusException(
+					org.springframework.http.HttpStatus.BAD_REQUEST,
+					"Chế độ khách không có lịch sử giao hàng");
+		}
+		User user = userRepository.findByUsername(username)
+				.orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
+						org.springframework.http.HttpStatus.NOT_FOUND, "Không tìm thấy người dùng"));
+		Customer customer = customerRepository.findById(user.getId())
+				.orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
+						org.springframework.http.HttpStatus.NOT_FOUND, "Không tìm thấy hồ sơ khách hàng"));
+
+		return deliveryRepository.findHistoryByCustomerUserId(customer.getUserId())
+				.stream()
+				.map(this::toDeliveryResponse)
+				.toList();
+	}
+
+	private CustomerDeliveryResponse toDeliveryResponse(Delivery d) {
+		var createdAt = d.getCreatedAt();
+		if (createdAt == null && d.getOrder() != null) {
+			createdAt = d.getOrder().getCreatedAt();
+		}
+		Integer orderId = d.getOrder() != null ? d.getOrder().getId() : null;
+
+		var hydratedOrder = orderId == null ? null : cafeOrderRepository.findWithItemsById(orderId).orElse(null);
+		var sourceOrder = hydratedOrder != null ? hydratedOrder : d.getOrder();
+
+		var orderedItems = sourceOrder == null || sourceOrder.getItems() == null
+				? List.<String>of()
+				: sourceOrder.getItems().stream()
+						.map(oi -> {
+							String name = oi.getProduct() != null ? oi.getProduct().getName() : "Món";
+							Integer qty = oi.getQuantity() == null ? 0 : oi.getQuantity();
+							return name + " x" + qty;
+						})
+						.toList();
+
+		Payment payment = d.getPayment();
+		if (payment == null && orderId != null) {
+			payment = paymentRepository.findTopByOrder_IdOrderByIdDesc(orderId).orElse(null);
+		}
+		return new CustomerDeliveryResponse(
+				d.getId(),
+				orderId,
+				d.getStatus(),
+				payment != null ? payment.getMethod() : null,
+				d.getCustomer() != null ? d.getCustomer().getAddress() : null,
+				orderedItems,
+				createdAt,
+				d.getDeliveredAt());
 	}
 
 	@GetMapping("/orders")

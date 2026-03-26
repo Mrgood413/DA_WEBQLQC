@@ -2,9 +2,12 @@ package com.example.WebCafe.service;
 
 
 import com.example.WebCafe.dto.request.LoginRequest;
+import com.example.WebCafe.dto.request.RegisterCustomerRequest;
 import com.example.WebCafe.dto.response.AuthMeResponse;
+import com.example.WebCafe.model.Customer;
 import com.example.WebCafe.model.User;
 import com.example.WebCafe.repository.AdminRepository;
+import com.example.WebCafe.repository.CustomerRepository;
 import com.example.WebCafe.repository.StaffRepository;
 import com.example.WebCafe.repository.UserRepository;
 import com.example.WebCafe.security.CustomerPrincipal;
@@ -23,11 +26,13 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.springframework.http.HttpStatus;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -35,13 +40,15 @@ public class AuthServiceImpl implements AuthService {
 	private final UserRepository userRepository;
 	private final StaffRepository staffRepository;
 	private final AdminRepository adminRepository;
+	private final CustomerRepository customerRepository;
 	private final PasswordEncoder passwordEncoder;
 
 	public AuthServiceImpl(UserRepository userRepository, StaffRepository staffRepository,
-			AdminRepository adminRepository, PasswordEncoder passwordEncoder) {
+			AdminRepository adminRepository, CustomerRepository customerRepository, PasswordEncoder passwordEncoder) {
 		this.userRepository = userRepository;
 		this.staffRepository = staffRepository;
 		this.adminRepository = adminRepository;
+		this.customerRepository = customerRepository;
 		this.passwordEncoder = passwordEncoder;
 	}
 
@@ -49,13 +56,27 @@ public class AuthServiceImpl implements AuthService {
 	@Transactional(readOnly = true)
 	public void login(LoginRequest request, HttpServletRequest httpRequest) {
 		switch (request.mode()) {
-			case CUSTOMER -> loginCustomer(httpRequest);
+			case CUSTOMER -> loginCustomer(request, httpRequest);
 			case STAFF -> loginStaff(request, httpRequest);
 			case ADMIN -> loginAdmin(request, httpRequest);
 		}
 	}
 
-	private void loginCustomer(HttpServletRequest httpRequest) {
+	private void loginCustomer(LoginRequest request, HttpServletRequest httpRequest) {
+		String username = request.username() == null ? "" : request.username().trim();
+		String password = request.password() == null ? "" : request.password();
+		// CUSTOMER có 2 mode:
+		// - Guest tại quán: không truyền username/password
+		// - Customer account: có username/password
+		if (!username.isBlank() || !password.isBlank()) {
+			User user = loadUserWithPasswordCheck(request);
+			if (!customerRepository.existsById(user.getId())) {
+				throw new BadCredentialsException("Tài khoản không phải khách hàng");
+			}
+			authenticateUser(user, Roles.CUSTOMER, httpRequest);
+			return;
+		}
+
 		CustomerPrincipal guest = new CustomerPrincipal(UUID.randomUUID().toString());
 		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
 				guest,
@@ -133,10 +154,39 @@ public class AuthServiceImpl implements AuthService {
 			return Optional.of(new AuthMeResponse("CUSTOMER", null, null, cp.guestId(), roles, tableNumber));
 		}
 		if (auth.getPrincipal() instanceof String username) {
-			String mode = roles.contains("ADMIN") ? "ADMIN" : roles.contains("STAFF") ? "STAFF" : "UNKNOWN";
+			String mode = roles.contains("ADMIN") ? "ADMIN"
+					: roles.contains("STAFF") ? "STAFF"
+							: roles.contains("CUSTOMER") ? "CUSTOMER" : "UNKNOWN";
 			String fullName = userRepository.findByUsername(username).map(User::getFullName).orElse(null);
 			return Optional.of(new AuthMeResponse(mode, username, fullName, null, roles, tableNumber));
 		}
 		return Optional.empty();
+	}
+
+	@Override
+	@Transactional
+	public void registerCustomer(RegisterCustomerRequest request) {
+		String username = request.username() != null ? request.username().trim() : "";
+		String fullName = request.fullName() != null ? request.fullName().trim() : "";
+		String address = request.address() != null ? request.address().trim() : "";
+		if (username.isBlank() || fullName.isBlank() || address.isBlank()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Thiếu thông tin đăng ký");
+		}
+		if (userRepository.existsByUsername(username)) {
+			throw new ResponseStatusException(HttpStatus.CONFLICT, "Tên đăng nhập đã tồn tại");
+		}
+
+		User u = new User();
+		u.setUsername(username);
+		u.setPassword(passwordEncoder.encode(request.password()));
+		u.setFullName(fullName);
+		u.setPhone(request.phone());
+		userRepository.save(u);
+
+		Customer customer = new Customer();
+		customer.setUser(u);
+		customer.setActive(true);
+		customer.setAddress(address);
+		customerRepository.save(customer);
 	}
 }
