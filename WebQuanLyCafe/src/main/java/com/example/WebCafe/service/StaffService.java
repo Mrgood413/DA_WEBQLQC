@@ -6,6 +6,7 @@ import com.example.WebCafe.dto.request.StaffProductUpdateRequest;
 import com.example.WebCafe.dto.response.CategoryOptionResponse;
 import com.example.WebCafe.dto.response.OrderQueueResponse;
 import com.example.WebCafe.dto.response.ProductResponse;
+import com.example.WebCafe.dto.response.StaffMyShiftSlotResponse;
 
 import java.util.List;
 
@@ -20,6 +21,8 @@ public interface StaffService {
 	ProductResponse updateProduct(Integer productId, StaffProductUpdateRequest request);
 
 	List<OrderQueueResponse> listQueue();
+
+	List<StaffMyShiftSlotResponse> getMyShiftSlots();
 
 	void confirmOrder(Integer orderId);
 

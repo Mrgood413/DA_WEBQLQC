@@ -300,7 +300,7 @@
         body: JSON.stringify({ mode: 'STAFF', username: username, password: password })
       });
       if (staffRes.ok) {
-        window.location.href = '/staff/menu';
+        window.location.href = '/staff/dashboard';
         return;
       }
 

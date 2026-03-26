@@ -7,17 +7,25 @@ import com.example.WebCafe.dto.response.OrderItemResponse;
 import com.example.WebCafe.dto.response.CategoryOptionResponse;
 import com.example.WebCafe.dto.response.OrderQueueResponse;
 import com.example.WebCafe.dto.response.ProductResponse;
+import com.example.WebCafe.dto.response.StaffMyShiftSlotResponse;
 import com.example.WebCafe.model.CafeOrder;
 import com.example.WebCafe.model.Category;
 import com.example.WebCafe.model.OrderItem;
 import com.example.WebCafe.model.Product;
 import com.example.WebCafe.model.Payment;
+import com.example.WebCafe.model.StaffShift;
+import com.example.WebCafe.model.User;
 import com.example.WebCafe.model.enums.OrderStatus;
 import com.example.WebCafe.repository.CafeOrderRepository;
 import com.example.WebCafe.repository.CategoryRepository;
 import com.example.WebCafe.repository.PaymentRepository;
 import com.example.WebCafe.repository.ProductRepository;
+import com.example.WebCafe.repository.StaffRepository;
+import com.example.WebCafe.repository.StaffShiftRepository;
+import com.example.WebCafe.repository.UserRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -37,19 +45,28 @@ public class StaffServiceImpl implements StaffService {
 	private final PaymentRepository paymentRepository;
 	private final OrderMilestoneEventService orderMilestoneEventService;
 	private final StaffQueueUpdateEventService staffQueueUpdateEventService;
+	private final UserRepository userRepository;
+	private final StaffRepository staffRepository;
+	private final StaffShiftRepository staffShiftRepository;
 
 	public StaffServiceImpl(ProductRepository productRepository,
 			CategoryRepository categoryRepository,
 			CafeOrderRepository cafeOrderRepository,
 			PaymentRepository paymentRepository,
 			OrderMilestoneEventService orderMilestoneEventService,
-			StaffQueueUpdateEventService staffQueueUpdateEventService) {
+			StaffQueueUpdateEventService staffQueueUpdateEventService,
+			UserRepository userRepository,
+			StaffRepository staffRepository,
+			StaffShiftRepository staffShiftRepository) {
 		this.productRepository = productRepository;
 		this.categoryRepository = categoryRepository;
 		this.cafeOrderRepository = cafeOrderRepository;
 		this.paymentRepository = paymentRepository;
 		this.orderMilestoneEventService = orderMilestoneEventService;
 		this.staffQueueUpdateEventService = staffQueueUpdateEventService;
+		this.userRepository = userRepository;
+		this.staffRepository = staffRepository;
+		this.staffShiftRepository = staffShiftRepository;
 	}
 
 	@Override
@@ -119,6 +136,33 @@ public class StaffServiceImpl implements StaffService {
 			p.setCategory(cat);
 		}
 		return toResponse(productRepository.save(p));
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<StaffMyShiftSlotResponse> getMyShiftSlots() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth == null || !auth.isAuthenticated()) {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+		}
+		String username = auth.getName();
+		if (username == null || username.isBlank()) {
+			return List.of();
+		}
+		User user = userRepository.findByUsername(username.trim()).orElse(null);
+		if (user == null) {
+			return List.of();
+		}
+		if (!staffRepository.existsById(user.getId())) {
+			return List.of();
+		}
+		return staffShiftRepository.findByStaffUserId(user.getId()).stream()
+				.map(StaffShift::getShift)
+				.filter(s -> s != null)
+				.map(s -> new StaffMyShiftSlotResponse(
+						s.getDayOfWeek().name(),
+						s.getShiftTime().name()))
+				.toList();
 	}
 
 	@Override

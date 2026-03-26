@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html class="light" lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Báo cáo Doanh thu - The Artisanal Ledger</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary": "#ffffff",
+              "on-secondary-container": "#217128",
+              "outline": "#827472",
+              "on-tertiary": "#ffffff",
+              "on-error-container": "#93000a",
+              "on-tertiary-container": "#ae8d81",
+              "on-surface-variant": "#504442",
+              "on-secondary-fixed-variant": "#005312",
+              "primary": "#271310",
+              "tertiary": "#27130b",
+              "error-container": "#ffdad6",
+              "tertiary-fixed-dim": "#e4beb2",
+              "surface-container": "#f5eed7",
+              "on-error": "#ffffff",
+              "primary-fixed": "#ffdad4",
+              "inverse-surface": "#333121",
+              "surface-variant": "#e9e2cc",
+              "secondary-fixed-dim": "#88d982",
+              "on-primary-fixed-variant": "#5b403c",
+              "secondary-fixed": "#a3f69c",
+              "tertiary-fixed": "#ffdbce",
+              "on-tertiary-fixed-variant": "#5b4137",
+              "surface-container-low": "#faf4dd",
+              "background": "#fff9ea",
+              "on-primary-container": "#ae8d87",
+              "surface-bright": "#fff9ea",
+              "primary-container": "#3e2723",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-high": "#efe8d2",
+              "outline-variant": "#d3c3c0",
+              "on-primary-fixed": "#2b1613",
+              "primary-fixed-dim": "#e3beb8",
+              "inverse-primary": "#e3beb8",
+              "on-tertiary-fixed": "#2b160f",
+              "surface": "#fff9ea",
+              "tertiary-container": "#3e271e",
+              "on-surface": "#1e1c0e",
+              "secondary-container": "#a0f399",
+              "surface-tint": "#745853",
+              "secondary": "#1b6d24",
+              "on-secondary": "#ffffff",
+              "inverse-on-surface": "#f8f1da",
+              "error": "#ba1a1a",
+              "surface-container-highest": "#e9e2cc",
+              "on-secondary-fixed": "#002204",
+              "on-background": "#1e1c0e",
+              "surface-dim": "#e0dac4"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            keyframes: {
+              'fade-in-up': {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              'chart-draw': {
+                '0%': { strokeDashoffset: '1200' },
+                '100%': { strokeDashoffset: '0' }
+              }
+            },
+            animation: {
+              'fade-in-up': 'fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #fff9ea; color: #1e1c0e; }
+        h1, h2, .font-headline { font-family: 'Manrope', sans-serif; }
+        .glass-panel {
+            background: rgba(245, 238, 215, 0.8);
+            backdrop-filter: blur(12px);
+        }
+        .animate-delay-100 { animation-delay: 100ms; }
+        .animate-delay-200 { animation-delay: 200ms; }
+        .animate-delay-300 { animation-delay: 300ms; }
+        .animate-delay-400 { animation-delay: 400ms; }
+        .animate-delay-500 { animation-delay: 500ms; }
+        .animate-delay-600 { animation-delay: 600ms; }
+        .animate-delay-700 { animation-delay: 700ms; }
+        .chart-path {
+            stroke-dasharray: 1200;
+            stroke-dashoffset: 1200;
+            animation: chart-draw 2s cubic-bezier(0.4, 0, 0.2, 1) forwards 1.2s;
+        }
+</style>
+</head>
+<body class="min-h-screen">
+<aside class="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 border-r-0 bg-[#f5eed7] py-6 z-50">
+<div class="px-6 mb-10">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined">coffee</span>
+</div>
+<div>
+<h1 class="font-manrope font-bold text-lg text-[#271310]">Artisanal Ledger</h1>
+<p class="text-[10px] uppercase tracking-widest opacity-60">Staff Portal</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center px-4 py-3 mx-2 text-[#3e2723]/70 hover:text-[#271310] hover:bg-[#ffffff]/50 rounded-full transition-all duration-200" href="/admin/category">
+<span class="material-symbols-outlined mr-3">category</span>
+<span class="font-medium text-sm">Categories</span>
+</a>
+<a class="flex items-center px-4 py-3 mx-2 text-[#3e2723]/70 hover:text-[#271310] hover:bg-[#ffffff]/50 rounded-full transition-all duration-200" href="/admin/staff">
+<span class="material-symbols-outlined mr-3">group</span>
+<span class="font-medium text-sm">Staff</span>
+</a>
+<a class="flex items-center px-4 py-3 mx-2 bg-[#ffffff] text-[#271310] rounded-full shadow-sm" href="/admin/revenue">
+<span class="material-symbols-outlined mr-3" style="font-variation-settings: 'FILL' 1;">payments</span>
+<span class="font-medium text-sm">Revenue</span>
+</a>
+</nav>
+<div class="mt-auto px-2 space-y-1">
+<div class="px-4 py-2 mb-1">
+<p class="text-[10px] uppercase tracking-wider opacity-60">Đăng nhập</p>
+<p id="current-user-fullname" class="text-sm font-semibold text-[#271310] truncate" title="">—</p>
+</div>
+<button type="button" id="admin-logout" class="flex items-center w-full px-4 py-3 text-[#3e2723]/70 hover:text-[#271310] hover:bg-[#ffffff]/50 rounded-full transition-all text-left">
+<span class="material-symbols-outlined mr-3">logout</span>
+<span class="font-medium text-sm">Logout</span>
+</button>
+</div>
+</aside>
+<main class="md:ml-64 min-h-screen pb-24 md:pb-0">
+<header class="bg-[#fff9ea] flex flex-wrap gap-4 justify-between items-center w-full px-6 md:px-8 py-4 sticky top-0 z-40 opacity-0 animate-fade-in-up">
+<div class="flex items-center gap-6">
+<h2 class="text-xl font-bold text-[#271310] tracking-tight font-manrope">Báo cáo Doanh thu</h2>
+</div>
+<button type="button" id="btn-export-excel" class="flex items-center gap-2 px-6 py-2.5 bg-[#3E2723] text-[#f7f7f6] rounded-lg text-sm font-bold shadow-sm hover:opacity-90 transition-all">
+<span class="material-symbols-outlined text-xl">download</span>
+Xuất Excel
+</button>
+</header>
+<section class="p-6 space-y-8">
+<p id="page-error" class="hidden text-sm text-error" role="alert"></p>
+<div class="flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between">
+<div id="period-bar" class="flex flex-wrap gap-2 p-1 bg-surface-container-high rounded-full w-full lg:w-auto opacity-0 animate-fade-in-up animate-delay-100">
+<button type="button" data-period="all" class="period-btn flex-1 lg:flex-none px-5 py-2 rounded-full text-sm font-semibold transition-all">Tất cả</button>
+<button type="button" data-period="DAY" class="period-btn flex-1 lg:flex-none px-5 py-2 rounded-full text-sm font-semibold text-on-surface-variant hover:text-primary transition-all">Ngày</button>
+<button type="button" data-period="WEEK" class="period-btn flex-1 lg:flex-none px-5 py-2 rounded-full text-sm font-semibold text-on-surface-variant hover:text-primary transition-all">Tuần</button>
+<button type="button" data-period="MONTH" class="period-btn flex-1 lg:flex-none px-5 py-2 bg-surface-container-lowest text-primary shadow-sm rounded-full text-sm font-bold transition-all">Tháng</button>
+<button type="button" data-period="YEAR" class="period-btn flex-1 lg:flex-none px-5 py-2 rounded-full text-sm font-semibold text-on-surface-variant hover:text-primary transition-all">Năm</button>
+</div>
+<div class="flex gap-4 overflow-x-auto w-full lg:w-auto pb-2 lg:pb-0">
+<div class="flex items-center gap-3 px-4 py-2 bg-surface-container-low rounded-xl min-w-[160px] opacity-0 animate-fade-in-up animate-delay-200">
+<div class="w-10 h-10 rounded-full bg-secondary-container/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">trending_up</span>
+</div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Tổng Doanh Thu</p>
+<p id="stat-total-revenue" class="text-lg font-headline font-bold text-primary">—</p>
+</div>
+</div>
+<div class="flex items-center gap-3 px-4 py-2 bg-surface-container-low rounded-xl min-w-[160px] opacity-0 animate-fade-in-up animate-delay-300">
+<div class="w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">receipt_long</span>
+</div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Số Hóa Đơn</p>
+<p id="stat-total-orders" class="text-lg font-headline font-bold text-primary">—</p>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<div class="bg-surface-container-lowest p-6 md:p-8 rounded-xl shadow-sm relative overflow-hidden opacity-0 animate-fade-in-up animate-delay-400 lg:col-span-12">
+<div class="flex justify-between items-start mb-8">
+<div>
+<h3 class="text-xl font-headline font-bold text-primary">Xu hướng Doanh thu</h3>
+<p class="text-sm text-on-surface-variant">Theo kỳ đã chọn (dữ liệu từ API)</p>
+</div>
+</div>
+<div id="chart-container" class="relative h-64 w-full flex items-end">
+<div class="absolute inset-0 flex items-end">
+<svg id="revenue-chart-svg" class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 1000 300" aria-hidden="true">
+<defs>
+<linearGradient id="chartGradientGreen" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#1b6d24" stop-opacity="0.15"></stop>
+<stop offset="100%" stop-color="#1b6d24" stop-opacity="0"></stop>
+</linearGradient>
+</defs>
+<path id="chart-area" d="" fill="url(#chartGradientGreen)"></path>
+<path id="chart-line" class="chart-path" d="" fill="none" stroke="#1b6d24" stroke-linecap="round" stroke-width="4"></path>
+</svg>
+</div>
+<div id="chart-axis" class="absolute bottom-0 left-0 w-full flex justify-between pt-4 text-[10px] font-bold text-on-surface-variant/40 px-1">
+</div>
+</div>
+<p id="chart-empty" class="hidden text-sm text-on-surface-variant text-center py-8">Chưa có điểm dữ liệu cho biểu đồ.</p>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-xl overflow-hidden opacity-0 animate-fade-in-up animate-delay-500">
+<div class="px-6 md:px-8 py-6 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center bg-surface-container">
+<h3 class="font-headline font-bold text-lg text-primary">Doanh thu theo Sản phẩm</h3>
+<div class="relative w-full sm:w-auto">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input id="product-filter" type="search" class="bg-surface-container-lowest border-none rounded-full py-2 pl-10 pr-4 text-xs focus:ring-2 focus:ring-secondary w-full sm:w-64" placeholder="Tìm kiếm món..."/>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-high/50 text-on-surface-variant text-[10px] font-bold uppercase tracking-widest">
+<tr>
+<th class="px-6 md:px-8 py-4">Sản phẩm</th>
+<th class="px-6 md:px-8 py-4">Số lượng</th>
+<th class="px-6 md:px-8 py-4">Đơn giá TB</th>
+<th class="px-6 md:px-8 py-4 text-right">Doanh thu</th>
+</tr>
+</thead>
+<tbody id="product-tbody" class="text-sm">
+<tr><td colspan="4" class="px-8 py-10 text-center text-on-surface-variant">Đang tải…</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<footer class="p-8 text-center text-[10px] font-bold text-on-surface-variant/30 uppercase tracking-[0.2em] mb-20 md:mb-0 opacity-0 animate-fade-in-up animate-delay-700">
+Dữ liệu từ /api/admin/revenue — The Artisanal Ledger
+</footer>
+</main>
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-background/90 backdrop-blur-xl border-t border-outline-variant/10 flex justify-around items-center px-4 py-3 z-50">
+<a class="flex flex-col items-center gap-1 text-on-surface-variant/60" href="/admin/category">
+<span class="material-symbols-outlined">category</span>
+<span class="text-[10px] font-bold">Danh mục</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="/admin/revenue">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
+<span class="text-[10px] font-bold">Doanh thu</span>
+</a>
+</nav>
+<script>
+(function () {
+  var state = { period: "MONTH" };
+  var lastRows = [];
+
+  function fmtVnd(n) {
+    if (n == null || n === "") return "0 ₫";
+    var x = Number(n);
+    if (isNaN(x)) return "0 ₫";
+    return new Intl.NumberFormat("vi-VN").format(x) + " ₫";
+  }
+
+  function fmtInt(n) {
+    if (n == null) return "0";
+    return new Intl.NumberFormat("vi-VN").format(Number(n));
+  }
+
+  function buildQuery() {
+    var p = new URLSearchParams();
+    if (state.period && state.period !== "all") p.set("period", state.period);
+    return p.toString();
+  }
+
+  function loadMe() {
+    fetch("/api/auth/me", { credentials: "same-origin" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        var el = document.getElementById("current-user-fullname");
+        if (!el || !data) return;
+        var name = data.fullName && String(data.fullName).trim()
+          ? String(data.fullName).trim()
+          : data.username || "—";
+        el.textContent = name;
+        el.setAttribute("title", name);
+      });
+  }
+
+  function renderChart(chart) {
+    var svg = document.getElementById("revenue-chart-svg");
+    var area = document.getElementById("chart-area");
+    var line = document.getElementById("chart-line");
+    var axis = document.getElementById("chart-axis");
+    var empty = document.getElementById("chart-empty");
+    var container = document.getElementById("chart-container");
+    if (!chart || chart.length === 0) {
+      if (area) area.setAttribute("d", "");
+      if (line) line.setAttribute("d", "");
+      if (axis) axis.innerHTML = "";
+      if (empty) empty.classList.remove("hidden");
+      return;
+    }
+    if (empty) empty.classList.add("hidden");
+    var amounts = chart.map(function (c) { return Number(c.amount || 0); });
+    var max = Math.max.apply(null, amounts.concat([1]));
+    var w = 1000;
+    var h = 300;
+    var padB = 36;
+    var plotH = h - padB - 24;
+    var n = chart.length;
+    var pts = chart.map(function (c, i) {
+      var x = n === 1 ? w / 2 : (i / (n - 1)) * w;
+      var y = 24 + plotH - (Number(c.amount || 0) / max) * plotH;
+      return { x: x, y: y, label: c.label || "" };
+    });
+    var dLine = pts.map(function (p, i) { return (i === 0 ? "M" : "L") + p.x + "," + p.y; }).join(" ");
+    var dArea = dLine + " L" + w + "," + h + " L0," + h + " Z";
+    if (area) area.setAttribute("d", dArea);
+    if (line) line.setAttribute("d", dLine);
+    if (axis) {
+      axis.innerHTML = pts.map(function (p) {
+        return "<span class=\"truncate max-w-[4.5rem]\">" + (p.label || "") + "</span>";
+      }).join("");
+    }
+  }
+
+  function renderTable(rows, filter) {
+    var tbody = document.getElementById("product-tbody");
+    if (!tbody) return;
+    var q = (filter || "").trim().toLowerCase();
+    var list = rows.filter(function (r) {
+      if (!q) return true;
+      return (r.productName || "").toLowerCase().indexOf(q) >= 0;
+    });
+    if (list.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" class="px-8 py-10 text-center text-on-surface-variant">Không có dữ liệu.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = list.map(function (r, idx) {
+      var qty = Number(r.quantitySold || 0);
+      var rev = Number(r.revenue || 0);
+      var avg = qty > 0 ? rev / qty : 0;
+      var zebra = idx % 2 === 1 ? " bg-surface-container-lowest/20" : "";
+      return (
+        '<tr class="hover:bg-surface-container-lowest/50 transition-colors border-b border-outline-variant/5' + zebra + '">' +
+        '<td class="px-6 md:px-8 py-5"><span class="font-bold text-primary">' + (r.productName || "—") + "</span></td>" +
+        '<td class="px-6 md:px-8 py-5 font-medium">' + fmtInt(qty) + "</td>" +
+        '<td class="px-6 md:px-8 py-5 text-on-surface-variant">' + fmtVnd(avg) + "</td>" +
+        '<td class="px-6 md:px-8 py-5 text-right font-bold text-primary">' + fmtVnd(rev) + "</td>" +
+        "</tr>"
+      );
+    }).join("");
+  }
+
+  function loadRevenue() {
+    var errEl = document.getElementById("page-error");
+    if (errEl) { errEl.classList.add("hidden"); errEl.textContent = ""; }
+    var q = buildQuery();
+    fetch("/api/admin/revenue" + (q ? "?" + q : ""), { credentials: "same-origin" })
+      .then(function (r) {
+        if (r.status === 401 || r.status === 403) {
+          window.location.href = "/login";
+          return null;
+        }
+        if (!r.ok) throw new Error("load");
+        return r.json();
+      })
+      .then(function (data) {
+        if (!data) return;
+        document.getElementById("stat-total-revenue").textContent = fmtVnd(data.totalRevenue);
+        document.getElementById("stat-total-orders").textContent = fmtInt(data.totalOrders);
+        lastRows = Array.isArray(data.byProduct) ? data.byProduct : [];
+        renderTable(lastRows, document.getElementById("product-filter") && document.getElementById("product-filter").value);
+        renderChart(Array.isArray(data.chart) ? data.chart : []);
+      })
+      .catch(function () {
+        if (errEl) {
+          errEl.textContent = "Không tải được báo cáo. Vui lòng đăng nhập admin.";
+          errEl.classList.remove("hidden");
+        }
+      });
+  }
+
+  function syncPeriodButtons() {
+    document.querySelectorAll(".period-btn").forEach(function (btn) {
+      var p = btn.getAttribute("data-period");
+      var active = p === state.period;
+      btn.className =
+        "period-btn flex-1 lg:flex-none px-5 py-2 rounded-full text-sm font-semibold transition-all " +
+        (active
+          ? "bg-surface-container-lowest text-primary shadow-sm font-bold"
+          : "text-on-surface-variant hover:text-primary");
+    });
+  }
+
+  document.querySelectorAll(".period-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      state.period = btn.getAttribute("data-period") || "MONTH";
+      syncPeriodButtons();
+      loadRevenue();
+    });
+  });
+
+  document.getElementById("product-filter").addEventListener("input", function () {
+    renderTable(lastRows, this.value);
+  });
+
+  document.getElementById("admin-logout").addEventListener("click", function () {
+    fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" })
+      .then(function () { window.location.href = "/login"; })
+      .catch(function () { window.location.href = "/login"; });
+  });
+
+  document.getElementById("btn-export-excel").addEventListener("click", function () {
+    var q = buildQuery();
+    fetch("/api/admin/revenue/export" + (q ? "?" + q : ""), { credentials: "same-origin" })
+      .then(function (r) {
+        if (!r.ok) throw new Error("export");
+        return r.blob();
+      })
+      .then(function (blob) {
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "revenue.xlsx";
+        a.click();
+        URL.revokeObjectURL(a.href);
+      })
+      .catch(function () {
+        alert("Xuất Excel chưa khả dụng hoặc lỗi máy chủ.");
+      });
+  });
+
+  syncPeriodButtons();
+  loadMe();
+  loadRevenue();
+})();
+</script>
+</body>
+</html>

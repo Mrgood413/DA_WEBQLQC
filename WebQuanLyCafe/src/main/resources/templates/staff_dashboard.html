@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html class="light" lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dashboard — The Artisanal Ledger</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "outline-variant": "#d3c3c0",
+              "on-secondary-fixed": "#002204",
+              "on-surface": "#1e1c0e",
+              "primary-container": "#3e2723",
+              "on-surface-variant": "#504442",
+              "primary": "#271310",
+              "tertiary-fixed-dim": "#e4beb2",
+              "surface-container-highest": "#e9e2cc",
+              "on-secondary-fixed-variant": "#005312",
+              "on-primary": "#ffffff",
+              "background": "#fff9ea",
+              "secondary-container": "#a0f399",
+              "inverse-primary": "#e3beb8",
+              "on-tertiary-fixed-variant": "#5b4137",
+              "inverse-surface": "#333121",
+              "surface-tint": "#745853",
+              "on-error": "#ffffff",
+              "surface-container-low": "#faf4dd",
+              "secondary": "#1b6d24",
+              "on-tertiary": "#ffffff",
+              "surface": "#fff9ea",
+              "error-container": "#ffdad6",
+              "on-secondary-container": "#217128",
+              "on-primary-fixed": "#2b1613",
+              "primary-fixed": "#ffdad4",
+              "tertiary-container": "#3e271e",
+              "on-background": "#1e1c0e",
+              "outline": "#827472",
+              "surface-container-lowest": "#ffffff",
+              "secondary-fixed": "#a3f69c",
+              "surface-dim": "#e0dac4",
+              "primary-fixed-dim": "#e3beb8",
+              "error": "#ba1a1a",
+              "on-secondary": "#ffffff",
+              "on-primary-container": "#ae8d87",
+              "on-tertiary-container": "#ae8d81",
+              "surface-container": "#f5eed7",
+              "on-tertiary-fixed": "#2b160f",
+              "tertiary-fixed": "#ffdbce",
+              "tertiary": "#27130b",
+              "surface-container-high": "#efe8d2",
+              "surface-variant": "#e9e2cc",
+              "secondary-fixed-dim": "#88d982",
+              "on-error-container": "#93000a",
+              "surface-bright": "#fff9ea",
+              "inverse-on-surface": "#f8f1da",
+              "on-primary-fixed-variant": "#5b403c"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+        body { font-family: 'Inter', sans-serif; background-color: #fff9ea; color: #1e1c0e; }
+        h1, h2, h3, .font-headline { font-family: 'Manrope', sans-serif; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+    </style>
+</head>
+<body class="flex min-h-screen">
+<aside class="hidden md:flex flex-col h-full py-8 bg-[#f5eed7] dark:bg-[#271310] h-screen w-64 fixed left-0 top-0 z-50 border-r border-opacity-10 border-[#1e1c0e] shadow-xl dark:shadow-none font-inter text-sm font-medium transition-all duration-300 ease-in-out">
+<div class="px-6 mb-10">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined">coffee</span>
+</div>
+<div>
+<h1 class="font-manrope font-bold text-lg text-[#271310] dark:text-[#f5eed7]">Artisanal Ledger</h1>
+<p class="text-[10px] uppercase tracking-widest opacity-60">Staff Portal</p>
+</div>
+</div>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="flex items-center gap-4 text-[#271310] dark:text-[#ffffff] bg-[#ffffff] dark:bg-[#3e2723] rounded-r-full py-3 px-6 shadow-sm" href="/staff/dashboard">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-inter text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-4 text-[#3e2723] dark:text-[#f5eed7]/80 py-3 px-6 hover:translate-x-1 transition-all duration-300 ease-in-out hover:bg-[#ffffff]/50 dark:hover:bg-[#3e2723]/50" href="/staff/order">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-inter text-sm font-medium">Orders</span>
+</a>
+<a class="flex items-center gap-4 text-[#3e2723] dark:text-[#f5eed7]/80 py-3 px-6 hover:translate-x-1 transition-all duration-300 ease-in-out hover:bg-[#ffffff]/50 dark:hover:bg-[#3e2723]/50" href="/staff/menu">
+<span class="material-symbols-outlined">restaurant_menu</span>
+<span class="font-inter text-sm font-medium">Menu</span>
+</a>
+</nav>
+<div class="px-4 mt-auto space-y-4">
+<div class="pt-4 border-t border-[#1e1c0e]/10 dark:border-outline-variant/20 space-y-1">
+<div class="px-2 mb-2">
+<p class="text-[10px] uppercase tracking-wider opacity-60">Đăng nhập</p>
+<p id="current-user-fullname" class="text-sm font-semibold text-[#271310] dark:text-[#f5eed7] truncate" title="">—</p>
+</div>
+<button type="button" id="btn-logout" class="flex items-center gap-3 text-error hover:opacity-70 px-4 py-2 text-sm font-medium transition-opacity w-full text-left">
+<span class="material-symbols-outlined">logout</span>
+<span>Logout</span>
+</button>
+</div>
+</div>
+</aside>
+<main class="flex-1 md:ml-64 min-h-screen flex flex-col">
+<header class="bg-[#fff9ea] dark:bg-[#1e1c0e] flex justify-between items-center w-full px-6 md:px-8 py-4 sticky top-0 z-40 animate-fade-in-up">
+<div class="flex items-center gap-6">
+<h2 class="text-xl font-bold text-[#271310] dark:text-[#f5eed7] tracking-tight font-manrope">Lịch làm việc của tôi</h2>
+</div>
+</header>
+<div class="p-6 md:p-10 max-w-7xl mx-auto w-full flex-1">
+<p id="schedule-error" class="hidden text-sm text-error mb-4" role="alert"></p>
+<p id="schedule-loading" class="text-on-surface-variant text-sm mb-6 animate-fade-in-up">Đang tải lịch làm...</p>
+<p id="schedule-empty-hint" class="hidden text-sm text-on-surface-variant mb-6">Chưa có ca được gán. Quản trị viên có thể gán ca trong trang quản lý nhân viên.</p>
+<div id="schedule-root" class="grid grid-cols-7 gap-4"></div>
+</div>
+</main>
+<script>
+(function () {
+  var API = { shifts: '/api/staff/me/shifts', logout: '/api/auth/logout', me: '/api/auth/me' };
+  var DAYS = [
+    { key: 'MONDAY', title: 'Thứ 2' },
+    { key: 'TUESDAY', title: 'Thứ 3' },
+    { key: 'WEDNESDAY', title: 'Thứ 4' },
+    { key: 'THURSDAY', title: 'Thứ 5' },
+    { key: 'FRIDAY', title: 'Thứ 6' },
+    { key: 'SATURDAY', title: 'Thứ 7' },
+    { key: 'SUNDAY', title: 'Chủ nhật' }
+  ];
+  var SHIFT_ROWS = [
+    { key: 'MORNING', labelVi: 'Sáng', range: '06:00 - 11:00' },
+    { key: 'AFTERNOON', labelVi: 'Chiều', range: '11:00 - 17:00' },
+    { key: 'EVENING', labelVi: 'Tối', range: '17:00 - 22:30' }
+  ];
+
+  function loadCurrentUserDisplayName() {
+    fetch(API.me, { credentials: 'same-origin' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        var el = document.getElementById('current-user-fullname');
+        if (!el || !data) return;
+        var name = data.fullName && String(data.fullName).trim()
+          ? String(data.fullName).trim()
+          : data.username || '—';
+        el.textContent = name;
+        el.setAttribute('title', name);
+      });
+  }
+
+  function renderSchedule(set) {
+    var root = document.getElementById('schedule-root');
+    if (!root) return;
+    root.innerHTML = '';
+    DAYS.forEach(function (d, col) {
+      var el = document.createElement('div');
+      el.className = 'flex flex-col items-center mb-6 animate-fade-in-up';
+      el.style.animationDelay = (0.1 + col * 0.05) + 's';
+      var span = document.createElement('span');
+      span.className = 'text-on-surface-variant uppercase tracking-wider mb-1 text-sm font-extrabold';
+      span.textContent = d.title;
+      el.appendChild(span);
+      root.appendChild(el);
+    });
+    SHIFT_ROWS.forEach(function (row, ri) {
+      DAYS.forEach(function (d, ci) {
+        var key = d.key + '|' + row.key;
+        var active = set.has(key);
+        var cell = document.createElement('div');
+        cell.className = active
+          ? 'bg-surface-container-low rounded-2xl p-4 min-h-[160px] border-b-2 border-secondary shadow-sm animate-fade-in-up'
+          : 'bg-[#f0ece0]/40 rounded-2xl p-4 min-h-[160px] flex flex-col justify-between animate-fade-in-up';
+        cell.style.animationDelay = (0.5 + ri * 0.1 + ci * 0.015) + 's';
+        if (active) {
+          cell.innerHTML =
+            '<div class="flex justify-between items-start mb-4">' +
+            '<span class="text-[10px] font-bold text-on-surface-variant/60 uppercase">' + row.labelVi + '</span>' +
+            '<div class="w-2.5 h-2.5 rounded-full bg-secondary"></div></div>' +
+            '<div class="space-y-1"><p class="text-sm font-bold text-primary">' + row.range + '</p></div>';
+        } else {
+          cell.innerHTML =
+            '<div class="flex justify-between items-start">' +
+            '<span class="text-[10px] font-bold text-on-surface-variant/30 uppercase">' + row.labelVi + '</span>' +
+            '<div class="w-2.5 h-2.5 rounded-full bg-[#ccc5b9]"></div></div>';
+        }
+        root.appendChild(cell);
+      });
+    });
+    var hint = document.getElementById('schedule-empty-hint');
+    if (hint) {
+      if (set.size === 0) hint.classList.remove('hidden');
+      else hint.classList.add('hidden');
+    }
+  }
+
+  function loadSchedule() {
+    var loading = document.getElementById('schedule-loading');
+    var errEl = document.getElementById('schedule-error');
+    fetch(API.shifts, { credentials: 'same-origin' })
+      .then(function (r) {
+        if (r.status === 401 || r.status === 403) {
+          window.location.href = '/login';
+          return null;
+        }
+        if (!r.ok) throw new Error('Không tải được lịch');
+        return r.json();
+      })
+      .then(function (slots) {
+        if (loading) loading.classList.add('hidden');
+        if (errEl) { errEl.classList.add('hidden'); errEl.textContent = ''; }
+        if (!slots) return;
+        var set = new Set();
+        slots.forEach(function (s) {
+          if (s.weekday && s.shiftTime) set.add(s.weekday + '|' + s.shiftTime);
+        });
+        renderSchedule(set);
+      })
+      .catch(function () {
+        if (loading) loading.classList.add('hidden');
+        if (errEl) {
+          errEl.textContent = 'Không tải được lịch làm. Vui lòng thử lại.';
+          errEl.classList.remove('hidden');
+        }
+      });
+  }
+
+  document.getElementById('btn-logout').addEventListener('click', function () {
+    fetch(API.logout, { method: 'POST', credentials: 'same-origin' }).then(function () {
+      window.location.href = '/login';
+    }).catch(function () {
+      window.location.href = '/login';
+    });
+  });
+
+  loadCurrentUserDisplayName();
+  loadSchedule();
+})();
+</script>
+</body>
+</html>

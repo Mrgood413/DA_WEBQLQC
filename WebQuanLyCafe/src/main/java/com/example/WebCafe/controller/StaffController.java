@@ -6,6 +6,7 @@ import com.example.WebCafe.dto.request.StaffProductUpdateRequest;
 import com.example.WebCafe.dto.response.CategoryOptionResponse;
 import com.example.WebCafe.dto.response.OrderQueueResponse;
 import com.example.WebCafe.dto.response.ProductResponse;
+import com.example.WebCafe.dto.response.StaffMyShiftSlotResponse;
 import com.example.WebCafe.service.StaffService;
 import com.example.WebCafe.service.StaffQueueUpdateEventService;
 import jakarta.validation.Valid;
@@ -61,6 +62,11 @@ public class StaffController {
 	@GetMapping("/queue")
 	public List<OrderQueueResponse> queue() {
 		return staffService.listQueue();
+	}
+
+	@GetMapping("/me/shifts")
+	public List<StaffMyShiftSlotResponse> myShifts() {
+		return staffService.getMyShiftSlots();
 	}
 
 	@GetMapping("/queue/events")

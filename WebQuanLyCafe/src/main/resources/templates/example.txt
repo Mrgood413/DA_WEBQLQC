@@ -3,6 +3,7 @@
 <html class="light" lang="vi"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Artisanal Ledger - Theo dõi đơn hàng</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -12,67 +13,84 @@
         theme: {
           extend: {
             colors: {
-              "on-primary": "#ffffff",
-              "on-secondary-container": "#217128",
-              "outline": "#827472",
-              "on-tertiary": "#ffffff",
-              "on-error-container": "#93000a",
-              "on-tertiary-container": "#ae8d81",
-              "on-surface-variant": "#504442",
-              "on-secondary-fixed-variant": "#005312",
-              "primary": "#271310",
-              "tertiary": "#27130b",
-              "error-container": "#ffdad6",
-              "tertiary-fixed-dim": "#e4beb2",
-              "surface-container": "#f5eed7",
-              "on-error": "#ffffff",
-              "primary-fixed": "#ffdad4",
-              "inverse-surface": "#333121",
-              "surface-variant": "#e9e2cc",
-              "secondary-fixed-dim": "#88d982",
-              "on-primary-fixed-variant": "#5b403c",
               "secondary-fixed": "#a3f69c",
-              "tertiary-fixed": "#ffdbce",
-              "on-tertiary-fixed-variant": "#5b4137",
-              "surface-container-low": "#faf4dd",
-              "background": "#fff9ea",
-              "on-primary-container": "#ae8d87",
-              "surface-bright": "#fff9ea",
               "primary-container": "#3e2723",
-              "surface-container-lowest": "#ffffff",
-              "surface-container-high": "#efe8d2",
-              "outline-variant": "#d3c3c0",
-              "on-primary-fixed": "#2b1613",
+              "on-tertiary": "#ffffff",
               "primary-fixed-dim": "#e3beb8",
-              "inverse-primary": "#e3beb8",
-              "on-tertiary-fixed": "#2b160f",
-              "surface": "#fff9ea",
-              "tertiary-container": "#3e271e",
-              "on-surface": "#1e1c0e",
-              "secondary-container": "#a0f399",
-              "surface-tint": "#745853",
-              "secondary": "#1b6d24",
-              "on-secondary": "#ffffff",
               "inverse-on-surface": "#f8f1da",
-              "error": "#ba1a1a",
-              "surface-container-highest": "#e9e2cc",
-              "on-secondary-fixed": "#002204",
+              "on-primary-container": "#ae8d87",
+              "tertiary-container": "#3e271e",
+              "on-error": "#ffffff",
+              "outline-variant": "#d3c3c0",
+              "on-secondary-fixed-variant": "#005312",
+              "secondary-container": "#a0f399",
+              "on-tertiary-fixed": "#2b160f",
               "on-background": "#1e1c0e",
-              "surface-dim": "#e0dac4"
+              "on-surface": "#1e1c0e",
+              "on-secondary-fixed": "#002204",
+              "surface-container-low": "#faf4dd",
+              "inverse-primary": "#e3beb8",
+              "on-secondary": "#ffffff",
+              "surface-dim": "#e0dac4",
+              "surface-variant": "#e9e2cc",
+              "error-container": "#ffdad6",
+              "primary-fixed": "#ffdad4",
+              "primary": "#271310",
+              "tertiary-fixed-dim": "#e4beb2",
+              "outline": "#827472",
+              "on-primary-fixed": "#2b1613",
+              "on-error-container": "#93000a",
+              "surface": "#fff9ea",
+              "secondary-fixed-dim": "#88d982",
+              "surface-tint": "#745853",
+              "surface-container-lowest": "#ffffff",
+              "error": "#ba1a1a",
+              "tertiary": "#27130b",
+              "on-tertiary-fixed-variant": "#5b4137",
+              "background": "#fff9ea",
+              "surface-container-highest": "#e9e2cc",
+              "on-secondary-container": "#217128",
+              "surface-container-high": "#efe8d2",
+              "tertiary-fixed": "#ffdbce",
+              "on-primary": "#ffffff",
+              "on-primary-fixed-variant": "#5b403c",
+              "surface-bright": "#fff9ea",
+              "inverse-surface": "#333121",
+              "on-tertiary-container": "#ae8d81",
+              "secondary": "#1b6d24",
+              "surface-container": "#f5eed7",
+              "on-surface-variant": "#504442"
             },
             fontFamily: {
               "headline": ["Manrope"],
               "body": ["Inter"],
               "label": ["Inter"]
             },
-            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            borderRadius: {"DEFAULT": "0.5rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
             animation: {
               'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+              'bounce-once': 'bounceOnce 0.5s cubic-bezier(0.36, 0, 0.66, -0.56) alternate',
+              'glow': 'glow 1.5s ease-in-out infinite alternate',
+              'success-pulse': 'successPulse 0.8s ease-out',
             },
             keyframes: {
               fadeInUp: {
                 '0%': { opacity: '0', transform: 'translateY(20px)' },
                 '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              bounceOnce: {
+                '0%': { transform: 'scale(1)' },
+                '50%': { transform: 'scale(1.3)' },
+                '100%': { transform: 'scale(1)' }
+              },
+              glow: {
+                'from': { 'box-shadow': '0 0 5px rgba(27, 109, 36, 0.2), 0 0 10px rgba(27, 109, 36, 0.1)' },
+                'to': { 'box-shadow': '0 0 15px rgba(27, 109, 36, 0.6), 0 0 25px rgba(27, 109, 36, 0.4)' }
+              },
+              successPulse: {
+                '0%': { transform: 'scale(1)', 'box-shadow': '0 0 0 0 rgba(27, 109, 36, 0.7)' },
+                '70%': { transform: 'scale(1.1)', 'box-shadow': '0 0 0 20px rgba(27, 109, 36, 0)' },
+                '100%': { transform: 'scale(1)', 'box-shadow': '0 0 0 0 rgba(27, 109, 36, 0)' }
               }
             }
           },
@@ -80,384 +98,230 @@
       }
     </script>
 <style>
-        body { font-family: 'Inter', sans-serif; background-color: #fff9ea; color: #1e1c0e; }
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        .font-headline { font-family: 'Manrope', sans-serif; }
-        details > summary::-webkit-details-marker { display: none; }
-        details[open] .expand-icon { transform: rotate(180deg); }
-        
-        .animate-fade-in-up { opacity: 0; }
-        .delay-100 { animation-delay: 100ms; }
-        .delay-200 { animation-delay: 200ms; }
-        .delay-300 { animation-delay: 300ms; }
-        .delay-400 { animation-delay: 400ms; }
-
-        @keyframes slideDownFadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
-        .animate-detail-show {
-            animation: slideDownFadeIn 0.3s ease-out forwards;
+        .btn-ordered {
+            background-color: #ba1a1a !important;
+            color: white !important;
+        }
+        .progress-line-animate {
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .milestone-active {
+            background-color: #1b6d24 !important;
+            color: white !important;
+            box-shadow: 0 0 15px rgba(27, 109, 36, 0.4);
+        }
+        .milestone-active .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1;
         }
     </style>
 </head>
-<body class="flex min-h-screen">
-<!-- SideNavBar -->
-<aside class="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 border-r-0 bg-[#f5eed7] py-6 z-50 animate-fade-in-up">
-<div class="px-6 mb-10">
-<div class="flex items-center gap-3 mb-2">
-<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary">
-<span class="material-symbols-outlined">coffee</span>
-</div>
-<div>
-<h1 class="font-manrope font-bold text-lg text-[#271310]">Artisanal Ledger</h1>
-<p class="text-[10px] uppercase tracking-widest opacity-60">Staff Portal</p>
-</div>
-</div>
-</div>
-<nav class="flex-1 space-y-1">
-<a class="flex items-center px-4 py-3 mx-2 text-[#3e2723]/70 hover:text-[#271310] hover:bg-[#ffffff]/50 rounded-full transition-all duration-200" href="#">
-<span class="material-symbols-outlined mr-3" data-icon="category">category</span>
-<span class="font-medium text-sm">Categories</span>
-</a>
-<a class="flex items-center px-4 py-3 mx-2 bg-[#ffffff] text-[#271310] rounded-full shadow-sm" href="#">
-<span class="material-symbols-outlined mr-3" data-icon="group" style="font-variation-settings: 'FILL' 1;">group</span>
-<span class="font-medium text-sm">Staff</span>
-</a>
-<a class="flex items-center px-4 py-3 mx-2 text-[#3e2723]/70 hover:text-[#271310] hover:bg-[#ffffff]/50 rounded-full transition-all duration-200" href="#">
-<span class="material-symbols-outlined mr-3" data-icon="payments">payments</span>
-<span class="font-medium text-sm">Revenue</span>
-</a>
+<body class="bg-background text-on-background font-body selection:bg-secondary-container selection:text-on-secondary-container min-h-screen animate-fade-in-up">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 max-w-none bg-[#fff9ea] dark:bg-[#1e1c0e]">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold text-[#271310] dark:text-[#f5eed7] font-['Manrope'] tracking-tight">The Artisanal Ledger</span>
+<nav class="hidden md:flex gap-6 items-center font-['Manrope'] font-semibold tracking-tight">
+<a class="text-[#3e2723] dark:text-[#f5eed7] opacity-80 hover:text-[#271310] dark:hover:text-white transition-colors duration-200" href="#">Thực đơn</a>
+<a class="text-[#1b6d24] dark:text-[#a0f399] border-b-2 border-[#1b6d24] dark:border-[#a0f399] pb-1 transition-colors duration-200" href="#">Đơn hàng</a>
 </nav>
-<div class="mt-auto px-2 space-y-1">
-<a class="flex items-center px-4 py-3 text-[#3e2723]/70 hover:text-[#271310] hover:bg-[#ffffff]/50 rounded-full transition-all" href="#">
-<span class="material-symbols-outlined mr-3" data-icon="logout">logout</span>
-<span class="font-medium text-sm">Logout</span>
-</a>
 </div>
-</aside>
-<!-- Main Content Canvas -->
-<main class="flex-1 md:ml-64 min-h-screen flex flex-col">
-<!-- TopAppBar -->
-<header class="bg-[#fff9ea] flex justify-between items-center w-full px-8 py-4 sticky top-0 z-40 animate-fade-in-up delay-100">
-<div class="flex items-center gap-6">
-<h2 class="text-xl font-bold text-[#271310] tracking-tight font-manrope">Quản lý Nhân viên</h2>
-</div>
-<div class="flex items-center gap-4 w-full max-w-xs">
-<div class="relative flex items-center w-full">
-<span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-xl">search</span>
-<input class="w-full pl-11 pr-4 py-2.5 bg-surface-container-low border border-outline-variant/10 rounded-xl text-sm font-body text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-on-surface-variant/50 shadow-sm" placeholder="Tìm kiếm nhân viên..." type="text"/>
-</div>
-</div>
-</header>
-<!-- Content Area -->
-<div class="p-8 max-w-7xl mx-auto w-full space-y-8">
-<!-- Dashboard Stats -->
-<div class="bg-primary-container p-8 rounded-2xl relative overflow-hidden group min-h-[160px] flex flex-col justify-center animate-fade-in-up delay-200">
-<div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-<div class="flex items-center gap-6">
-<div class="w-16 h-16 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container shadow-lg shadow-black/20">
-<span class="material-symbols-outlined text-3xl" data-icon="groups">groups</span>
-</div>
-<div>
-<p class="text-primary-fixed-dim text-sm font-medium uppercase tracking-wider mb-1">Tổng quan đội ngũ</p>
-<h2 class="text-primary-fixed text-4xl font-headline font-extrabold flex items-baseline gap-2">
-                            Tổng nhân sự: <span class="text-secondary-fixed text-5xl">24</span>
-</h2>
-</div>
-</div>
-</div>
-<div class="absolute -right-16 -top-16 w-64 h-64 bg-primary-fixed/5 rounded-full group-hover:scale-110 transition-transform duration-700"></div>
-<div class="absolute -left-8 -bottom-8 w-32 h-32 bg-secondary-fixed/5 rounded-full"></div>
-</div>
-<!-- Staff Table Container -->
-<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm border border-outline-variant/10 animate-fade-in-up delay-300">
-<div class="overflow-x-auto">
-<table class="w-full text-left border-collapse">
-<thead>
-<tr class="bg-surface-container-high">
-<th class="px-6 py-4 text-xs font-bold text-[#271310] uppercase tracking-wider">Tên đăng nhập</th>
-<th class="px-6 py-4 text-xs font-bold text-[#271310] uppercase tracking-wider">Mật khẩu</th>
-<th class="px-6 py-4 text-xs font-bold text-[#271310] uppercase tracking-wider">Họ và Tên</th>
-<th class="px-6 py-4 text-xs font-bold text-[#271310] uppercase tracking-wider">Số điện thoại</th>
-<th class="px-6 py-4 text-xs font-bold text-[#271310] uppercase tracking-wider">Giới tính</th>
-<th class="px-6 py-4 text-xs font-bold text-[#271310] uppercase tracking-wider">Tuổi</th>
-<th class="px-6 py-4 text-xs font-bold text-[#271310] uppercase tracking-wider">Thao tác</th>
-</tr>
-</thead>
-<tbody class="divide-y divide-outline-variant/10">
-<!-- Row 1 -->
-<tr class="hover:bg-surface-container-low transition-colors group">
-<td class="px-6 py-4 text-sm font-medium text-[#271310]">minhanh.n</td>
-<td class="px-6 py-4 text-sm text-[#3e2723]">••••••••</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-3">
-<span class="text-sm font-semibold text-[#271310]">Nguyễn Minh Anh</span>
-</div>
-</td>
-<td class="px-6 py-4 text-sm text-[#3e2723]">0901 234 567</td>
-<td class="px-6 py-4 text-sm text-[#3e2723]">Nam</td>
-<td class="px-6 py-4 text-sm text-[#3e2723]">24</td>
-<td class="px-6 py-4">
-<button class="px-4 py-1.5 bg-primary text-on-primary text-xs font-semibold rounded-full hover:bg-primary/90 transition-colors shadow-sm flex items-center gap-1.5" onclick="const row = this.closest('tr').nextElementSibling; row.classList.toggle('hidden'); if(!row.classList.contains('hidden')) { row.querySelector('.animate-detail-show').style.animation = 'none'; row.offsetHeight; row.querySelector('.animate-detail-show').style.animation = ''; }">
-<span class="material-symbols-outlined text-[16px]">visibility</span>
-                                    Chi tiết
-                                </button>
-</td>
-</tr>
-<!-- Detail View for Row 1 -->
-<tr class="bg-surface-container-low/50 hidden">
-<td class="px-8 py-8 border-b border-outline-variant/10" colspan="7">
-<div class="max-w-5xl mx-auto space-y-6 animate-detail-show">
-<div class="flex items-center justify-between mb-2">
-<h3 class="text-lg font-headline font-bold text-primary">Lịch làm việc hàng tuần</h3>
 <div class="flex items-center gap-4">
-<div class="flex items-center gap-2">
-<span class="w-3 h-3 rounded-full bg-secondary"></span>
-<span class="text-xs font-medium opacity-70">Có ca</span>
-</div>
-<div class="flex items-center gap-2">
-<span class="w-3 h-3 rounded-full bg-error"></span>
-<span class="text-xs font-medium opacity-70">Nghỉ</span>
-</div>
-</div>
-</div>
-<!-- Schedule Grid -->
-<div class="grid grid-cols-7 gap-3">
-<!-- Each Day Column -->
-<div class="space-y-3">
-<div class="text-center pb-2 border-b border-outline-variant/20"><span class="text-xs font-bold uppercase tracking-tighter opacity-60">Thứ 2</span></div>
-<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
-<span class="text-[10px] font-semibold opacity-60">Sáng</span>
-<div class="w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></div>
-</div>
-<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
-<span class="text-[10px] font-semibold opacity-60">Chiều</span>
-<div class="w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></div>
-</div>
-<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
-<span class="text-[10px] font-semibold opacity-60">Tối</span>
-<div class="w-2.5 h-2.5 rounded-full bg-error shadow-sm"></div>
-</div>
-</div>
-<div class="space-y-3">
-<div class="text-center pb-2 border-b border-outline-variant/20"><span class="text-xs font-bold uppercase tracking-tighter opacity-60">Thứ 3</span></div>
-<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
-<span class="text-[10px] font-semibold opacity-60">Sáng</span>
-<div class="w-2.5 h-2.5 rounded-full bg-error shadow-sm"></div>
-</div>
-<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
-<span class="text-[10px] font-semibold opacity-60">Chiều</span>
-<div class="w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></div>
-</div>
-<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
-<span class="text-[10px] font-semibold opacity-60">Tối</span>
-<div class="w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></div>
-</div>
-</div>
-<div class="space-y-3">
-<div class="text-center pb-2 border-b border-outline-variant/20"><span class="text-xs font-bold uppercase tracking-tighter opacity-60">Thứ 4</span></div>
-<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
-<span class="text-[10px] font-semibold opacity-60">Sáng</span>
-<div class="w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></div>
-</div>
-<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
-<span class="text-[10px] font-semibold opacity-60">Chiều</span>
-<div class="w-2.5 h-2.5 rounded-full bg-error shadow-sm"></div>
-</div>
-<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
-<span class="text-[10px] font-semibold opacity-60">Tối</span>
-<div class="w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></div>
-</div>
-</div>
-<div class="space-y-3">
-<div class="text-center pb-2 border-b border-outline-variant/20"><span class="text-xs font-bold uppercase tracking-tighter opacity-60">Thứ 5</span></div>
-<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
-<span class="text-[10px] font-semibold opacity-60">Sáng</span>
-<div class="w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></div>
-</div>
-<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
-<span class="text-[10px] font-semibold opacity-60">Chiều</span>
-<div class="w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></div>
-</div>
-<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
-<span class="text-[10px] font-semibold opacity-60">Tối</span>
-<div class="w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></div>
-</div>
-</div>
-<div class="space-y-3">
-<div class="text-center pb-2 border-b border-outline-variant/20"><span class="text-xs font-bold uppercase tracking-tighter opacity-60">Thứ 6</span></div>
-<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
-<span class="text-[10px] font-semibold opacity-60">Sáng</span>
-<div class="w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></div>
-</div>
-<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
-<span class="text-[10px] font-semibold opacity-60">Chiều</span>
-<div class="w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></div>
-</div>
-<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
-<span class="text-[10px] font-semibold opacity-60">Tối</span>
-<div class="w-2.5 h-2.5 rounded-full bg-error shadow-sm"></div>
-</div>
-</div>
-<div class="space-y-3">
-<div class="text-center pb-2 border-b border-outline-variant/20"><span class="text-xs font-bold uppercase tracking-tighter opacity-60">Thứ 7</span></div>
-<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
-<span class="text-[10px] font-semibold opacity-60">Sáng</span>
-<div class="w-2.5 h-2.5 rounded-full bg-error shadow-sm"></div>
-</div>
-<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
-<span class="text-[10px] font-semibold opacity-60">Chiều</span>
-<div class="w-2.5 h-2.5 rounded-full bg-error shadow-sm"></div>
-</div>
-<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
-<span class="text-[10px] font-semibold opacity-60">Tối</span>
-<div class="w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></div>
-</div>
-</div>
-<div class="space-y-3">
-<div class="text-center pb-2 border-b border-outline-variant/20"><span class="text-xs font-bold uppercase tracking-tighter opacity-60">Chủ Nhật</span></div>
-<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
-<span class="text-[10px] font-semibold opacity-60">Sáng</span>
-<div class="w-2.5 h-2.5 rounded-full bg-error shadow-sm"></div>
-</div>
-<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
-<span class="text-[10px] font-semibold opacity-60">Chiều</span>
-<div class="w-2.5 h-2.5 rounded-full bg-error shadow-sm"></div>
-</div>
-<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10 flex items-center justify-between">
-<span class="text-[10px] font-semibold opacity-60">Tối</span>
-<div class="w-2.5 h-2.5 rounded-full bg-error shadow-sm"></div>
-</div>
-</div>
-</div>
-<!-- Status and Actions -->
-<div class="pt-6 border-t border-outline-variant/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-<div class="flex items-center gap-6">
-<div>
-<p class="text-[10px] uppercase font-bold tracking-widest opacity-60 mb-1">Trạng thái hiện tại</p>
-<span class="px-3 py-1 bg-secondary/10 text-secondary text-xs font-bold rounded-full">Đang làm việc</span>
-</div>
-</div>
-<div class="flex gap-3">
-<button class="px-8 py-2.5 bg-primary text-on-primary text-sm font-bold rounded-xl hover:bg-primary/90 transition-all shadow-md shadow-primary/20 flex items-center gap-2">
-<span class="material-symbols-outlined text-lg">edit</span>
-                                                Chỉnh sửa hồ sơ
-                                            </button>
-</div>
-</div>
-</div>
-</td>
-</tr>
-<!-- Row 2 -->
-<tr class="hover:bg-surface-container-low transition-colors group">
-<td class="px-6 py-4 text-sm font-medium text-[#271310]">phuongthao.l</td>
-<td class="px-6 py-4 text-sm text-[#3e2723]">••••••••</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-3">
-<span class="text-sm font-semibold text-[#271310]">Lê Thị Phương Thảo</span>
-</div>
-</td>
-<td class="px-6 py-4 text-sm text-[#3e2723]">0902 345 678</td>
-<td class="px-6 py-4 text-sm text-[#3e2723]">Nữ</td>
-<td class="px-6 py-4 text-sm text-[#3e2723]">22</td>
-<td class="px-6 py-4">
-<button class="px-4 py-1.5 bg-primary text-on-primary text-xs font-semibold rounded-full hover:bg-primary/90 transition-colors shadow-sm flex items-center gap-1.5">
-<span class="material-symbols-outlined text-[16px]">visibility</span>
-                                    Chi tiết
-                                </button>
-</td>
-</tr>
-<!-- Row 3 -->
-<tr class="hover:bg-surface-container-low transition-colors group">
-<td class="px-6 py-4 text-sm font-medium text-[#271310]">hoanglong.t</td>
-<td class="px-6 py-4 text-sm text-[#3e2723]">••••••••</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-3">
-<span class="text-sm font-semibold text-[#271310]">Trần Hoàng Long</span>
-</div>
-</td>
-<td class="px-6 py-4 text-sm text-[#3e2723]">0903 456 789</td>
-<td class="px-6 py-4 text-sm text-[#3e2723]">Nam</td>
-<td class="px-6 py-4 text-sm text-[#3e2723]">27</td>
-<td class="px-6 py-4">
-<button class="px-4 py-1.5 bg-primary text-on-primary text-xs font-semibold rounded-full hover:bg-primary/90 transition-colors shadow-sm flex items-center gap-1.5">
-<span class="material-symbols-outlined text-[16px]">visibility</span>
-                                    Chi tiết
-                                </button>
-</td>
-</tr>
-<!-- Row 4 -->
-<tr class="hover:bg-surface-container-low transition-colors group">
-<td class="px-6 py-4 text-sm font-medium text-[#271310]">bichngoc.p</td>
-<td class="px-6 py-4 text-sm text-[#3e2723]">••••••••</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-3">
-<span class="text-sm font-semibold text-[#271310]">Phạm Bích Ngọc</span>
-</div>
-</td>
-<td class="px-6 py-4 text-sm text-[#3e2723]">0904 567 890</td>
-<td class="px-6 py-4 text-sm text-[#3e2723]">Nữ</td>
-<td class="px-6 py-4 text-sm text-[#3e2723]">21</td>
-<td class="px-6 py-4">
-<button class="px-4 py-1.5 bg-primary text-on-primary text-xs font-semibold rounded-full hover:bg-primary/90 transition-colors shadow-sm flex items-center gap-1.5">
-<span class="material-symbols-outlined text-[16px]">visibility</span>
-                                    Chi tiết
-                                </button>
-</td>
-</tr>
-<!-- Skeleton Loading Row -->
-<tr class="animate-pulse opacity-60 bg-surface-container-low/30">
-<td class="px-6 py-4"><div class="h-4 w-16 bg-outline-variant/20 rounded"></div></td>
-<td class="px-6 py-4"><div class="h-4 w-20 bg-outline-variant/20 rounded"></div></td>
-<td class="px-6 py-4"><div class="flex items-center gap-3"><div class="h-4 w-32 bg-outline-variant/20 rounded-md"></div></div></td>
-<td class="px-6 py-4"><div class="h-4 w-24 bg-outline-variant/20 rounded"></div></td>
-<td class="px-6 py-4"><div class="h-4 w-12 bg-outline-variant/20 rounded"></div></td>
-<td class="px-6 py-4"><div class="h-4 w-8 bg-outline-variant/20 rounded"></div></td>
-<td class="px-6 py-4"><div class="h-7 w-24 bg-outline-variant/20 rounded-full"></div></td>
-</tr>
-</tbody>
-</table>
-</div>
-<!-- Pagination -->
-<div class="px-6 py-4 flex items-center justify-between bg-surface-container-high/30">
-<p class="text-xs text-[#3e2723]/60">Hiển thị <span class="font-bold text-[#271310]">1 - 4</span> của <span class="font-bold text-[#271310]">24</span> nhân viên</p>
-<div class="flex gap-1">
-<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors disabled:opacity-30" disabled="">
-<span class="material-symbols-outlined text-sm" data-icon="chevron_left">chevron_left</span>
+<button class="Active: scale-95 transition-transform">
+<span class="material-symbols-outlined text-[#271310] dark:text-[#f5eed7] text-2xl">account_circle</span>
 </button>
-<button class="w-8 h-8 flex items-center justify-center rounded-full bg-[#271310] text-white text-xs font-bold">1</button>
-<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container text-xs font-bold">2</button>
-<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container text-xs font-bold">3</button>
-<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors">
-<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+</div>
+<div class="absolute bottom-0 left-0 bg-[#f5eed7] dark:bg-[#271310] h-[1px] w-full"></div>
+</header>
+<!-- Main Content -->
+<main class="pt-24 pb-32 px-4 md:px-8 max-w-4xl mx-auto">
+<!-- Header Section -->
+<header class="mb-8">
+<span class="text-secondary font-bold uppercase tracking-[0.2em] text-[10px] mb-2 block">Cập nhật thời gian thực</span>
+<h1 class="font-headline text-4xl md:text-5xl font-extrabold text-primary leading-tight">Theo dõi đơn hàng</h1>
+</header>
+<!-- Order Status Section -->
+<section>
+<div class="flex items-end justify-between mb-6">
+<h2 class="font-headline text-2xl font-bold text-primary">Trạng thái đơn hàng</h2>
+<div class="text-right">
+<p class="text-xs text-on-surface-variant">Đơn #AL-89234</p>
+<p class="text-xs font-bold">Đặt lúc 10:42 AM</p>
+</div>
+</div>
+<div class="bg-surface-container-high rounded-2xl p-6 md:p-8 relative overflow-hidden shadow-sm">
+<!-- Progress Bar -->
+<div class="relative mb-20 mt-4">
+<!-- Progress Container -->
+<div class="absolute top-1/2 left-0 right-0 h-1 bg-surface-variant -translate-y-1/2 rounded-full overflow-hidden">
+<!-- Dynamic Progress Line -->
+<div class="h-full bg-secondary w-0 progress-line-animate" id="progressLine"></div>
+</div>
+<div class="relative flex justify-between items-center px-2">
+<!-- Step 1: Xác nhận đơn -->
+<div class="flex flex-col items-center relative">
+<div class="w-10 h-10 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center shadow-lg z-10 transition-all duration-300" id="milestone-1">
+<span class="material-symbols-outlined text-lg">check_circle</span>
+</div>
+<span class="absolute top-12 text-[9px] md:text-[10px] font-bold uppercase tracking-tight opacity-40 whitespace-nowrap milestone-label transition-all duration-300 text-center">Xác nhận đơn</span>
+</div>
+<!-- Step 2: Đang chuẩn bị -->
+<div class="flex flex-col items-center relative">
+<div class="w-10 h-10 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center shadow-lg z-10 transition-all duration-300" id="milestone-2">
+<span class="material-symbols-outlined text-lg">restaurant</span>
+</div>
+<span class="absolute top-12 text-[9px] md:text-[10px] font-bold uppercase tracking-tight opacity-40 whitespace-nowrap milestone-label transition-all duration-300 text-center">Đang chuẩn bị</span>
+</div>
+<!-- Step 3: Hoàn thành -->
+<div class="flex flex-col items-center relative">
+<div class="w-10 h-10 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center shadow-lg z-10 transition-all duration-300" id="milestone-3">
+<span class="material-symbols-outlined text-lg">celebration</span>
+</div>
+<span class="absolute top-12 text-[9px] md:text-[10px] font-bold uppercase tracking-tight opacity-40 whitespace-nowrap milestone-label transition-all duration-300 text-center">Hoàn thành</span>
+</div>
+<!-- Step 4: Đã thanh toán -->
+<div class="flex flex-col items-center relative">
+<div class="w-10 h-10 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center shadow-lg z-10 transition-all duration-300" id="milestone-4">
+<span class="material-symbols-outlined text-lg">payments</span>
+</div>
+<span class="absolute top-12 text-[9px] md:text-[10px] font-bold uppercase tracking-tight opacity-40 whitespace-nowrap milestone-label transition-all duration-300 text-center">Đã thanh toán</span>
+</div>
+</div>
+</div>
+<!-- Order Content Breakdown -->
+<div class="space-y-4 mb-8 pt-4 border-t border-outline-variant/20">
+<div class="flex justify-between items-center py-2">
+<div class="flex items-center gap-4">
+<span class="text-xs font-bold w-4 text-secondary">1x</span>
+<span class="text-sm font-medium">Signature Latte (Extra Shot)</span>
+</div>
+<span class="text-sm font-bold">$6.25</span>
+</div>
+<div class="flex justify-between items-center py-2">
+<div class="flex items-center gap-4">
+<span class="text-xs font-bold w-4 text-secondary">2x</span>
+<span class="text-sm font-medium">Almond Croissant</span>
+</div>
+<span class="text-sm font-bold">$12.50</span>
+</div>
+<div class="pt-4 mt-4 border-t border-outline-variant/30 flex justify-between items-center">
+<span class="font-headline font-bold text-xl text-primary">Tổng cộng</span>
+<span class="font-headline font-bold text-xl text-secondary">$18.75</span>
+</div>
+</div>
+<!-- Order Action Button -->
+<div class="mt-6 flex flex-col items-center">
+<button class="w-full bg-primary text-on-primary py-4 rounded-xl text-sm font-bold uppercase tracking-widest hover:bg-primary-container active:scale-[0.98] transition-all shadow-md group relative overflow-hidden duration-300 ease-in-out" id="mainOrderBtn">
+<span class="relative z-10">Đặt đơn</span>
 </button>
 </div>
 </div>
+<!-- Call to Action Section -->
+<div class="mt-8 space-y-4">
+<button class="w-full bg-primary text-on-primary py-5 rounded-2xl text-base font-extrabold uppercase tracking-widest hover:shadow-xl active:scale-[0.99] transition-all flex items-center justify-center gap-3">
+<span class="material-symbols-outlined">add_circle</span>
+                Gọi thêm
+            </button>
+<p class="text-[10px] text-center text-on-surface-variant italic">Không thể hủy đơn sau khi barista đã bắt đầu thực hiện.</p>
 </div>
-</div>
+</section>
 </main>
-<!-- Mobile BottomNavBar -->
-<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-[#fff9ea] flex justify-around items-center py-3 border-t-0 shadow-[0_-4px_24px_rgba(30,28,14,0.06)] z-50 animate-fade-in-up delay-400">
-<a class="flex flex-col items-center gap-1 text-[#3e2723]/60" href="#">
-<span class="material-symbols-outlined" data-icon="category">category</span>
-<span class="text-[10px] font-medium">DM</span>
-</a>
-<a class="flex flex-col items-center gap-1 text-[#271310]" href="#">
-<span class="material-symbols-outlined" data-icon="group" style="font-variation-settings: 'FILL' 1;">group</span>
-<span class="text-[10px] font-bold">Nhân viên</span>
-</a>
-<a class="flex flex-col items-center gap-1 text-[#3e2723]/60" href="#">
-<span class="material-symbols-outlined" data-icon="payments">payments</span>
-<span class="text-[10px] font-medium">Doanh thu</span>
-</a>
+<!-- Bottom Navigation Bar (Mobile) -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 lg:hidden bg-white/80 dark:bg-[#1e1c0e]/80 backdrop-blur-xl border-t border-outline-variant/10 font-inter text-[10px] font-medium uppercase tracking-tighter">
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-3 active:scale-90 duration-200">
+<span class="material-symbols-outlined mb-1">menu_book</span>
+<span>Thực đơn</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary text-on-primary rounded-2xl p-3 mb-1 active:scale-90 duration-200 shadow-md">
+<div class="relative">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">shopping_bag</span>
+<span class="absolute -top-1 -right-2 bg-secondary text-on-secondary text-[8px] px-1 rounded-full font-bold">3</span>
+</div>
+<span>Giỏ hàng</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-3 active:scale-90 duration-200">
+<span class="material-symbols-outlined mb-1">person</span>
+<span>Cá nhân</span>
+</div>
 </nav>
 <script>
-    document.querySelectorAll('[data-purpose="detail-toggle"]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const detailRow = btn.closest('tr').nextElementSibling;
-            detailRow.classList.toggle('hidden');
+    document.addEventListener('DOMContentLoaded', function() {
+        const mainOrderBtn = document.getElementById('mainOrderBtn');
+        const btnText = mainOrderBtn.querySelector('span');
+        const progressLine = document.getElementById('progressLine');
+        
+        const milestones = [
+            { el: document.getElementById('milestone-1'), label: document.getElementById('milestone-1').parentElement.querySelector('.milestone-label'), width: '10%' },
+            { el: document.getElementById('milestone-2'), label: document.getElementById('milestone-2').parentElement.querySelector('.milestone-label'), width: '40%' },
+            { el: document.getElementById('milestone-3'), label: document.getElementById('milestone-3').parentElement.querySelector('.milestone-label'), width: '70%' },
+            { el: document.getElementById('milestone-4'), label: document.getElementById('milestone-4').parentElement.querySelector('.milestone-label'), width: '100%' }
+        ];
+
+        let currentState = 0; // 0: Not started, 1-4: Steps
+
+        mainOrderBtn.addEventListener('click', function() {
+            if (currentState === 4) {
+                resetUI();
+            } else {
+                currentState++;
+                updateProgress(currentState);
+            }
         });
+
+        function updateProgress(state) {
+            const currentMilestone = milestones[state - 1];
+            
+            // Move progress line
+            progressLine.style.width = currentMilestone.width;
+
+            // Activate milestone visual with slight delay for the line to reach
+            setTimeout(() => {
+                currentMilestone.el.classList.add('milestone-active');
+                
+                // Special animation for milestones
+                if (state === 4) {
+                    currentMilestone.el.classList.add('animate-success-pulse');
+                    // Update label with check icon for final state if desired, but request asked for 4th milestone text
+                } else {
+                    currentMilestone.el.classList.add('animate-bounce-once');
+                }
+                
+                currentMilestone.label.classList.remove('opacity-40');
+                currentMilestone.label.classList.add('text-secondary', 'opacity-100');
+                
+                // Update Button UI based on state
+                if (state === 1) {
+                    mainOrderBtn.classList.add('btn-ordered');
+                    btnText.textContent = 'HỦY ĐƠN';
+                } else if (state === 2) {
+                    btnText.textContent = 'ĐANG THỰC HIỆN...';
+                    mainOrderBtn.classList.remove('btn-ordered');
+                    mainOrderBtn.classList.add('bg-primary');
+                } else if (state === 3) {
+                    btnText.textContent = 'HOÀN TẤT - CHỜ THANH TOÁN';
+                } else if (state === 4) {
+                    btnText.textContent = 'ĐÃ THANH TOÁN - CẢM ƠN!';
+                    mainOrderBtn.classList.remove('bg-primary');
+                    mainOrderBtn.classList.add('bg-secondary');
+                }
+            }, 800);
+        }
+
+        function resetUI() {
+            currentState = 0;
+            mainOrderBtn.classList.remove('btn-ordered', 'bg-secondary', 'bg-primary');
+            mainOrderBtn.classList.add('bg-primary');
+            btnText.textContent = 'Đặt đơn';
+            progressLine.style.width = '0%';
+            
+            milestones.forEach(m => {
+                m.el.classList.remove('milestone-active', 'animate-bounce-once', 'animate-success-pulse');
+                m.label.classList.add('opacity-40');
+                m.label.classList.remove('text-secondary', 'opacity-100');
+            });
+        }
     });
 </script>
 </body></html>

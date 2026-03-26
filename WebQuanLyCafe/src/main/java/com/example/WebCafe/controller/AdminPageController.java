@@ -20,4 +20,9 @@ public class AdminPageController {
 	public String adminStaffPage() {
 		return "admin_staff";
 	}
+
+	@GetMapping("/admin/revenue")
+	public String adminRevenuePage() {
+		return "admin_revenue";
+	}
 }

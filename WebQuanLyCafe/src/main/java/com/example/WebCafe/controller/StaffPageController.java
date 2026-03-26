@@ -6,6 +6,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class StaffPageController {
 
+	@GetMapping("/staff/dashboard")
+	public String staffDashboardPage() {
+		return "staff_dashboard";
+	}
+
 	@GetMapping("/staff/menu")
 	public String staffMenuPage() {
 		return "staff_menu";
