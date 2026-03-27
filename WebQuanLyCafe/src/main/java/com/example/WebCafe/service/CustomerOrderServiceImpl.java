@@ -230,7 +230,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		}
 		PaymentMethod paymentMethod = null;
 		String deliveryAddress = null;
+		Customer deliveryCustomer = null;
 		if (isDeliveryFlow) {
+			deliveryCustomer = loggedCustomer;
+			if (deliveryCustomer == null) {
+				throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Không xác định được khách hàng");
+			}
 			String methodRaw = request.paymentMethod() == null ? "" : request.paymentMethod().trim();
 			if (methodRaw.isEmpty()) {
 				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Vui lòng chọn phương thức thanh toán");
@@ -242,8 +247,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 			}
 
 			boolean useProfileAddress = Boolean.TRUE.equals(request.useProfileAddress());
-			deliveryAddress = useProfileAddress ? loggedCustomer.getAddress()
-					: (request.address() == null ? "" : request.address().trim());
+			if (useProfileAddress) {
+				deliveryAddress = deliveryCustomer.getAddress();
+			} else {
+				deliveryAddress = request.address() == null ? "" : request.address().trim();
+			}
 			if (deliveryAddress.isEmpty()) {
 				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Vui lòng nhập địa chỉ giao hàng");
 			}
@@ -293,15 +301,16 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 			Payment savedPayment = paymentRepository.save(payment);
 
 			// Nếu customer nhập địa chỉ mới thì cập nhật hồ sơ để các đơn sau có thể dùng lại.
-			if (deliveryAddress != null && !deliveryAddress.equals(loggedCustomer.getAddress())) {
-				loggedCustomer.setAddress(deliveryAddress);
-				customerRepository.save(loggedCustomer);
+			if (deliveryCustomer != null && deliveryAddress != null
+					&& !deliveryAddress.equals(deliveryCustomer.getAddress())) {
+				deliveryCustomer.setAddress(deliveryAddress);
+				customerRepository.save(deliveryCustomer);
 			}
 
 			Delivery delivery = new Delivery();
 			delivery.setOrder(saved);
 			delivery.setPayment(savedPayment);
-			delivery.setCustomer(loggedCustomer);
+			delivery.setCustomer(deliveryCustomer);
 			delivery.setStatus(DeliveryStatus.PENDING);
 			deliveryRepository.save(delivery);
 		}
