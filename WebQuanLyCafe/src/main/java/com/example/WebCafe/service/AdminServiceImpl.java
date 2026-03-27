@@ -2,6 +2,7 @@ package com.example.WebCafe.service;
 
 import com.example.WebCafe.dto.request.AdminCategoryRequest;
 import com.example.WebCafe.dto.request.AdminProductRequest;
+import com.example.WebCafe.dto.request.RevenuePeriod;
 import com.example.WebCafe.dto.request.RevenueQueryRequest;
 import com.example.WebCafe.dto.request.StaffShiftsUpdateRequest;
 import com.example.WebCafe.dto.request.StaffUpsertRequest;
@@ -16,6 +17,7 @@ import com.example.WebCafe.dto.response.ShiftResponse;
 import com.example.WebCafe.dto.response.StaffListResponse;
 import com.example.WebCafe.model.Category;
 import com.example.WebCafe.model.Product;
+import com.example.WebCafe.model.Payment;
 import com.example.WebCafe.model.Shift;
 import com.example.WebCafe.model.Staff;
 import com.example.WebCafe.model.StaffShift;
@@ -38,6 +40,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.DayOfWeek;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -46,6 +50,8 @@ import java.util.Map;
 import java.util.Set;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.WeekFields;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -272,16 +278,200 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	@Transactional(readOnly = true)
 	public RevenueDashboardResponse revenue(RevenueQueryRequest query) {
-		return new RevenueDashboardResponse(
-				BigDecimal.ZERO,
-				0L,
-				List.<RevenueByProductRow>of(),
-				List.<RevenueChartPoint>of());
+		DateRange range = resolveDateRange(query);
+		List<Payment> payments = (range == null)
+				? paymentRepository.findAllPaidDetails()
+				: paymentRepository.findPaidDetailsBetween(range.from(), range.toExclusive());
+
+		if (payments.isEmpty()) {
+			return new RevenueDashboardResponse(
+					BigDecimal.ZERO,
+					0L,
+					List.of(),
+					List.of());
+		}
+
+		BigDecimal totalRevenue = payments.stream()
+				.map(Payment::getTotalAmount)
+				.filter(java.util.Objects::nonNull)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		long totalOrders = payments.stream()
+				.map(p -> p.getOrder() != null ? p.getOrder().getId() : null)
+				.filter(java.util.Objects::nonNull)
+				.distinct()
+				.count();
+
+		Map<Integer, ProductAgg> byProductMap = new LinkedHashMap<>();
+		for (Payment payment : payments) {
+			if (payment.getOrder() == null || payment.getOrder().getItems() == null) continue;
+			for (var item : payment.getOrder().getItems()) {
+				if (item == null || item.getProduct() == null) continue;
+				Integer productId = item.getProduct().getId();
+				if (productId == null) continue;
+				String productName = item.getProduct().getName();
+				long qty = item.getQuantity() != null ? item.getQuantity() : 0;
+				BigDecimal lineRevenue = item.getPrice() != null
+						? item.getPrice().multiply(BigDecimal.valueOf(qty))
+						: BigDecimal.ZERO;
+				ProductAgg agg = byProductMap.computeIfAbsent(productId,
+						k -> new ProductAgg(productId, productName, 0L, BigDecimal.ZERO));
+				agg.quantity += qty;
+				agg.revenue = agg.revenue.add(lineRevenue);
+			}
+		}
+
+		List<RevenueByProductRow> byProduct = byProductMap.values().stream()
+				.map(a -> new RevenueByProductRow(a.productId, a.productName, a.quantity, a.revenue))
+				.sorted(Comparator.comparing(RevenueByProductRow::revenue, Comparator.nullsFirst(BigDecimal::compareTo)).reversed())
+				.toList();
+
+		List<RevenueChartPoint> chart = buildChart(payments, query != null ? query.period() : null);
+
+		return new RevenueDashboardResponse(totalRevenue, totalOrders, byProduct, chart);
 	}
 
 	@Override
 	public byte[] exportRevenueExcel(RevenueQueryRequest query) {
-		throw new UnsupportedOperationException("Xuất Excel — triển khai ở bước service tiếp theo");
+		RevenueDashboardResponse data = revenue(query);
+		StringBuilder csv = new StringBuilder();
+		csv.append("Tong doanh thu,").append(data.totalRevenue() != null ? data.totalRevenue() : BigDecimal.ZERO).append('\n');
+		csv.append("Tong so don,").append(data.totalOrders()).append('\n');
+		csv.append('\n');
+		csv.append("Product ID,Ten san pham,So luong,Doanh thu\n");
+		for (RevenueByProductRow row : data.byProduct()) {
+			csv.append(row.productId() != null ? row.productId() : "")
+					.append(',')
+					.append(csvCell(row.productName()))
+					.append(',')
+					.append(row.quantitySold())
+					.append(',')
+					.append(row.revenue() != null ? row.revenue() : BigDecimal.ZERO)
+					.append('\n');
+		}
+		return csv.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8);
+	}
+
+	private String csvCell(String value) {
+		if (value == null) return "";
+		String escaped = value.replace("\"", "\"\"");
+		return '"' + escaped + '"';
+	}
+
+	private List<RevenueChartPoint> buildChart(List<Payment> payments, RevenuePeriod period) {
+		if (payments == null || payments.isEmpty()) return List.of();
+		RevenuePeriod p = period != null ? period : RevenuePeriod.MONTH;
+		Map<String, BigDecimal> buckets = new LinkedHashMap<>();
+
+		if (p == RevenuePeriod.DAY) {
+			for (int h = 0; h < 24; h++) {
+				buckets.put(String.format("%02dh", h), BigDecimal.ZERO);
+			}
+			for (Payment payment : payments) {
+				if (payment.getPaidAt() == null) continue;
+				String key = String.format("%02dh", payment.getPaidAt().getHour());
+				buckets.put(key, buckets.getOrDefault(key, BigDecimal.ZERO).add(zeroIfNull(payment.getTotalAmount())));
+			}
+		} else if (p == RevenuePeriod.WEEK) {
+			for (DayOfWeek d : DayOfWeek.values()) {
+				buckets.put(labelDay(d), BigDecimal.ZERO);
+			}
+			for (Payment payment : payments) {
+				if (payment.getPaidAt() == null) continue;
+				DayOfWeek day = payment.getPaidAt().getDayOfWeek();
+				String key = labelDay(day);
+				buckets.put(key, buckets.getOrDefault(key, BigDecimal.ZERO).add(zeroIfNull(payment.getTotalAmount())));
+			}
+		} else if (p == RevenuePeriod.YEAR) {
+			for (int m = 1; m <= 12; m++) {
+				buckets.put("T" + m, BigDecimal.ZERO);
+			}
+			for (Payment payment : payments) {
+				if (payment.getPaidAt() == null) continue;
+				String key = "T" + payment.getPaidAt().getMonthValue();
+				buckets.put(key, buckets.getOrDefault(key, BigDecimal.ZERO).add(zeroIfNull(payment.getTotalAmount())));
+			}
+		} else {
+			Map<LocalDate, BigDecimal> monthMap = new java.util.TreeMap<>();
+			for (Payment payment : payments) {
+				if (payment.getPaidAt() == null) continue;
+				LocalDate d = payment.getPaidAt().toLocalDate();
+				monthMap.put(d, monthMap.getOrDefault(d, BigDecimal.ZERO).add(zeroIfNull(payment.getTotalAmount())));
+			}
+			for (var e : monthMap.entrySet()) {
+				String label = e.getKey().format(DateTimeFormatter.ofPattern("dd/MM"));
+				buckets.put(label, e.getValue());
+			}
+		}
+
+		return buckets.entrySet().stream()
+				.map(e -> new RevenueChartPoint(e.getKey(), e.getValue().setScale(0, RoundingMode.HALF_UP)))
+				.toList();
+	}
+
+	private String labelDay(DayOfWeek day) {
+		return switch (day) {
+			case MONDAY -> "T2";
+			case TUESDAY -> "T3";
+			case WEDNESDAY -> "T4";
+			case THURSDAY -> "T5";
+			case FRIDAY -> "T6";
+			case SATURDAY -> "T7";
+			case SUNDAY -> "CN";
+		};
+	}
+
+	private BigDecimal zeroIfNull(BigDecimal v) {
+		return v != null ? v : BigDecimal.ZERO;
+	}
+
+	private DateRange resolveDateRange(RevenueQueryRequest query) {
+		if (query == null) return null;
+		LocalDate fromDate = query.from();
+		LocalDate toDate = query.to();
+		if (fromDate != null || toDate != null) {
+			LocalDate f = fromDate != null ? fromDate : LocalDate.of(1970, 1, 1);
+			LocalDate t = toDate != null ? toDate : LocalDate.now();
+			if (t.isBefore(f)) {
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Khoảng thời gian không hợp lệ");
+			}
+			return new DateRange(f.atStartOfDay(), t.plusDays(1).atStartOfDay());
+		}
+
+		RevenuePeriod period = query.period();
+		if (period == null) return null;
+		LocalDate now = LocalDate.now();
+		return switch (period) {
+			case DAY -> new DateRange(now.atStartOfDay(), now.plusDays(1).atStartOfDay());
+			case WEEK -> {
+				LocalDate weekStart = now.with(WeekFields.ISO.dayOfWeek(), 1);
+				yield new DateRange(weekStart.atStartOfDay(), weekStart.plusDays(7).atStartOfDay());
+			}
+			case MONTH -> {
+				LocalDate monthStart = now.withDayOfMonth(1);
+				yield new DateRange(monthStart.atStartOfDay(), monthStart.plusMonths(1).atStartOfDay());
+			}
+			case YEAR -> {
+				LocalDate yearStart = now.withDayOfYear(1);
+				yield new DateRange(yearStart.atStartOfDay(), yearStart.plusYears(1).atStartOfDay());
+			}
+		};
+	}
+
+	private record DateRange(LocalDateTime from, LocalDateTime toExclusive) {}
+
+	private static class ProductAgg {
+		final Integer productId;
+		final String productName;
+		long quantity;
+		BigDecimal revenue;
+
+		ProductAgg(Integer productId, String productName, long quantity, BigDecimal revenue) {
+			this.productId = productId;
+			this.productName = productName;
+			this.quantity = quantity;
+			this.revenue = revenue;
+		}
 	}
 
 	@Override

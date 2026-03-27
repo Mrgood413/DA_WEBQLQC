@@ -157,6 +157,34 @@ Làm mới
 
 <section class="p-6 md:p-8 space-y-6">
 <p id="dashboard-error" class="hidden text-sm text-error" role="alert"></p>
+<section class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<div class="col-span-1 md:col-span-2 bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/20 shadow-sm relative overflow-hidden group flex flex-col justify-center min-h-[160px] animate-fade-in-up delay-200">
+<div class="relative z-10">
+<p class="text-xs font-bold uppercase tracking-[0.2em] text-on-surface-variant/70 mb-4">TỔNG DOANH THU TRONG NGÀY</p>
+<div class="flex items-baseline gap-3">
+<h3 id="kpi-revenue-today" class="text-5xl font-extrabold text-primary tracking-tight">0</h3>
+<span class="text-xl font-bold text-on-surface-variant/60">VND</span>
+</div>
+</div>
+<div class="absolute bottom-0 right-0 w-2/3 h-full opacity-10 pointer-events-none">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 100 40">
+<path class="text-primary" d="M0 40 Q 40 35, 70 20 T 120 10" fill="none" stroke="currentColor" stroke-width="3"></path>
+</svg>
+</div>
+</div>
+<div class="col-span-1 md:col-span-2 bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/20 shadow-sm relative overflow-hidden group flex flex-col justify-center min-h-[160px] animate-fade-in-up delay-300">
+<div class="absolute -right-4 -top-4 opacity-5 transform group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-8xl">receipt_long</span>
+</div>
+<div class="relative z-10">
+<p class="text-xs font-bold uppercase tracking-[0.2em] text-on-surface-variant/70 mb-4">SỐ ĐƠN TRONG NGÀY</p>
+<div class="flex items-baseline gap-3">
+<h3 id="kpi-orders-today" class="text-5xl font-extrabold text-primary tracking-tight">0</h3>
+<span class="text-xl font-bold text-on-surface-variant/60">ĐƠN</span>
+</div>
+</div>
+</div>
+</section>
 <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/20 p-6 animate-fade-in-up delay-500">
 <h3 class="text-lg font-headline font-bold text-primary mb-2">Nhân viên có ca trong ngày</h3>
 <div class="overflow-x-auto">
@@ -178,12 +206,6 @@ Làm mới
 </div>
 </div>
 
-<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/20 p-6 animate-fade-in-up delay-400">
-<h3 class="text-lg font-headline font-bold text-primary mb-2">Ghi chú dữ liệu</h3>
-<p class="text-sm text-on-surface-variant">
-Dữ liệu lấy từ API <code>/api/admin/dashboard/today</code>.
-</p>
-</div>
 </section>
 </main>
 
@@ -227,7 +249,23 @@ Dữ liệu lấy từ API <code>/api/admin/dashboard/today</code>.
   }
 
   function render(data) {
+    renderKpis(data || {});
     renderStaffToday(Array.isArray(data.staffToday) ? data.staffToday : []);
+  }
+
+  function renderKpis(data) {
+    var revenueEl = document.getElementById("kpi-revenue-today");
+    var ordersEl = document.getElementById("kpi-orders-today");
+    if (revenueEl) {
+      var revenueVal = Number(data && data.revenueToday != null ? data.revenueToday : 0);
+      if (!Number.isFinite(revenueVal)) revenueVal = 0;
+      revenueEl.textContent = revenueVal.toLocaleString("vi-VN");
+    }
+    if (ordersEl) {
+      var ordersVal = Number(data && data.ordersToday != null ? data.ordersToday : 0);
+      if (!Number.isFinite(ordersVal)) ordersVal = 0;
+      ordersEl.textContent = ordersVal.toLocaleString("vi-VN");
+    }
   }
 
   function renderStaffToday(list) {

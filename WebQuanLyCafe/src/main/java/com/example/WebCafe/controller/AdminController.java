@@ -140,8 +140,8 @@ public class AdminController {
 	public ResponseEntity<byte[]> exportRevenue(@ModelAttribute RevenueQueryRequest query) {
 		byte[] data = adminService.exportRevenueExcel(query);
 		return ResponseEntity.ok()
-				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"revenue.xlsx\"")
-				.contentType(MediaType.APPLICATION_OCTET_STREAM)
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"revenue.csv\"")
+				.contentType(MediaType.parseMediaType("text/csv; charset=UTF-8"))
 				.body(data);
 	}
 
