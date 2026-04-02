@@ -335,6 +335,7 @@
 	function setupUserHeader() {
 		var userEl = document.getElementById("current-username");
 		var logoutBtn = document.getElementById("logout-btn");
+		var accountLink = document.getElementById("nav-account-link");
 
 		fetch("/api/auth/me", { credentials: "same-origin" })
 			.then(function (r) {
@@ -342,13 +343,21 @@
 				return r.json();
 			})
 			.then(function (me) {
-				if (!userEl) return;
-				if (me && me.username) userEl.textContent = me.username;
-				else if (me && me.fullName) userEl.textContent = me.fullName;
-				else userEl.textContent = "Khách";
+				if (userEl) {
+					if (me && me.username) userEl.textContent = me.username;
+					else if (me && me.fullName) userEl.textContent = me.fullName;
+					else userEl.textContent = "Khách";
+				}
+
+				// Guest đặt tại quán (principal CustomerPrincipal) => có guestId, không có trang tài khoản.
+				if (accountLink) {
+					var isGuest = !!(me && me.guestId);
+					accountLink.classList.toggle("hidden", isGuest);
+				}
 			})
 			.catch(function () {
 				if (userEl) userEl.textContent = "Khách";
+				if (accountLink) accountLink.classList.add("hidden");
 			});
 
 		if (logoutBtn) {
@@ -380,13 +389,15 @@
 			document.body.classList.add("page-swipe-in-from-left");
 		}
 
-		var navLinks = document.querySelectorAll('a[href="/menu"], a[href="/order"]');
+		var navLinks = document.querySelectorAll('a[href="/menu"], a[href="/order"], a[href="/customer/profile"]');
 		Array.prototype.forEach.call(navLinks, function (link) {
 			link.addEventListener("click", function (e) {
 				var href = link.getAttribute("href");
 				if (!href) return;
 				e.preventDefault();
-				navigateWithSwipe(href, href === "/order" ? "left" : "right");
+				var direction = href === "/order" ? "left" : "right";
+				if (href === "/customer/profile") direction = "right";
+				navigateWithSwipe(href, direction);
 			});
 		});
 	}

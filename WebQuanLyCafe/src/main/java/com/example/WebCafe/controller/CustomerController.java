@@ -3,6 +3,7 @@ package com.example.WebCafe.controller;
 import com.example.WebCafe.dto.request.AddCartItemRequest;
 import com.example.WebCafe.dto.request.ConfirmOrderRequest;
 import com.example.WebCafe.dto.request.SetTableRequest;
+import com.example.WebCafe.dto.request.UpdateCustomerProfileRequest;
 import com.example.WebCafe.dto.response.CustomerDeliveryResponse;
 import com.example.WebCafe.dto.response.CustomerProfileResponse;
 import com.example.WebCafe.dto.response.CustomerTableResponse;
@@ -30,6 +31,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -103,6 +105,37 @@ public class CustomerController {
 				.orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
 						org.springframework.http.HttpStatus.NOT_FOUND, "Không tìm thấy hồ sơ khách hàng"));
 		return new CustomerProfileResponse(user.getUsername(), user.getFullName(), customer.getAddress());
+	}
+
+	@PutMapping("/profile")
+	public ResponseEntity<Void> updateProfile(@Valid @RequestBody UpdateCustomerProfileRequest request) {
+		var auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+		if (auth == null || !(auth.getPrincipal() instanceof String username)) {
+			throw new org.springframework.web.server.ResponseStatusException(
+					org.springframework.http.HttpStatus.BAD_REQUEST,
+					"Chế độ khách không có hồ sơ tài khoản");
+		}
+
+		User user = userRepository.findByUsername(username)
+				.orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
+						org.springframework.http.HttpStatus.NOT_FOUND, "Không tìm thấy người dùng"));
+		Customer customer = customerRepository.findById(user.getId())
+				.orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
+						org.springframework.http.HttpStatus.NOT_FOUND, "Không tìm thấy hồ sơ khách hàng"));
+
+		String fullName = request.fullName() != null ? request.fullName().trim() : "";
+		String address = request.address() != null ? request.address().trim() : "";
+
+		if (fullName.isBlank() || address.isBlank()) {
+			throw new org.springframework.web.server.ResponseStatusException(
+					org.springframework.http.HttpStatus.BAD_REQUEST, "Thiếu thông tin cá nhân");
+		}
+
+		user.setFullName(fullName);
+		customer.setAddress(address);
+		userRepository.save(user);
+		customerRepository.save(customer);
+		return ResponseEntity.noContent().build();
 	}
 
 	@GetMapping("/deliveries")

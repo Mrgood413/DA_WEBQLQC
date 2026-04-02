@@ -38,6 +38,9 @@ public class SecurityConfig {
 				.cors(Customizer.withDefaults())
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/", "/login", "/register", "/menu", "/order", "/js/**", "/css/**").permitAll()
+						.requestMatchers("/customer/**").hasRole("CUSTOMER")
+						.requestMatchers("/table/**").permitAll()
+						.requestMatchers("/customer/profile").hasRole("CUSTOMER")
 						.requestMatchers("/admin/**").hasRole("ADMIN")
 						.requestMatchers("/staff/**").hasRole("STAFF")
 						.requestMatchers("/error").permitAll()

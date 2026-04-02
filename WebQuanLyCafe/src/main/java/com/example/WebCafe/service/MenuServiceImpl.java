@@ -13,9 +13,11 @@ import java.util.List;
 public class MenuServiceImpl implements MenuService {
 
 	private final ProductRepository productRepository;
+	private final ProductInventoryService productInventoryService;
 
-	public MenuServiceImpl(ProductRepository productRepository) {
+	public MenuServiceImpl(ProductRepository productRepository, ProductInventoryService productInventoryService) {
 		this.productRepository = productRepository;
+		this.productInventoryService = productInventoryService;
 	}
 
 	@Override
@@ -29,6 +31,7 @@ public class MenuServiceImpl implements MenuService {
 					}
 					return !Boolean.TRUE.equals(c.getHidden());
 				})
+				.filter(productInventoryService::isVisibleOnMenu)
 				.map(this::toResponse)
 				.toList();
 	}

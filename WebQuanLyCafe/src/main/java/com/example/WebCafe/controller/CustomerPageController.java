@@ -9,22 +9,22 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 @Controller
-public class MenuController {
+public class CustomerPageController {
 
 	private final MenuService menuService;
 
-	public MenuController(MenuService menuService) {
+	public CustomerPageController(MenuService menuService) {
 		this.menuService = menuService;
 	}
 
 	/** Trang thực đơn (sau khi khách đã chọn bàn). */
-	@GetMapping("/menu")
+	@GetMapping("/customer/menu")
 	public String menuPage() {
 		return "customer_menu";
 	}
 
 	/** Trang theo dõi đơn hàng. */
-	@GetMapping("/order")
+	@GetMapping("/customer/order")
 	public String orderPage() {
 		return "customer_order";
 	}
@@ -36,3 +36,4 @@ public class MenuController {
 		return menuService.listMenuItems();
 	}
 }
+

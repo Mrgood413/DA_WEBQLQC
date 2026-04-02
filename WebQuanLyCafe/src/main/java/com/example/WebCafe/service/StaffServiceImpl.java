@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -48,6 +49,7 @@ public class StaffServiceImpl implements StaffService {
 	private final UserRepository userRepository;
 	private final StaffRepository staffRepository;
 	private final StaffShiftRepository staffShiftRepository;
+	private final ProductInventoryService productInventoryService;
 
 	public StaffServiceImpl(ProductRepository productRepository,
 			CategoryRepository categoryRepository,
@@ -57,7 +59,8 @@ public class StaffServiceImpl implements StaffService {
 			StaffQueueUpdateEventService staffQueueUpdateEventService,
 			UserRepository userRepository,
 			StaffRepository staffRepository,
-			StaffShiftRepository staffShiftRepository) {
+			StaffShiftRepository staffShiftRepository,
+			ProductInventoryService productInventoryService) {
 		this.productRepository = productRepository;
 		this.categoryRepository = categoryRepository;
 		this.cafeOrderRepository = cafeOrderRepository;
@@ -67,6 +70,7 @@ public class StaffServiceImpl implements StaffService {
 		this.userRepository = userRepository;
 		this.staffRepository = staffRepository;
 		this.staffShiftRepository = staffShiftRepository;
+		this.productInventoryService = productInventoryService;
 	}
 
 	@Override
@@ -184,12 +188,13 @@ public class StaffServiceImpl implements StaffService {
 	@Override
 	@Transactional
 	public void confirmOrder(Integer orderId) {
-		CafeOrder o = cafeOrderRepository.findById(orderId)
+		CafeOrder o = cafeOrderRepository.findWithItemsById(orderId)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy order"));
 
 		int milestone;
 		OrderStatus next;
 		if (o.getStatus() == OrderStatus.PENDING) {
+			applyStockOnKitchenAccept(o);
 			next = OrderStatus.PREPARING;
 			milestone = 2;
 		} else if (o.getStatus() == OrderStatus.PREPARING) {
@@ -204,6 +209,38 @@ public class StaffServiceImpl implements StaffService {
 		cafeOrderRepository.save(o);
 		orderMilestoneEventService.emitMilestone(orderId, milestone);
 		staffQueueUpdateEventService.emitQueueUpdated();
+	}
+
+	/**
+	 * Trừ kho khi nhân viên xác nhận đơn lần đầu (PENDING → PREPARING).
+	 * Nếu tồn không đủ: giảm số lượng dòng hoặc bỏ dòng; nếu không còn dòng nào thì lỗi.
+	 */
+	private void applyStockOnKitchenAccept(CafeOrder o) {
+		if (o.getItems() == null || o.getItems().isEmpty()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Đơn không có món");
+		}
+		List<OrderItem> snapshot = new ArrayList<>(o.getItems());
+		for (OrderItem oi : snapshot) {
+			if (oi.getProduct() == null) {
+				o.getItems().remove(oi);
+				continue;
+			}
+			Product p = productRepository.findById(oi.getProduct().getId())
+					.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy món"));
+			int fulfill = productInventoryService.fulfillableQuantity(p, oi.getQuantity());
+			if (fulfill <= 0) {
+				o.getItems().remove(oi);
+				continue;
+			}
+			if (fulfill < oi.getQuantity()) {
+				oi.setQuantity(fulfill);
+			}
+			productInventoryService.deductStock(p, fulfill);
+			productRepository.save(p);
+		}
+		if (o.getItems().isEmpty()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Không còn món nào đủ tồn kho để xác nhận đơn");
+		}
 	}
 
 	@Override

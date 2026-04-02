@@ -34,7 +34,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Khung xử lý giỏ / đơn — logic lưu DB sẽ bổ sung sau (phiên khách, order CART, v.v.).
@@ -50,6 +52,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	private final CustomerRepository customerRepository;
 	private final DeliveryRepository deliveryRepository;
 	private final PaymentRepository paymentRepository;
+	private final ProductInventoryService productInventoryService;
 
 	public CustomerOrderServiceImpl(CafeOrderRepository cafeOrderRepository,
 			CafeTableRepository cafeTableRepository,
@@ -58,7 +61,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 			UserRepository userRepository,
 			CustomerRepository customerRepository,
 			DeliveryRepository deliveryRepository,
-			PaymentRepository paymentRepository) {
+			PaymentRepository paymentRepository,
+			ProductInventoryService productInventoryService) {
 		this.cafeOrderRepository = cafeOrderRepository;
 		this.cafeTableRepository = cafeTableRepository;
 		this.productRepository = productRepository;
@@ -67,6 +71,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		this.customerRepository = customerRepository;
 		this.deliveryRepository = deliveryRepository;
 		this.paymentRepository = paymentRepository;
+		this.productInventoryService = productInventoryService;
 	}
 
 	private Integer getTableNumber(HttpSession session) {
@@ -190,6 +195,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		Product p = productRepository.findById(request.productId())
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy món"));
 
+		int req = request.quantity() == null ? 0 : request.quantity();
+		int canAdd = productInventoryService.fulfillableQuantity(p, req);
+		if (canAdd <= 0) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Không đủ hàng trong kho");
+		}
+
 		// Upsert order_item theo product
 		OrderItem target = o.getItems() == null ? null :
 				o.getItems().stream()
@@ -199,17 +210,20 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
 		LocalDateTime now = LocalDateTime.now();
 		if (target != null) {
-			target.setQuantity(target.getQuantity() + request.quantity());
+			target.setQuantity(target.getQuantity() + canAdd);
 			target.setUpdated(now);
 		} else {
 			OrderItem oi = new OrderItem();
 			oi.setOrder(o);
 			oi.setProduct(p);
-			oi.setQuantity(request.quantity());
+			oi.setQuantity(canAdd);
 			oi.setPrice(p.getPrice());
 			oi.setUpdated(now);
 			o.getItems().add(oi);
 		}
+
+		productInventoryService.deductStock(p, canAdd);
+		productRepository.save(p);
 
 		CafeOrder saved = cafeOrderRepository.save(o);
 		staffQueueUpdateEventService.emitQueueUpdated();
@@ -274,17 +288,29 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		order.setStatus(OrderStatus.PENDING);
 
 		LocalDateTime now = LocalDateTime.now();
+		Map<Integer, Integer> allocatedPerProduct = new HashMap<>();
 		for (AddCartItemRequest itemReq : request.items()) {
 			Product p = productRepository.findById(itemReq.productId())
 					.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy món"));
+			int requested = itemReq.quantity() == null ? 0 : itemReq.quantity();
+			int used = allocatedPerProduct.getOrDefault(p.getId(), 0);
+			int qty = productInventoryService.allocateForNewOrderLine(p, requested, used);
+			if (qty <= 0) {
+				continue;
+			}
+			allocatedPerProduct.put(p.getId(), used + qty);
 
 			OrderItem oi = new OrderItem();
 			oi.setOrder(order);
 			oi.setProduct(p);
-			oi.setQuantity(itemReq.quantity());
+			oi.setQuantity(qty);
 			oi.setPrice(p.getPrice());
 			oi.setUpdated(now);
 			order.getItems().add(oi);
+		}
+
+		if (order.getItems().isEmpty()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Không còn món nào đủ tồn kho để đặt");
 		}
 
 		CafeOrder saved = cafeOrderRepository.save(order);

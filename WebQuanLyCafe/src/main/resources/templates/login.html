@@ -259,8 +259,12 @@
     }, 220);
   }
 
-  function redirectToMenuWithSwipe() {
-    redirectWithAuthAnimation('/menu', { customerSwipeDirection: 'left' });
+  function redirectToCustomerMenuWithSwipe() {
+    redirectWithAuthAnimation('/customer/menu', { customerSwipeDirection: 'left' });
+  }
+
+  function redirectToTableMenuWithSwipe(tableNumber) {
+    redirectWithAuthAnimation('/table/' + tableNumber + '/menu', { customerSwipeDirection: 'left' });
   }
 
   document.getElementById('btn-confirm-table').addEventListener('click', async function () {
@@ -301,7 +305,7 @@
       try {
         window.localStorage.setItem('webcafe.tableNumber', String(num));
       } catch (ignore) {}
-      redirectToMenuWithSwipe();
+      redirectToTableMenuWithSwipe(num);
     } catch (e) {
       tableMsg.textContent = (e && e.message) ? e.message : 'Có lỗi xảy ra.';
       tableMsg.classList.remove('hidden');
@@ -338,7 +342,7 @@
         body: JSON.stringify({ mode: 'CUSTOMER', username: username, password: password })
       });
       if (customerRes.ok) {
-        redirectToMenuWithSwipe();
+        redirectToCustomerMenuWithSwipe();
         return;
       }
 

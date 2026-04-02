@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Chỉnh sửa hồ sơ - The Artisanal Ledger</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "secondary-fixed-dim": "#88d982",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#e9e2cc",
+                        "surface-container-highest": "#e9e2cc",
+                        "on-surface": "#1e1c0e",
+                        "on-secondary-fixed": "#002204",
+                        "primary-fixed": "#ffdad4",
+                        "on-primary": "#ffffff",
+                        "outline": "#827472",
+                        "surface-container-lowest": "#ffffff",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#fff9ea",
+                        "surface-container": "#f5eed7",
+                        "on-tertiary-container": "#ae8d81",
+                        "surface-dim": "#e0dac4",
+                        "inverse-primary": "#e3beb8",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#3e2723",
+                        "inverse-surface": "#333121",
+                        "tertiary-fixed": "#ffdbce",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#5b403c",
+                        "on-primary-container": "#ae8d87",
+                        "on-tertiary-fixed": "#2b160f",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#f8f1da",
+                        "tertiary-container": "#3e271e",
+                        "outline-variant": "#d3c3c0",
+                        "on-secondary-fixed-variant": "#005312",
+                        "background": "#fff9ea",
+                        "surface-tint": "#745853",
+                        "tertiary-fixed-dim": "#e4beb2",
+                        "on-primary-fixed": "#2b1613",
+                        "secondary-container": "#a0f399",
+                        "on-tertiary-fixed-variant": "#5b4137",
+                        "surface-container-low": "#faf4dd",
+                        "primary-fixed-dim": "#e3beb8",
+                        "on-secondary-container": "#217128",
+                        "primary": "#271310",
+                        "on-surface-variant": "#504442",
+                        "secondary-fixed": "#a3f69c",
+                        "tertiary": "#27130b",
+                        "surface-container-high": "#efe8d2",
+                        "secondary": "#1b6d24",
+                        "surface": "#fff9ea",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#1e1c0e"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        @keyframes scaleFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes staggeredFadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .animate-card-in {
+            animation: scaleFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .stagger-item {
+            opacity: 0;
+            animation: staggeredFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .focus-within-glow {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .focus-within-glow:focus-within {
+            background-color: #fff9ea;
+            border-bottom-color: #271310;
+            box-shadow: 0 4px 12px -8px rgba(39, 19, 16, 0.2);
+        }
+
+        .btn-loading-state { display: none; }
+        .btn-active .btn-text { opacity: 0.7; }
+        .btn-active .btn-loading-state { display: inline-block; animation: spin-slow 1s linear infinite; }
+        .btn-active .btn-icon-default { display: none; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body min-h-screen">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 max-w-none bg-[#fff9ea] dark:bg-[#1e1c0e]">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold text-[#271310] dark:text-[#f5eed7] font-['Manrope'] tracking-tight">The Artisanal Ledger</span>
+<nav class="hidden md:flex gap-6 items-center font-['Manrope'] font-semibold tracking-tight">
+<a class="text-[#3e2723] dark:text-[#f5eed7] opacity-80 hover:text-[#271310] dark:hover:text-white transition-colors duration-200" href="/menu">Thực đơn</a>
+<a class="text-[#3e2723] dark:text-[#f5eed7] opacity-80 hover:text-[#271310] dark:hover:text-white transition-colors duration-200" href="/order">Đơn hàng</a>
+<a id="nav-account-link" class="text-[#271310] dark:text-white font-bold transition-colors duration-200 border-b-2 border-[#271310] dark:border-white" href="/customer/profile">Tài khoản</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<span id="current-username" class="hidden sm:inline text-sm font-semibold text-[#271310] dark:text-[#f5eed7]">—</span>
+<button id="logout-btn" class="px-3 py-2 rounded-full bg-surface-container text-sm font-semibold text-[#271310] hover:bg-surface-container-high transition-colors">Logout</button>
+</div>
+<div class="absolute bottom-0 left-0 bg-[#f5eed7] dark:bg-[#271310] h-[1px] w-full"></div>
+</header>
+
+<!-- Main Content -->
+<main class="pt-24 pb-24 px-4 md:px-8 max-w-4xl mx-auto min-h-screen">
+<!-- Page Header -->
+<div class="mb-10 text-center animate-card-in">
+<span class="text-secondary font-bold uppercase tracking-[0.2em] text-[10px] mb-2 block">Cài đặt cá nhân</span>
+<h1 class="font-headline text-4xl md:text-5xl font-extrabold text-primary leading-tight mb-2">Chỉnh sửa hồ sơ</h1>
+<p class="text-on-surface-variant font-body">Cập nhật thông tin cá nhân và cài đặt tài khoản của bạn</p>
+</div>
+
+<div id="profile-error" class="hidden bg-error-container text-on-error-container rounded-xl px-4 py-3 mb-6 animate-card-in" style="animation-delay: 0.08s;"></div>
+
+<!-- Profile Form Card -->
+<div class="bg-surface-container-high rounded-2xl p-6 md:p-8 shadow-sm animate-card-in" style="animation-delay: 0.1s;">
+<div class="p-0">
+<form class="space-y-8" id="profileForm" onsubmit="return false;">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Username (Readonly Style) -->
+<div class="space-y-2 stagger-item" style="animation-delay: 0.2s;">
+<label class="text-xs font-semibold text-primary uppercase tracking-wider block">Tên người dùng</label>
+<div class="bg-surface-container-low px-4 py-3 rounded-lg border-b-2 border-outline-variant flex items-center justify-between opacity-80 cursor-not-allowed">
+<span id="profile-username" class="text-on-surface-variant font-medium">—</span>
+<span class="material-symbols-outlined text-stone-400 text-sm" data-icon="lock">lock</span>
+</div>
+</div>
+<!-- Full Name -->
+<div class="space-y-2 stagger-item" style="animation-delay: 0.3s;">
+<label class="text-xs font-semibold text-primary uppercase tracking-wider block" for="fullname">Họ và tên</label>
+<div class="focus-within-glow bg-surface-container-highest border-b-2 border-outline-variant rounded-t-lg">
+<input class="w-full bg-transparent border-0 focus:ring-0 px-4 py-3 text-on-surface transition-all" id="fullname" type="text" maxlength="100"/>
+</div>
+</div>
+<!-- Phone (not supported yet) -->
+<div class="space-y-2 stagger-item" style="animation-delay: 0.4s;">
+<label class="text-xs font-semibold text-primary uppercase tracking-wider block" for="phone">Số điện thoại</label>
+<div class="bg-surface-container-highest border-b-2 border-outline-variant rounded-t-lg relative flex items-center opacity-60">
+<span class="absolute left-4 material-symbols-outlined text-on-surface-variant text-lg" data-icon="call">call</span>
+<input class="w-full bg-transparent border-0 focus:ring-0 pl-12 pr-4 py-3 text-on-surface transition-all" id="phone" type="tel" placeholder="Chưa hỗ trợ" disabled/>
+</div>
+</div>
+<!-- Password (not supported yet) -->
+<div class="space-y-2 stagger-item" style="animation-delay: 0.5s;">
+<label class="text-xs font-semibold text-primary uppercase tracking-wider block" for="password">Mật khẩu mới</label>
+<div class="bg-surface-container-highest border-b-2 border-outline-variant rounded-t-lg relative flex items-center opacity-60">
+<span class="absolute left-4 material-symbols-outlined text-on-surface-variant text-lg" data-icon="key">key</span>
+<input class="w-full bg-transparent border-0 focus:ring-0 pl-12 pr-4 py-3 text-on-surface transition-all" id="password" placeholder="Chưa hỗ trợ" type="password" disabled/>
+</div>
+</div>
+</div>
+<!-- Address -->
+<div class="space-y-2 stagger-item" style="animation-delay: 0.6s;">
+<label class="text-xs font-semibold text-primary uppercase tracking-wider block" for="address">Địa chỉ</label>
+<div class="focus-within-glow bg-surface-container-highest border-b-2 border-outline-variant rounded-t-lg relative">
+<span class="absolute left-4 top-4 material-symbols-outlined text-on-surface-variant text-lg" data-icon="location_on">location_on</span>
+<textarea class="w-full bg-transparent border-0 focus:ring-0 pl-12 pr-4 py-4 text-on-surface transition-all resize-none" id="address" rows="3" maxlength="255"></textarea>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-col items-center gap-4 pt-6 stagger-item" style="animation-delay: 0.7s;">
+<button class="w-full bg-primary text-on-primary py-4 rounded-xl text-sm font-bold uppercase tracking-widest hover:bg-primary-container active:scale-[0.98] transition-all shadow-md flex items-center justify-center gap-3 group" id="saveBtn" type="submit">
+<span class="btn-icon-default material-symbols-outlined text-sm group-hover:scale-110 transition-transform" data-icon="save">save</span>
+<span class="btn-loading-state material-symbols-outlined text-sm" data-icon="progress_activity">progress_activity</span>
+<span class="btn-text">Lưu thay đổi</span>
+</button>
+<button id="cancelBtn" class="text-on-surface-variant text-xs font-semibold hover:text-primary transition-colors py-2 active:scale-95" type="button">Hủy bỏ</button>
+</div>
+</form>
+</div>
+</div>
+</main>
+
+<div class="fixed inset-0 pointer-events-none opacity-[0.03] mix-blend-multiply z-[100]" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAh5-DBmlce7wNnd53gPFlz_aBL5j41L4t8TGypZhjyB7B5FkSPO8sqd5FB21Asn-fi8yovDPP5sOMuNOfoRXSK8DIdJLI0Lnwe7Eh311VU3gN9NGvRTCQJp5MQNTQ2yNhXk5W_a3fpJZLft1lnK7TLRrBGaeTOVJc9nf_zGvUMOfJAJh4Z8k3MK5EixMTmU8bF-eVaBm_09o6-QVANGaMG0zuwHcWvy0xUvj6KeUGHZZyIl6N9qL3BfmPWZ8GhtPEuUYOqv4S7uu8l');"></div>
+
+<script src="/js/customer-session.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var errorEl = document.getElementById("profile-error");
+  var usernameEl = document.getElementById("profile-username");
+  var fullNameInput = document.getElementById("fullname");
+  var addressInput = document.getElementById("address");
+  var saveBtn = document.getElementById("saveBtn");
+  var cancelBtn = document.getElementById("cancelBtn");
+
+  function setError(message) {
+    if (!errorEl) return;
+    if (!message) {
+      errorEl.classList.add("hidden");
+      errorEl.textContent = "";
+      return;
+    }
+    errorEl.textContent = String(message);
+    errorEl.classList.remove("hidden");
+  }
+
+  function apiJson(url, opts) {
+    return fetch(url, Object.assign({ credentials: "same-origin" }, opts || {})).then(function (res) {
+      return res.text().then(function (text) {
+        var data = null;
+        try {
+          data = text ? JSON.parse(text) : null;
+        } catch (e) {
+          data = null;
+        }
+        if (!res.ok) {
+          var msg = (data && data.message) ? data.message :
+            (data && data.error) ? data.error :
+              (text ? text : ("HTTP " + res.status));
+          throw new Error(msg);
+        }
+        return data;
+      });
+    });
+  }
+
+  function setupUserHeader() {
+    var userEl = document.getElementById("current-username");
+    var logoutBtn = document.getElementById("logout-btn");
+    apiJson("/api/auth/me", { method: "GET" })
+      .then(function (me) {
+        if (!userEl) return;
+        if (me && me.username) userEl.textContent = me.username;
+        else if (me && me.fullName) userEl.textContent = me.fullName;
+        else userEl.textContent = "Khách";
+      })
+      .catch(function () {
+        if (userEl) userEl.textContent = "Khách";
+      });
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", function () {
+        fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" }).finally(function () {
+          try {
+            localStorage.removeItem("webcafe.cart");
+            localStorage.removeItem("webcafe.orderId");
+            localStorage.removeItem("webcafe.tableNumber");
+            localStorage.removeItem("webcafe.sentItems");
+            localStorage.removeItem("webcafe.morePending");
+            localStorage.removeItem("webcafe.moreSnapshot");
+          } catch (e) {}
+          window.location.href = "/login";
+        });
+      });
+    }
+  }
+
+  function loadProfile() {
+    return apiJson("/api/customer/profile", { method: "GET" }).then(function (profile) {
+      if (!profile) return;
+      if (usernameEl) usernameEl.textContent = profile.username || "—";
+      if (fullNameInput) fullNameInput.value = profile.fullName || "";
+      if (addressInput) addressInput.value = profile.address || "";
+    });
+  }
+
+  function saveProfile() {
+    var payload = {
+      fullName: fullNameInput ? String(fullNameInput.value || "").trim() : "",
+      address: addressInput ? String(addressInput.value || "").trim() : ""
+    };
+
+    if (!payload.fullName || !payload.address) {
+      setError("Vui lòng nhập đầy đủ họ tên và địa chỉ.");
+      return Promise.reject(new Error("Thiếu thông tin"));
+    }
+
+    return apiJson("/api/customer/profile", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+  }
+
+  function boot() {
+    setupUserHeader();
+    setError(null);
+    loadProfile().catch(function (e) {
+      setError(e && e.message ? e.message : "Không tải được thông tin.");
+    });
+
+    var form = document.getElementById("profileForm");
+    if (form) {
+      form.addEventListener("submit", function () {
+        if (!saveBtn) return;
+        setError(null);
+        saveBtn.classList.add("btn-active");
+        saveProfile().then(function () {
+          alert("Cập nhật thành công");
+        }).catch(function (e) {
+          setError(e && e.message ? e.message : "Không thể cập nhật.");
+        }).finally(function () {
+          saveBtn.classList.remove("btn-active");
+        });
+      });
+    }
+
+    if (cancelBtn) {
+      cancelBtn.addEventListener("click", function () {
+        window.location.href = "/order";
+      });
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    var sessionPromise = window.WebCafeCustomerSession && window.WebCafeCustomerSession.ensure
+      ? window.WebCafeCustomerSession.ensure()
+      : Promise.resolve();
+    sessionPromise.then(boot).catch(boot);
+  });
+})();
+</script>
+</body></html>
+
