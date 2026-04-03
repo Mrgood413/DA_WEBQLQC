@@ -23,6 +23,15 @@
 		return d.innerHTML;
 	}
 
+	function optimizeImgUrl(raw, maxW) {
+		if (!raw || !String(raw).trim()) return null;
+		var s = String(raw).trim();
+		if (window.WebCafeImageUrl && typeof window.WebCafeImageUrl.optimize === "function") {
+			return window.WebCafeImageUrl.optimize(s, { maxW: maxW != null ? maxW : 512 });
+		}
+		return s;
+	}
+
 	function getProductId(product) {
 		return String(product.id != null ? product.id : product.name || "");
 	}
@@ -190,11 +199,12 @@
 			return;
 		}
 
-		list.forEach(function (p) {
+		list.forEach(function (p, idx) {
 			var productId = getProductId(p);
 			var qty = getSelectedQuantity(productId);
 			var cartQty = getCartQuantity(productId);
-			var imgUrl = p.imageUrl && String(p.imageUrl).trim() ? escapeHtml(p.imageUrl) : PLACEHOLDER_IMG;
+			var rawSrc = p.imageUrl && String(p.imageUrl).trim() ? optimizeImgUrl(p.imageUrl, 512) : null;
+			var imgUrl = rawSrc ? escapeHtml(rawSrc) : PLACEHOLDER_IMG;
 			var desc = p.description
 				? '<p class="text-sm text-on-surface-variant mt-1">' +
 				  escapeHtml(p.description) +
@@ -204,15 +214,23 @@
 			var disabledClass = canEditCart() ? "" : " opacity-50 cursor-not-allowed";
 			var card = document.createElement("div");
 			card.className =
-				"group bg-surface-container-lowest rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col sm:flex-row h-auto sm:h-48 border border-transparent hover:border-outline-variant animate-card " +
-				delayClasses[Math.min(list.indexOf(p), delayClasses.length - 1)];
+				"menu-product-card group bg-surface-container-lowest rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col sm:flex-row h-auto sm:h-48 border border-transparent hover:border-outline-variant animate-card " +
+				delayClasses[Math.min(idx, delayClasses.length - 1)];
 			card.setAttribute("data-product-id", productId);
 			var img = document.createElement("img");
 			img.className =
 				"w-full h-full object-cover transition-transform duration-500 group-hover:scale-110";
 			img.alt = p.name || "";
-			img.loading = "lazy";
-			img.src = p.imageUrl && String(p.imageUrl).trim() ? p.imageUrl : PLACEHOLDER_IMG;
+			img.decoding = "async";
+			img.setAttribute("width", "512");
+			img.setAttribute("height", "384");
+			if (idx === 0) {
+				img.loading = "eager";
+				img.fetchPriority = "high";
+			} else {
+				img.loading = "lazy";
+			}
+			img.src = rawSrc ? rawSrc : PLACEHOLDER_IMG;
 			img.onerror = function () {
 				this.onerror = null;
 				this.src = PLACEHOLDER_IMG;
@@ -305,9 +323,12 @@
 					"</span>";
 			} else {
 				var iconUrl = getCategoryImageByName(item.name);
+				var iconOpt = iconUrl ? optimizeImgUrl(iconUrl, 128) : "";
 				button.innerHTML =
-					(iconUrl
-						? '<img src="' + escapeHtml(iconUrl) + '" alt="" class="w-6 h-6 rounded-full object-cover bg-surface-container shrink-0"/>'
+					(iconOpt
+						? '<img src="' +
+						  escapeHtml(iconOpt) +
+						  '" alt="" width="24" height="24" loading="lazy" decoding="async" class="w-6 h-6 rounded-full object-cover bg-surface-container shrink-0"/>'
 						: '<span class="material-symbols-outlined text-lg">category</span>') +
 					'<span class="truncate">' + escapeHtml(item.name) + "</span>";
 			}

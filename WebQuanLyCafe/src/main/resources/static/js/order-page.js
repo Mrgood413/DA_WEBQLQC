@@ -30,7 +30,12 @@
 	}
 
 	function getImageUrl(item) {
-		return item && item.imageUrl ? escapeHtml(item.imageUrl) : PLACEHOLDER_IMG;
+		if (!item || !item.imageUrl) return PLACEHOLDER_IMG;
+		var u = String(item.imageUrl).trim();
+		if (window.WebCafeImageUrl && typeof window.WebCafeImageUrl.optimize === "function") {
+			u = window.WebCafeImageUrl.optimize(u, { maxW: 128 });
+		}
+		return escapeHtml(u);
 	}
 
 	function formatTime(isoString) {
@@ -564,7 +569,7 @@
 			getImageUrl(item) +
 			'" alt="' +
 			escapeHtml(item.name) +
-			'">' +
+			'" width="56" height="56" loading="lazy" decoding="async">' +
 			'<span class="text-xs font-bold w-8 text-secondary shrink-0">' +
 			item.quantity +
 			"x</span>" +

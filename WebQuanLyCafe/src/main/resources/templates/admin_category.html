@@ -247,6 +247,7 @@
     </form>
   </div>
 </div>
+<script src="/js/image-url.js"></script>
 <script>
 (function () {
   function setupAdminContentTransition() {
@@ -343,14 +344,18 @@
         stagger;
       if (c.hidden) div.classList.add("opacity-75");
       var imgSrc = c.imageUrl || PLACEHOLDER;
+      var imgSrcDisplay =
+        window.WebCafeImageUrl && typeof window.WebCafeImageUrl.optimize === "function"
+          ? window.WebCafeImageUrl.optimize(imgSrc, { maxW: 640 })
+          : imgSrc;
       var hiddenBadge = c.hidden
         ? '<span class="absolute top-3 right-3 z-10 bg-outline-variant/90 text-on-surface text-[10px] font-bold px-2 py-1 rounded-full">Đã ẩn</span>'
         : "";
       div.innerHTML =
         '<div class="h-48 overflow-hidden relative bg-surface-variant">' +
         hiddenBadge +
-        '<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="" src="' +
-        esc(imgSrc) +
+        '<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="" width="640" height="360" loading="lazy" decoding="async" src="' +
+        esc(imgSrcDisplay) +
         '"/>' +
         "</div>" +
         '<div class="p-6">' +

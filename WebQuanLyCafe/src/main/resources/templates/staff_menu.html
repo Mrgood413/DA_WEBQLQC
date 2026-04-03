@@ -241,6 +241,7 @@ Thêm món mới
 </div>
 </div>
 
+<script src="/js/image-url.js"></script>
 <script>
 (function () {
   function setupStaffContentTransition() {
@@ -337,9 +338,12 @@ Thêm món mới
       btn.className = 'px-6 py-2 rounded-full font-medium text-sm whitespace-nowrap transition-colors ' +
         (active ? 'bg-secondary-container text-on-secondary-container shadow-sm' : 'bg-surface-container-high hover:bg-surface-container-highest text-on-surface');
       if (imageUrl) {
+        var tabImg = (window.WebCafeImageUrl && window.WebCafeImageUrl.optimize)
+          ? window.WebCafeImageUrl.optimize(imageUrl, { maxW: 64 })
+          : imageUrl;
         btn.innerHTML =
           '<span class="inline-flex items-center gap-2">' +
-          '<img src="' + imageUrl + '" alt="" class="w-5 h-5 rounded-full object-cover bg-surface-container" />' +
+          '<img src="' + tabImg + '" alt="" width="20" height="20" loading="lazy" decoding="async" class="w-5 h-5 rounded-full object-cover bg-surface-container" />' +
           '<span>' + label + '</span>' +
           '</span>';
       } else {
@@ -392,7 +396,14 @@ Thêm món mới
         var img = document.createElement('img');
         img.className = 'w-full h-full object-cover';
         img.alt = '';
-        img.src = p.imageUrl;
+        img.decoding = 'async';
+        img.setAttribute('width', '480');
+        img.setAttribute('height', '360');
+        img.loading = idx < 2 ? 'eager' : 'lazy';
+        if (idx === 0) img.fetchPriority = 'high';
+        img.src = (window.WebCafeImageUrl && window.WebCafeImageUrl.optimize)
+          ? window.WebCafeImageUrl.optimize(p.imageUrl, { maxW: 480 })
+          : p.imageUrl;
         imgWrap.appendChild(img);
       } else {
         var ph = document.createElement('div');
