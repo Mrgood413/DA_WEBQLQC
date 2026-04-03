@@ -104,7 +104,11 @@ public class CustomerController {
 		Customer customer = customerRepository.findById(user.getId())
 				.orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
 						org.springframework.http.HttpStatus.NOT_FOUND, "Không tìm thấy hồ sơ khách hàng"));
-		return new CustomerProfileResponse(user.getUsername(), user.getFullName(), customer.getAddress());
+		return new CustomerProfileResponse(
+				user.getUsername(),
+				user.getFullName(),
+				user.getPhone(),
+				customer.getAddress());
 	}
 
 	@PutMapping("/profile")
