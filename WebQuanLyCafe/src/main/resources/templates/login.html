@@ -88,8 +88,49 @@
     to { opacity: 0; transform: translateY(-8px) scale(0.99); }
     }
 .login-leave {
-    animation: loginLeave 220ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation: loginLeave 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     pointer-events: none;
+    }
+@keyframes loginFadeUp {
+    from { opacity: 0; transform: translateY(1rem); }
+    to { opacity: 1; transform: translateY(0); }
+    }
+.login-page-brand {
+    opacity: 0;
+    animation: loginFadeUp 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+    }
+.login-page-card {
+    opacity: 0;
+    animation: loginFadeUp 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.35s forwards;
+    }
+@keyframes loginSliceOutLeft {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(-14px); }
+    }
+@keyframes loginSliceInRight {
+    from { opacity: 0; transform: translateX(18px); }
+    to { opacity: 1; transform: translateX(0); }
+    }
+.login-slice-out {
+    animation: loginSliceOutLeft 0.75s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    pointer-events: none;
+    }
+.login-slice-in {
+    animation: loginSliceInRight 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+@media (prefers-reduced-motion: reduce) {
+    .login-page-brand,
+    .login-page-card {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+        }
+    .login-slice-out,
+    .login-slice-in {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+        }
     }</style>
 </head>
 <body class="bg-background font-body text-on-background min-h-screen flex flex-col">
@@ -98,24 +139,20 @@
 <!-- Login Container -->
 <div class="w-full max-w-md">
 <!-- Brand Anchor (Simplified for Login Context) -->
-<div class="mb-10 text-center">
+<div class="login-page-brand mb-10 text-center">
 <h1 class="font-headline font-extrabold text-4xl text-surface tracking-widest uppercase">
                     Artisanal Ledger
                 </h1>
 <p class="font-body text-surface-container-high text-sm mt-2 opacity-90">Nghệ thuật Thủ công cho Cà phê Mỗi ngày</p>
 </div>
 <!-- Login Card -->
-<div class="glass-panel rounded-xl shadow-[0_24px_48px_rgba(30,28,14,0.15)] overflow-hidden border border-white/20">
+<div class="login-page-card glass-panel rounded-xl shadow-[0_24px_48px_rgba(30,28,14,0.15)] overflow-hidden border border-white/20">
 <div class="p-8 md:p-10">
+<div id="slice-login" class="login-slice">
 <!-- Header: đăng nhập -->
 <div id="header-login" class="mb-8">
 <h2 class="font-headline font-bold text-2xl text-primary mb-1">Đăng nhập tài khoản</h2>
 <p class="text-on-surface-variant text-sm">Chào mừng bạn quay lại. Vui lòng nhập thông tin đăng nhập của bạn.</p>
-</div>
-<!-- Header: chọn bàn -->
-<div id="header-table" class="mb-8 hidden">
-<h2 class="font-headline font-bold text-2xl text-primary mb-1">Chọn bàn</h2>
-<p class="text-on-surface-variant text-sm">Nhập số bàn bạn đang ngồi để đặt món tại quán.</p>
 </div>
 <!-- Form đăng nhập nhân viên / admin -->
 <form id="form-login" class="space-y-6" onsubmit="return false;">
@@ -159,8 +196,15 @@
 <button class="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary font-headline font-bold py-4 rounded-full shadow-lg active:scale-[0.98] transition-all hover:shadow-xl flex items-center justify-center gap-2 group" type="submit">Đăng nhập ngay <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span></button>
 </div>
 </form>
-<!-- Panel chọn bàn (khách) -->
-<div id="panel-table" class="space-y-6 hidden">
+</div>
+<!-- Luồng chọn bàn (khách) -->
+<div id="slice-table" class="login-slice hidden">
+<!-- Header: chọn bàn -->
+<div id="header-table" class="mb-8">
+<h2 class="font-headline font-bold text-2xl text-primary mb-1">Chọn bàn</h2>
+<p class="text-on-surface-variant text-sm">Nhập số bàn bạn đang ngồi để đặt món tại quán.</p>
+</div>
+<div id="panel-table" class="space-y-6">
 <div class="space-y-2">
 <label class="font-label text-xs font-semibold uppercase tracking-wider text-on-surface-variant ml-1" for="tableNumber">SỐ BÀN</label>
 <div class="relative group">
@@ -177,10 +221,15 @@
 </div>
 </div>
 </div>
+</div>
 <!-- Footer Separator (No borders rule: using tonal shift) -->
 <div class="bg-surface-container-low py-6 px-8 text-center">
+<div id="footer-slice-login" class="login-slice">
 <p id="footer-hint-login" class="text-on-surface-variant text-sm">Bạn là khách hàng? <button type="button" id="btn-open-table" class="text-secondary font-bold hover:text-on-secondary-fixed-variant transition-colors inline-flex items-center gap-1 ml-1 group">Đặt tại quán <span class="material-symbols-outlined text-[16px] group-hover:scale-110 transition-transform">local_cafe</span></button></p>
-<p id="footer-hint-table" class="text-on-surface-variant text-sm hidden">Bạn có tài khoản? <button type="button" id="btn-back-from-footer" class="text-secondary font-bold hover:text-on-secondary-fixed-variant transition-colors">Đăng nhập tài khoản</button></p>
+</div>
+<div id="footer-slice-table" class="login-slice hidden">
+<p id="footer-hint-table" class="text-on-surface-variant text-sm">Bạn có tài khoản? <button type="button" id="btn-back-from-footer" class="text-secondary font-bold hover:text-on-secondary-fixed-variant transition-colors">Đăng nhập tài khoản</button></p>
+</div>
 </div>
 </div>
 </main>
@@ -189,11 +238,20 @@
 (function () {
   var formLogin = document.getElementById('form-login');
   var panelTable = document.getElementById('panel-table');
-  var headerLogin = document.getElementById('header-login');
-  var headerTable = document.getElementById('header-table');
-  var footerLogin = document.getElementById('footer-hint-login');
-  var footerTable = document.getElementById('footer-hint-table');
+  var sliceLogin = document.getElementById('slice-login');
+  var sliceTable = document.getElementById('slice-table');
+  var footerSliceLogin = document.getElementById('footer-slice-login');
+  var footerSliceTable = document.getElementById('footer-slice-table');
   var tableMsg = document.getElementById('table-flow-message');
+  var swapMs = 750;
+
+  function prefersReducedMotion() {
+    try {
+      return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (e) {
+      return false;
+    }
+  }
 
   function clearLoginFields() {
     var u = document.getElementById('username');
@@ -215,22 +273,62 @@
 
   function showTableFlow() {
     clearLoginFields();
-    headerLogin.classList.add('hidden');
-    headerTable.classList.remove('hidden');
-    formLogin.classList.add('hidden');
-    panelTable.classList.remove('hidden');
-    footerLogin.classList.add('hidden');
-    footerTable.classList.remove('hidden');
+    if (!sliceLogin || !sliceTable || !footerSliceLogin || !footerSliceTable) return;
+    if (prefersReducedMotion()) {
+      sliceLogin.classList.add('hidden');
+      sliceTable.classList.remove('hidden');
+      footerSliceLogin.classList.add('hidden');
+      footerSliceTable.classList.remove('hidden');
+      return;
+    }
+    sliceLogin.classList.add('login-slice-out');
+    footerSliceLogin.classList.add('login-slice-out');
+    window.setTimeout(function () {
+      sliceLogin.classList.add('hidden');
+      sliceLogin.classList.remove('login-slice-out');
+      footerSliceLogin.classList.add('hidden');
+      footerSliceLogin.classList.remove('login-slice-out');
+      sliceTable.classList.remove('hidden');
+      footerSliceTable.classList.remove('hidden');
+      sliceTable.classList.add('login-slice-in');
+      footerSliceTable.classList.add('login-slice-in');
+      function onEnd() {
+        sliceTable.removeEventListener('animationend', onEnd);
+        sliceTable.classList.remove('login-slice-in');
+        footerSliceTable.classList.remove('login-slice-in');
+      }
+      sliceTable.addEventListener('animationend', onEnd);
+    }, swapMs);
   }
 
   function showLoginFlow() {
     clearTableFields();
-    headerTable.classList.add('hidden');
-    headerLogin.classList.remove('hidden');
-    panelTable.classList.add('hidden');
-    formLogin.classList.remove('hidden');
-    footerTable.classList.add('hidden');
-    footerLogin.classList.remove('hidden');
+    if (!sliceLogin || !sliceTable || !footerSliceLogin || !footerSliceTable) return;
+    if (prefersReducedMotion()) {
+      sliceTable.classList.add('hidden');
+      sliceLogin.classList.remove('hidden');
+      footerSliceTable.classList.add('hidden');
+      footerSliceLogin.classList.remove('hidden');
+      return;
+    }
+    sliceTable.classList.add('login-slice-out');
+    footerSliceTable.classList.add('login-slice-out');
+    window.setTimeout(function () {
+      sliceTable.classList.add('hidden');
+      sliceTable.classList.remove('login-slice-out');
+      footerSliceTable.classList.add('hidden');
+      footerSliceTable.classList.remove('login-slice-out');
+      sliceLogin.classList.remove('hidden');
+      footerSliceLogin.classList.remove('hidden');
+      sliceLogin.classList.add('login-slice-in');
+      footerSliceLogin.classList.add('login-slice-in');
+      function onEnd() {
+        sliceLogin.removeEventListener('animationend', onEnd);
+        sliceLogin.classList.remove('login-slice-in');
+        footerSliceLogin.classList.remove('login-slice-in');
+      }
+      sliceLogin.addEventListener('animationend', onEnd);
+    }, swapMs);
   }
 
   document.getElementById('btn-open-table').addEventListener('click', showTableFlow);
@@ -256,7 +354,7 @@
     document.body.classList.add('login-leave');
     window.setTimeout(function () {
       window.location.href = targetUrl;
-    }, 220);
+    }, 1500);
   }
 
   function redirectToCustomerMenuWithSwipe() {

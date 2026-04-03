@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,5 +44,12 @@ public class OrderItem {
 
 	/** Dòng món đã được chỉnh sửa (ví dụ đổi SL/giá sau khi gửi bếp). */
 	@Column(name = "updated", nullable = false)
-	private LocalDateTime updated = LocalDateTime.now();
+	private LocalDateTime updated;
+
+	@PrePersist
+	void onCreate() {
+		if (updated == null) {
+			updated = LocalDateTime.now();
+		}
+	}
 }

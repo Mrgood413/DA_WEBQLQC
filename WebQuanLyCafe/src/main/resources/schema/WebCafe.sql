@@ -8,7 +8,7 @@ CREATE TABLE users (
     password VARCHAR(255),
     full_name VARCHAR(100),
     phone VARCHAR(20),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE staff (
@@ -78,7 +78,7 @@ CREATE TABLE orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     table_id INT,
     status ENUM('PENDING','PREPARING','DONE','PAID') DEFAULT 'PENDING' NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (table_id) REFERENCES cafe_tables(id)
 );
 
@@ -88,7 +88,7 @@ CREATE TABLE order_items (
     product_id INT,
     quantity INT NOT NULL,
     price DECIMAL(10,2) NOT NULL,
-    updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (order_id) REFERENCES orders(id),
     FOREIGN KEY (product_id) REFERENCES products(id)
 );
@@ -98,7 +98,7 @@ CREATE TABLE payments (
     order_id INT,
     method ENUM('CASH','BANKING') NOT NULL,
     total_amount DECIMAL(10,2) NOT NULL,
-    paid_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    paid_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (order_id) REFERENCES orders(id)
 );
 
@@ -108,7 +108,7 @@ CREATE TABLE deliveries (
     payment_id INT UNIQUE,
     customer_id INT NOT NULL,
     status ENUM('PENDING','CONFIRMED','SHIPPING','DELIVERED','CANCELLED') NOT NULL DEFAULT 'PENDING',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     delivered_at TIMESTAMP NULL,
     FOREIGN KEY (order_id) REFERENCES orders(id),
     FOREIGN KEY (payment_id) REFERENCES payments(id),

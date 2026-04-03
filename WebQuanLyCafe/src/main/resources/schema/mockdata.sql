@@ -373,7 +373,69 @@ INSERT INTO deliveries (order_id, payment_id, customer_id, status, created_at, d
 (43, (SELECT id FROM payments WHERE order_id = 43), (SELECT user_id FROM customers WHERE user_id = (SELECT id FROM users WHERE username = 'cust02')), 'CONFIRMED', '2026-03-27 14:47:00', NULL);
 
 -- =========================
--- 10) Đồng bộ trạng thái bàn tham khảo
+-- 10) 10 đơn giao hàng (ship): table_id NULL, delivered_at từ 2026-04-04 xuống 2026-03-20
+--     (order_id 45–54 sau batch orders phía trên)
+-- =========================
+INSERT INTO orders (table_id, status, created_at) VALUES
+(NULL, 'PAID', '2026-04-03 09:00:00'),
+(NULL, 'PAID', '2026-04-01 09:15:00'),
+(NULL, 'PAID', '2026-03-31 10:20:00'),
+(NULL, 'PAID', '2026-03-28 08:40:00'),
+(NULL, 'PAID', '2026-03-26 11:10:00'),
+(NULL, 'PAID', '2026-03-24 08:50:00'),
+(NULL, 'PAID', '2026-03-23 14:25:00'),
+(NULL, 'PAID', '2026-03-21 09:45:00'),
+(NULL, 'PAID', '2026-03-20 10:30:00'),
+(NULL, 'PAID', '2026-03-19 11:05:00');
+
+INSERT INTO order_items (order_id, product_id, quantity, price, updated) VALUES
+(45, 1, 2, 29000, '2026-04-03 09:01:00'),
+(45, 5, 1, 39000, '2026-04-03 09:02:00'),
+(46, 3, 1, 45000, '2026-04-01 09:16:00'),
+(46, 8, 1, 35000, '2026-04-01 09:17:00'),
+(47, 2, 2, 35000, '2026-03-31 10:21:00'),
+(47, 6, 1, 42000, '2026-03-31 10:22:00'),
+(48, 4, 2, 32000, '2026-03-28 08:41:00'),
+(48, 9, 1, 55000, '2026-03-28 08:42:00'),
+(49, 7, 1, 48000, '2026-03-26 11:11:00'),
+(49, 10, 1, 40000, '2026-03-26 11:12:00'),
+(50, 1, 1, 29000, '2026-03-24 08:51:00'),
+(50, 11, 2, 35000, '2026-03-24 08:52:00'),
+(51, 5, 2, 39000, '2026-03-23 14:26:00'),
+(51, 3, 1, 45000, '2026-03-23 14:27:00'),
+(52, 6, 2, 42000, '2026-03-21 09:46:00'),
+(52, 8, 1, 35000, '2026-03-21 09:47:00'),
+(53, 4, 1, 32000, '2026-03-20 10:31:00'),
+(53, 10, 1, 40000, '2026-03-20 10:32:00'),
+(54, 2, 1, 35000, '2026-03-19 11:06:00'),
+(54, 9, 1, 55000, '2026-03-19 11:07:00');
+
+INSERT INTO payments (order_id, method, total_amount, paid_at) VALUES
+(45, 'CASH',    97000,  '2026-04-03 09:30:00'),
+(46, 'BANKING', 80000,  '2026-04-01 09:45:00'),
+(47, 'CASH',    112000, '2026-03-31 10:40:00'),
+(48, 'BANKING', 119000, '2026-03-28 09:00:00'),
+(49, 'CASH',    88000,  '2026-03-26 11:30:00'),
+(50, 'BANKING', 99000,  '2026-03-24 09:10:00'),
+(51, 'CASH',    123000, '2026-03-23 14:45:00'),
+(52, 'BANKING', 119000, '2026-03-21 10:00:00'),
+(53, 'CASH',    72000,  '2026-03-20 10:50:00'),
+(54, 'BANKING', 90000,  '2026-03-19 11:30:00');
+
+INSERT INTO deliveries (order_id, payment_id, customer_id, status, created_at, delivered_at) VALUES
+(45, (SELECT id FROM payments WHERE order_id = 45), (SELECT user_id FROM customers WHERE user_id = (SELECT id FROM users WHERE username = 'cust01')), 'DELIVERED', '2026-04-03 09:35:00', '2026-04-04 18:00:00'),
+(46, (SELECT id FROM payments WHERE order_id = 46), (SELECT user_id FROM customers WHERE user_id = (SELECT id FROM users WHERE username = 'cust02')), 'DELIVERED', '2026-04-01 09:50:00', '2026-04-02 16:30:00'),
+(47, (SELECT id FROM payments WHERE order_id = 47), (SELECT user_id FROM customers WHERE user_id = (SELECT id FROM users WHERE username = 'cust03')), 'DELIVERED', '2026-03-31 10:45:00', '2026-04-01 14:00:00'),
+(48, (SELECT id FROM payments WHERE order_id = 48), (SELECT user_id FROM customers WHERE user_id = (SELECT id FROM users WHERE username = 'cust04')), 'DELIVERED', '2026-03-28 09:05:00', '2026-03-29 17:20:00'),
+(49, (SELECT id FROM payments WHERE order_id = 49), (SELECT user_id FROM customers WHERE user_id = (SELECT id FROM users WHERE username = 'cust05')), 'DELIVERED', '2026-03-26 11:35:00', '2026-03-27 12:45:00'),
+(50, (SELECT id FROM payments WHERE order_id = 50), (SELECT user_id FROM customers WHERE user_id = (SELECT id FROM users WHERE username = 'cust06')), 'DELIVERED', '2026-03-24 09:15:00', '2026-03-25 10:30:00'),
+(51, (SELECT id FROM payments WHERE order_id = 51), (SELECT user_id FROM customers WHERE user_id = (SELECT id FROM users WHERE username = 'cust07')), 'DELIVERED', '2026-03-23 14:50:00', '2026-03-24 19:00:00'),
+(52, (SELECT id FROM payments WHERE order_id = 52), (SELECT user_id FROM customers WHERE user_id = (SELECT id FROM users WHERE username = 'cust08')), 'DELIVERED', '2026-03-21 10:05:00', '2026-03-22 15:15:00'),
+(53, (SELECT id FROM payments WHERE order_id = 53), (SELECT user_id FROM customers WHERE user_id = (SELECT id FROM users WHERE username = 'cust09')), 'DELIVERED', '2026-03-20 10:55:00', '2026-03-21 11:30:00'),
+(54, (SELECT id FROM payments WHERE order_id = 54), (SELECT user_id FROM customers WHERE user_id = (SELECT id FROM users WHERE username = 'cust10')), 'DELIVERED', '2026-03-19 11:35:00', '2026-03-20 14:00:00');
+
+-- =========================
+-- 11) Đồng bộ trạng thái bàn tham khảo
 -- =========================
 UPDATE cafe_tables
 SET status = CASE
