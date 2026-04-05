@@ -21,6 +21,11 @@ public class AdminPageController {
 		return "admin_category";
 	}
 
+	@GetMapping("/admin/products")
+	public String adminProductsPage() {
+		return "admin_products";
+	}
+
 	@GetMapping("/admin/staff")
 	public String adminStaffPage() {
 		return "admin_staff";

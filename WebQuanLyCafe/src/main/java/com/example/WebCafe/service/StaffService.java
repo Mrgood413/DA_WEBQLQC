@@ -1,8 +1,7 @@
 package com.example.WebCafe.service;
 
-import com.example.WebCafe.dto.request.AdminProductRequest;
 import com.example.WebCafe.dto.request.PaymentRequest;
-import com.example.WebCafe.dto.request.StaffProductUpdateRequest;
+import com.example.WebCafe.dto.request.StaffProductPatchRequest;
 import com.example.WebCafe.dto.response.CategoryOptionResponse;
 import com.example.WebCafe.dto.response.OrderQueueResponse;
 import com.example.WebCafe.dto.response.ProductResponse;
@@ -16,9 +15,7 @@ public interface StaffService {
 
 	List<CategoryOptionResponse> listCategories();
 
-	ProductResponse createProduct(AdminProductRequest request);
-
-	ProductResponse updateProduct(Integer productId, StaffProductUpdateRequest request);
+	ProductResponse patchProduct(Integer productId, StaffProductPatchRequest request);
 
 	List<OrderQueueResponse> listQueue();
 

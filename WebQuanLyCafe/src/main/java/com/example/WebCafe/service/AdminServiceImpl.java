@@ -97,13 +97,46 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
+	@Transactional
 	public ProductResponse createProduct(AdminProductRequest request) {
-		throw new UnsupportedOperationException("Thêm món chi tiết — triển khai ở bước service tiếp theo");
+		Category cat = categoryRepository.findById(request.categoryId())
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Danh mục không tồn tại"));
+		Product p = new Product();
+		applyAdminProductFields(p, request);
+		p.setQuantity(0);
+		p.setCategory(cat);
+		productRepository.save(p);
+		return toResponse(p);
 	}
 
 	@Override
+	@Transactional
 	public ProductResponse updateProduct(Integer id, AdminProductRequest request) {
-		throw new UnsupportedOperationException("Cập nhật món — triển khai ở bước service tiếp theo");
+		Product p = productRepository.findById(id)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy món"));
+		Category cat = categoryRepository.findById(request.categoryId())
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Danh mục không tồn tại"));
+		applyAdminProductFields(p, request);
+		p.setCategory(cat);
+		productRepository.save(p);
+		return toResponse(p);
+	}
+
+	private void applyAdminProductFields(Product p, AdminProductRequest request) {
+		p.setName(request.name().trim());
+		if (request.description() != null) {
+			String desc = request.description().trim();
+			p.setDescription(desc.isEmpty() ? null : desc);
+		}
+		p.setPrice(request.price());
+		String img = request.imageUrl();
+		if (img != null) {
+			img = img.trim();
+			p.setImageUrl(img.isEmpty() ? null : img);
+		} else {
+			p.setImageUrl(null);
+		}
+		p.setAvailable(request.available() != null ? request.available() : true);
 	}
 
 	@Override

@@ -132,6 +132,13 @@
 <span>Menu</span>
 </a>
 </nav>
+<div class="px-4 mx-2 mb-3 rounded-xl bg-surface-container-high/90 border border-outline-variant/25 p-3 text-[11px] leading-snug text-on-surface-variant">
+<p class="font-semibold text-primary mb-1.5 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">info</span>
+Quyền nhân viên
+</p>
+<p>Bạn chỉ <strong class="text-on-surface">cập nhật số lượng tồn</strong> món. Thêm / sửa tên, giá, ảnh, danh mục… do <strong class="text-on-surface">Admin</strong> (trang quản trị).</p>
+</div>
 <div class="mt-auto px-6 pt-6 border-t border-outline-variant/20">
 <div class="mb-3">
 <p class="text-[10px] uppercase tracking-wider opacity-60">Đăng nhập</p>
@@ -148,7 +155,7 @@
 <div class="flex items-center gap-6">
 <span class="md:hidden material-symbols-outlined text-primary cursor-pointer">menu</span>
 <div class="flex items-center gap-2">
-<h2 class="text-xl font-bold text-[#271310] dark:text-[#f5eed7] tracking-tight font-manrope">Quản lý Thực đơn</h2>
+<h2 class="text-xl font-bold text-[#271310] dark:text-[#f5eed7] tracking-tight font-manrope">Thực đơn — cập nhật tồn kho</h2>
 </div>
 </div>
 <div class="flex items-center gap-4">
@@ -168,12 +175,9 @@
   </div>
 </div>
 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-<div id="category-tabs" class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar flex-wrap"></div>
-<button type="button" id="btn-add-product" class="bg-primary text-on-primary px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-xl hover:translate-y-[-2px] transition-all flex items-center justify-center gap-2 shrink-0">
-<span class="material-symbols-outlined">add_circle</span>
-Thêm món mới
-</button>
+<div id="category-tabs" class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar flex-wrap w-full"></div>
 </div>
+<p class="text-xs text-on-surface-variant md:hidden -mt-2 mb-2 px-1"><strong class="text-on-surface">Tồn kho</strong>, <strong class="text-on-surface">ẩn/bán món</strong>. Tên, giá, ảnh: Admin.</p>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 <div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10 flex flex-col justify-between py-8">
 <span class="text-on-surface-variant text-xs font-semibold uppercase tracking-wider">Tổng số món</span>
@@ -191,55 +195,6 @@ Thêm món mới
 <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
 </div>
 </main>
-
-<div id="modalBackdrop" class="fixed inset-0 bg-black/40 z-[100] hidden items-center justify-center p-4">
-<div class="bg-surface rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto custom-scrollbar border border-outline-variant/20">
-<div class="p-6 border-b border-outline-variant/10 flex justify-between items-center sticky top-0 bg-surface z-10">
-<h3 id="modal-title" class="font-manrope font-bold text-lg text-primary">Thêm món</h3>
-<button type="button" id="modal-close" class="p-2 rounded-lg hover:bg-surface-container-high text-on-surface-variant">
-<span class="material-symbols-outlined">close</span>
-</button>
-</div>
-<form id="product-form" class="p-6 space-y-4">
-<input type="hidden" id="f-product-id"/>
-<div class="space-y-1">
-<label class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant" for="f-name">Tên món</label>
-<input required id="f-name" name="name" maxlength="150" class="w-full rounded-lg border border-outline-variant/30 bg-surface-container-highest px-3 py-2 text-primary"/>
-</div>
-<div class="space-y-1">
-<label class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant" for="f-description">Mô tả chi tiết</label>
-<textarea id="f-description" name="description" rows="4" class="w-full rounded-lg border border-outline-variant/30 bg-surface-container-highest px-3 py-2 text-primary text-sm"></textarea>
-</div>
-<div class="grid grid-cols-2 gap-3">
-<div class="space-y-1">
-<label class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant" for="f-price">Giá (đ)</label>
-<input required id="f-price" name="price" type="number" min="0" step="1000" class="w-full rounded-lg border border-outline-variant/30 bg-surface-container-highest px-3 py-2 text-primary"/>
-</div>
-<div class="space-y-1">
-<label class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant" for="f-quantity">Số lượng tồn</label>
-<input required id="f-quantity" name="quantity" type="number" min="0" step="1" class="w-full rounded-lg border border-outline-variant/30 bg-surface-container-highest px-3 py-2 text-primary"/>
-</div>
-</div>
-<div class="space-y-1">
-<label class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant" for="f-imageUrl">URL hình ảnh</label>
-<input id="f-imageUrl" name="imageUrl" type="url" maxlength="255" placeholder="https://..." class="w-full rounded-lg border border-outline-variant/30 bg-surface-container-highest px-3 py-2 text-primary text-sm"/>
-</div>
-<div class="space-y-1">
-<label class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant" for="f-categoryId">Danh mục</label>
-<select required id="f-categoryId" name="categoryId" class="w-full rounded-lg border border-outline-variant/30 bg-surface-container-highest px-3 py-2 text-primary"></select>
-</div>
-<div class="flex items-center gap-3 pt-2">
-<input id="f-available" name="available" type="checkbox" class="rounded border-outline-variant w-4 h-4 text-secondary focus:ring-secondary"/>
-<label for="f-available" class="text-sm font-medium text-on-surface">Hiển thị trong thực đơn (đang bán)</label>
-</div>
-<p id="form-error" class="text-sm text-error hidden" role="alert"></p>
-<div class="flex gap-3 pt-4">
-<button type="submit" class="flex-1 bg-primary text-on-primary font-bold py-3 rounded-full shadow-lg">Lưu</button>
-<button type="button" id="form-cancel" class="px-6 py-3 rounded-full border border-outline-variant text-on-surface-variant font-medium">Hủy</button>
-</div>
-</form>
-</div>
-</div>
 
 <script src="/js/image-url.js"></script>
 <script>
@@ -285,11 +240,7 @@ Thêm món mới
     statTotal: document.getElementById('stat-total'),
     statVisible: document.getElementById('stat-visible'),
     pageError: document.getElementById('page-error'),
-    loading: document.getElementById('staff-menu-loading'),
-    modalBackdrop: document.getElementById('modalBackdrop'),
-    modalTitle: document.getElementById('modal-title'),
-    form: document.getElementById('product-form'),
-    formError: document.getElementById('form-error')
+    loading: document.getElementById('staff-menu-loading')
   };
 
   function loadCurrentUserDisplayName() {
@@ -442,13 +393,26 @@ Thêm món mới
 
       var row = document.createElement('div');
       row.className = 'flex items-center justify-between pt-4 border-t border-outline-variant/10 gap-2 flex-wrap';
-      var editBtn = document.createElement('button');
-      editBtn.type = 'button';
-      editBtn.className = 'p-2 rounded-full hover:bg-surface-container-high text-on-surface-variant';
-      editBtn.title = 'Chỉnh sửa';
-      editBtn.innerHTML = '<span class="material-symbols-outlined text-[20px]">edit</span>';
-      editBtn.addEventListener('click', function () { openEditModal(p); });
-
+      var toggleAvail = document.createElement('button');
+      toggleAvail.type = 'button';
+      toggleAvail.className =
+        'shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ' +
+        (p.available
+          ? 'border border-outline-variant/50 text-on-surface-variant hover:bg-surface-container-high'
+          : 'bg-secondary text-on-secondary shadow-sm');
+      toggleAvail.textContent = p.available ? 'Ẩn món' : 'Bán lại';
+      toggleAvail.addEventListener('click', function () {
+        apiJson(API.products + '/' + p.id, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ available: !p.available })
+        }).then(function (updated) {
+          var ix = state.products.findIndex(function (x) { return x.id === p.id; });
+          if (ix >= 0) state.products[ix] = updated;
+          renderGrid();
+          updateStats();
+        }).catch(function (e) { alert(e.message || 'Lỗi cập nhật'); });
+      });
       var qtyWrap = document.createElement('div');
       qtyWrap.className = 'flex items-center gap-2';
       var minus = document.createElement('button');
@@ -492,177 +456,22 @@ Thêm món mới
         patchQty(v);
       });
 
+      var qtyLabel = document.createElement('span');
+      qtyLabel.className = 'text-xs font-medium text-on-surface-variant mr-2';
+      qtyLabel.textContent = 'Tồn kho';
+
+      qtyWrap.appendChild(qtyLabel);
       qtyWrap.appendChild(minus);
       qtyWrap.appendChild(qtyInput);
       qtyWrap.appendChild(plus);
 
-      var toggleWrap = document.createElement('div');
-      toggleWrap.className = 'flex items-center gap-2 shrink-0';
-      var chk = document.createElement('input');
-      chk.type = 'checkbox';
-      chk.className = 'rounded border-outline-variant w-4 h-4 text-secondary';
-      chk.checked = !!p.available;
-      chk.title = 'Hiển thị trong thực đơn';
-      chk.addEventListener('change', function () {
-        apiJson(API.products + '/' + p.id, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ available: chk.checked })
-        }).then(function (updated) {
-          var idx = state.products.findIndex(function (x) { return x.id === p.id; });
-          if (idx >= 0) state.products[idx] = updated;
-          renderGrid();
-          updateStats();
-        }).catch(function (e) {
-          chk.checked = !chk.checked;
-          alert(e.message || 'Lỗi');
-        });
-      });
-      var sp = document.createElement('span');
-      sp.className = 'text-xs font-medium text-on-surface-variant whitespace-nowrap';
-      sp.textContent = 'Hiện';
-      toggleWrap.appendChild(chk);
-      toggleWrap.appendChild(sp);
-
-      row.appendChild(editBtn);
+      row.appendChild(toggleAvail);
       row.appendChild(qtyWrap);
-      row.appendChild(toggleWrap);
       body.appendChild(row);
       card.appendChild(body);
       els.grid.appendChild(card);
     });
   }
-
-  function fillCategorySelect() {
-    var sel = document.getElementById('f-categoryId');
-    sel.innerHTML = '';
-    state.categories.forEach(function (c) {
-      var o = document.createElement('option');
-      o.value = String(c.id);
-      o.textContent = c.name;
-      sel.appendChild(o);
-    });
-  }
-
-  function openModal() {
-    els.modalBackdrop.classList.remove('hidden');
-    els.modalBackdrop.classList.add('flex');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeModal() {
-    els.modalBackdrop.classList.add('hidden');
-    els.modalBackdrop.classList.remove('flex');
-    document.body.style.overflow = '';
-    els.formError.classList.add('hidden');
-    els.formError.textContent = '';
-  }
-
-  function openAddModal() {
-    els.modalTitle.textContent = 'Thêm món mới';
-    document.getElementById('f-product-id').value = '';
-    document.getElementById('f-name').value = '';
-    document.getElementById('f-description').value = '';
-    document.getElementById('f-price').value = '';
-    document.getElementById('f-quantity').value = '0';
-    document.getElementById('f-imageUrl').value = '';
-    document.getElementById('f-available').checked = true;
-    fillCategorySelect();
-    if (state.categories.length) {
-      document.getElementById('f-categoryId').value = String(state.filterCategoryId != null ? state.filterCategoryId : state.categories[0].id);
-    }
-    openModal();
-  }
-
-  function openEditModal(p) {
-    els.modalTitle.textContent = 'Chỉnh sửa món';
-    document.getElementById('f-product-id').value = String(p.id);
-    document.getElementById('f-name').value = p.name || '';
-    document.getElementById('f-description').value = p.description || '';
-    document.getElementById('f-price').value = p.price != null ? String(p.price) : '';
-    document.getElementById('f-quantity').value = p.quantity != null ? String(p.quantity) : '0';
-    document.getElementById('f-imageUrl').value = p.imageUrl || '';
-    document.getElementById('f-available').checked = !!p.available;
-    fillCategorySelect();
-    if (p.categoryId != null) {
-      document.getElementById('f-categoryId').value = String(p.categoryId);
-    }
-    openModal();
-  }
-
-  document.getElementById('btn-add-product').addEventListener('click', openAddModal);
-  document.getElementById('modal-close').addEventListener('click', closeModal);
-  document.getElementById('form-cancel').addEventListener('click', closeModal);
-  els.modalBackdrop.addEventListener('click', function (e) {
-    if (e.target === els.modalBackdrop) closeModal();
-  });
-
-  els.form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    els.formError.classList.add('hidden');
-    var id = document.getElementById('f-product-id').value;
-    var name = document.getElementById('f-name').value.trim();
-    var description = document.getElementById('f-description').value;
-    var price = parseFloat(document.getElementById('f-price').value);
-    var quantity = parseInt(document.getElementById('f-quantity').value, 10);
-    var imageUrl = document.getElementById('f-imageUrl').value.trim();
-    var categoryId = parseInt(document.getElementById('f-categoryId').value, 10);
-    var available = document.getElementById('f-available').checked;
-    if (!name || isNaN(price) || price < 0 || isNaN(quantity) || quantity < 0 || isNaN(categoryId)) {
-      els.formError.textContent = 'Vui lòng kiểm tra lại dữ liệu.';
-      els.formError.classList.remove('hidden');
-      return;
-    }
-    var payloadCreate = {
-      name: name,
-      description: description || null,
-      price: price,
-      imageUrl: imageUrl || null,
-      quantity: quantity,
-      available: available,
-      categoryId: categoryId
-    };
-    if (id) {
-      var payloadPatch = {
-        name: name,
-        description: description,
-        price: price,
-        imageUrl: imageUrl || null,
-        quantity: quantity,
-        available: available,
-        categoryId: categoryId
-      };
-      apiJson(API.products + '/' + id, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payloadPatch)
-      }).then(function (updated) {
-        var idx = state.products.findIndex(function (x) { return x.id === updated.id; });
-        if (idx >= 0) state.products[idx] = updated;
-        else state.products.push(updated);
-        closeModal();
-        renderGrid();
-        updateStats();
-      }).catch(function (err) {
-        els.formError.textContent = err.message || 'Lỗi lưu';
-        els.formError.classList.remove('hidden');
-      });
-    } else {
-      apiJson(API.products, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payloadCreate)
-      }).then(function (created) {
-        state.products.push(created);
-        closeModal();
-        renderGrid();
-        updateStats();
-      }).catch(function (err) {
-        els.formError.textContent = err.message || 'Lỗi thêm món';
-        els.formError.classList.remove('hidden');
-      });
-    }
-  });
 
   document.getElementById('btn-logout').addEventListener('click', function () {
     fetch(API.logout, { method: 'POST', credentials: 'same-origin' }).then(function () {

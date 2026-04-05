@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html class="light" lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quản lý Sản phẩm - The Artisanal Ledger</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary": "#ffffff",
+              "on-surface-variant": "#504442",
+              "primary": "#271310",
+              "surface-container": "#f5eed7",
+              "surface-container-low": "#faf4dd",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-high": "#efe8d2",
+              "outline-variant": "#d3c3c0",
+              "background": "#fff9ea",
+              "on-surface": "#1e1c0e",
+              "secondary": "#1b6d24",
+              "error": "#ba1a1a",
+              "error-container": "#ffdad6"
+            },
+            fontFamily: { "headline": ["Manrope"], "body": ["Inter"] },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"}
+          }
+        }
+      };
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #fff9ea; color: #1e1c0e; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .font-headline { font-family: 'Manrope', sans-serif; }
+        @keyframes adminContentIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes adminContentOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-10px); } }
+        .admin-content-enter { animation: adminContentIn 0.22s ease-out both; }
+        .admin-content-leave { animation: adminContentOut 0.18s ease-in both; }
+    </style>
+</head>
+<body class="flex min-h-screen">
+<aside class="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 border-r-0 bg-[#f5eed7] py-6 z-50">
+<div class="px-6 mb-10">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined">coffee</span>
+</div>
+<div>
+<h1 class="font-manrope font-bold text-lg text-[#271310]">Artisanal Ledger</h1>
+<p class="text-[10px] uppercase tracking-widest opacity-60">Admin</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center px-4 py-3 mx-2 text-[#3e2723]/70 hover:text-[#271310] hover:bg-[#ffffff]/50 rounded-full transition-all duration-200" href="/admin/dashboard">
+<span class="material-symbols-outlined mr-3">dashboard</span>
+<span class="font-medium text-sm">Dashboard</span>
+</a>
+<a class="flex items-center px-4 py-3 mx-2 text-[#3e2723]/70 hover:text-[#271310] hover:bg-[#ffffff]/50 rounded-full transition-all duration-200" href="/admin/category">
+<span class="material-symbols-outlined mr-3">category</span>
+<span class="font-medium text-sm">Danh mục</span>
+</a>
+<a class="flex items-center px-4 py-3 mx-2 bg-[#ffffff] text-[#271310] rounded-full shadow-sm" href="/admin/products">
+<span class="material-symbols-outlined mr-3" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-medium text-sm">Sản phẩm</span>
+</a>
+<a class="flex items-center px-4 py-3 mx-2 text-[#3e2723]/70 hover:text-[#271310] hover:bg-[#ffffff]/50 rounded-full transition-all duration-200" href="/admin/staff">
+<span class="material-symbols-outlined mr-3">group</span>
+<span class="font-medium text-sm">Nhân viên</span>
+</a>
+<a class="flex items-center px-4 py-3 mx-2 text-[#3e2723]/70 hover:text-[#271310] hover:bg-[#ffffff]/50 rounded-full transition-all duration-200" href="/admin/revenue">
+<span class="material-symbols-outlined mr-3">payments</span>
+<span class="font-medium text-sm">Doanh thu</span>
+</a>
+</nav>
+<div class="mt-auto px-2 space-y-1">
+<div class="px-4 py-2 mb-1">
+<p class="text-[10px] uppercase tracking-wider opacity-60">Đăng nhập</p>
+<p id="current-user-fullname" class="text-sm font-semibold text-[#271310] truncate" title="">—</p>
+</div>
+<button type="button" id="admin-logout" class="flex items-center w-full px-4 py-3 text-[#3e2723]/70 hover:text-[#271310] hover:bg-[#ffffff]/50 rounded-full transition-all text-left">
+<span class="material-symbols-outlined mr-3">logout</span>
+<span class="font-medium text-sm">Logout</span>
+</button>
+</div>
+</aside>
+
+<main class="flex-1 md:ml-64 min-h-screen flex flex-col pb-24 md:pb-0">
+<header class="bg-[#fff9ea] flex flex-wrap gap-4 justify-between items-center w-full px-6 md:px-8 py-4 sticky top-0 z-40">
+<div class="flex items-center gap-4">
+<h2 class="text-xl font-bold text-[#271310] tracking-tight font-manrope">Quản lý Sản phẩm</h2>
+</div>
+<div class="flex flex-wrap items-center gap-3 w-full md:w-auto md:max-w-md">
+<div class="relative flex items-center flex-1 min-w-[200px]">
+<span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-xl">search</span>
+<input id="product-search" type="search" class="w-full pl-11 pr-4 py-2.5 bg-surface-container-low border border-outline-variant/10 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20" placeholder="Tìm tên món, danh mục…"/>
+</div>
+<button type="button" id="btn-add-product" class="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-full text-sm font-semibold hover:opacity-90 transition-all">
+<span class="material-symbols-outlined text-lg">add</span>
+Thêm sản phẩm
+</button>
+</div>
+</header>
+
+<div class="px-6 md:px-8 max-w-7xl mx-auto w-full flex-1 space-y-4">
+<p id="page-error" class="hidden text-sm text-error" role="alert"></p>
+
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm border border-outline-variant/10">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse text-sm">
+<thead>
+<tr class="bg-surface-container-high">
+<th class="px-4 md:px-6 py-3 text-xs font-bold text-[#271310] uppercase tracking-wider w-24">Ảnh</th>
+<th class="px-4 md:px-6 py-3 text-xs font-bold text-[#271310] uppercase tracking-wider">Tên</th>
+<th class="px-4 md:px-6 py-3 text-xs font-bold text-[#271310] uppercase tracking-wider hidden sm:table-cell">Danh mục</th>
+<th class="px-4 md:px-6 py-3 text-xs font-bold text-[#271310] uppercase tracking-wider whitespace-nowrap">Giá</th>
+<th class="px-4 md:px-6 py-3 text-xs font-bold text-[#271310] uppercase tracking-wider text-center">Tồn kho</th>
+<th class="px-4 md:px-6 py-3 text-xs font-bold text-[#271310] uppercase tracking-wider hidden md:table-cell">Bán</th>
+<th class="px-4 md:px-6 py-3 text-xs font-bold text-[#271310] uppercase tracking-wider text-right">Thao tác</th>
+</tr>
+</thead>
+<tbody id="product-tbody" class="divide-y divide-outline-variant/10">
+<tr id="product-loading-row">
+<td class="px-6 py-8 text-center text-on-surface-variant" colspan="7">Đang tải…</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-[#fff9ea] flex justify-around items-center py-3 border-t-0 shadow-[0_-4px_24px_rgba(30,28,14,0.06)] z-50">
+<a class="flex flex-col items-center gap-1 text-[#3e2723]/60" href="/admin/category">
+<span class="material-symbols-outlined">category</span>
+<span class="text-[10px] font-medium">DM</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-[#271310]" href="/admin/products">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="text-[10px] font-bold">SP</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-[#3e2723]/60" href="/admin/staff">
+<span class="material-symbols-outlined">group</span>
+<span class="text-[10px] font-medium">NV</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-[#3e2723]/60" href="/admin/revenue">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-[10px] font-medium">DT</span>
+</a>
+</nav>
+
+<div id="product-modal-backdrop" class="fixed inset-0 bg-black/40 z-[200] hidden items-center justify-center p-4">
+<div class="bg-white rounded-xl shadow-2xl max-w-lg w-full border border-outline-variant/20 p-6 max-h-[90vh] overflow-y-auto">
+<div class="flex items-center justify-between gap-3 mb-4">
+<h3 id="product-modal-title" class="font-manrope font-bold text-lg text-primary">Sản phẩm</h3>
+<button type="button" id="product-modal-close" class="p-2 rounded-lg hover:bg-surface-container-high text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
+</div>
+<p id="product-modal-error" class="hidden text-sm text-error mb-2" role="alert"></p>
+<form id="product-form" class="space-y-3 text-sm">
+<input type="hidden" id="pf-id" value=""/>
+<div id="pf-stock-wrap" class="hidden rounded-lg bg-surface-container-high/50 px-3 py-2 text-xs text-on-surface-variant">
+Tồn kho hiện tại: <span id="pf-stock-val" class="font-bold text-[#271310]">0</span> (chỉ nhân viên điều chỉnh)
+</div>
+<div>
+<label class="text-xs font-semibold text-on-surface-variant" for="pf-name">Tên món <span class="text-error">*</span></label>
+<input id="pf-name" required maxlength="150" class="mt-1 w-full rounded-lg border border-outline-variant/30 bg-surface-container-lowest px-3 py-2"/>
+</div>
+<div>
+<label class="text-xs font-semibold text-on-surface-variant" for="pf-desc">Mô tả</label>
+<textarea id="pf-desc" rows="3" class="mt-1 w-full rounded-lg border border-outline-variant/30 bg-surface-container-lowest px-3 py-2"></textarea>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<div>
+<label class="text-xs font-semibold text-on-surface-variant" for="pf-price">Giá (VND) <span class="text-error">*</span></label>
+<input id="pf-price" type="number" required min="0" step="1" class="mt-1 w-full rounded-lg border border-outline-variant/30 bg-surface-container-lowest px-3 py-2"/>
+</div>
+<div>
+<label class="text-xs font-semibold text-on-surface-variant" for="pf-category">Danh mục <span class="text-error">*</span></label>
+<select id="pf-category" required class="mt-1 w-full rounded-lg border border-outline-variant/30 bg-surface-container-lowest px-3 py-2"></select>
+</div>
+</div>
+<div>
+<label class="text-xs font-semibold text-on-surface-variant" for="pf-image">URL ảnh (tùy chọn)</label>
+<input id="pf-image" type="url" class="mt-1 w-full rounded-lg border border-outline-variant/30 bg-surface-container-lowest px-3 py-2" placeholder="https://..."/>
+</div>
+<div class="flex items-center gap-2">
+<input id="pf-available" type="checkbox" class="rounded border-outline-variant" checked/>
+<label for="pf-available" class="text-on-surface-variant">Đang bán</label>
+</div>
+<div class="flex gap-2 pt-4">
+<button type="submit" class="flex-1 bg-primary text-on-primary font-bold py-3 rounded-full">Lưu</button>
+<button type="button" id="product-modal-cancel" class="px-4 py-3 rounded-full border border-outline-variant">Hủy</button>
+</div>
+</form>
+</div>
+</div>
+
+<script src="/js/image-url.js"></script>
+<script>
+(function () {
+  function setupAdminContentTransition() {
+    var main = document.querySelector("main");
+    if (!main) return;
+    var mark = null;
+    try {
+      mark = window.sessionStorage.getItem("webcafe.admin.transition");
+      window.sessionStorage.removeItem("webcafe.admin.transition");
+    } catch (e) {}
+    if (mark === "1") main.classList.add("admin-content-enter");
+    var links = document.querySelectorAll('a[href^="/admin/"]');
+    Array.prototype.forEach.call(links, function (a) {
+      a.addEventListener("click", function (e) {
+        var href = a.getAttribute("href");
+        if (!href || href === window.location.pathname) return;
+        e.preventDefault();
+        main.classList.add("admin-content-leave");
+        try { window.sessionStorage.setItem("webcafe.admin.transition", "1"); } catch (err) {}
+        setTimeout(function () { window.location.href = href; }, 180);
+      });
+    });
+  }
+
+  var PLACEHOLDER =
+    "data:image/svg+xml," +
+    encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"><rect fill="#efe8d2" width="80" height="80"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#504442" font-family="sans-serif" font-size="10">Ảnh</text></svg>'
+    );
+
+  var moneyFmt = new Intl.NumberFormat("vi-VN");
+  var allProducts = [];
+  var allCategories = [];
+
+  function esc(s) {
+    if (s == null) return "";
+    var d = document.createElement("div");
+    d.textContent = String(s);
+    return d.innerHTML;
+  }
+
+  function productThumb(url) {
+    var u = url || PLACEHOLDER;
+    if (window.WebCafeImageUrl && typeof window.WebCafeImageUrl.optimize === "function") {
+      u = window.WebCafeImageUrl.optimize(u, { maxW: 128 });
+    }
+    return u;
+  }
+
+  function fillCategorySelect() {
+    var sel = document.getElementById("pf-category");
+    if (!sel) return;
+    sel.innerHTML = "";
+    allCategories.forEach(function (c) {
+      var opt = document.createElement("option");
+      opt.value = String(c.id);
+      opt.textContent = c.name + (c.hidden ? " (ẩn)" : "");
+      sel.appendChild(opt);
+    });
+  }
+
+  function productModalOpen(mode, prod) {
+    var backdrop = document.getElementById("product-modal-backdrop");
+    var title = document.getElementById("product-modal-title");
+    var err = document.getElementById("product-modal-error");
+    var stockWrap = document.getElementById("pf-stock-wrap");
+    if (err) err.classList.add("hidden");
+    fillCategorySelect();
+    if (mode === "create") {
+      if (title) title.textContent = "Thêm sản phẩm";
+      document.getElementById("pf-id").value = "";
+      document.getElementById("pf-name").value = "";
+      document.getElementById("pf-desc").value = "";
+      document.getElementById("pf-price").value = "";
+      document.getElementById("pf-image").value = "";
+      document.getElementById("pf-available").checked = true;
+      if (stockWrap) stockWrap.classList.add("hidden");
+    } else {
+      if (title) title.textContent = "Sửa sản phẩm";
+      document.getElementById("pf-id").value = String(prod.id);
+      document.getElementById("pf-name").value = prod.name || "";
+      document.getElementById("pf-desc").value = prod.description || "";
+      document.getElementById("pf-price").value = prod.price != null ? String(prod.price) : "";
+      document.getElementById("pf-image").value = prod.imageUrl || "";
+      document.getElementById("pf-available").checked = prod.available !== false;
+      var catSel = document.getElementById("pf-category");
+      if (catSel && prod.categoryId != null) catSel.value = String(prod.categoryId);
+      var sv = document.getElementById("pf-stock-val");
+      if (sv) sv.textContent = prod.quantity != null ? String(prod.quantity) : "0";
+      if (stockWrap) stockWrap.classList.remove("hidden");
+    }
+    if (backdrop) {
+      backdrop.classList.remove("hidden");
+      backdrop.classList.add("flex");
+    }
+  }
+
+  function productModalClose() {
+    var backdrop = document.getElementById("product-modal-backdrop");
+    if (backdrop) {
+      backdrop.classList.add("hidden");
+      backdrop.classList.remove("flex");
+    }
+  }
+
+  function matchesSearch(p, q) {
+    if (!q) return true;
+    var s = q.toLowerCase();
+    return (
+      String(p.name || "")
+        .toLowerCase()
+        .indexOf(s) >= 0 ||
+      String(p.categoryName || "")
+        .toLowerCase()
+        .indexOf(s) >= 0
+    );
+  }
+
+  function renderTable() {
+    var tbody = document.getElementById("product-tbody");
+    var loading = document.getElementById("product-loading-row");
+    if (!tbody) return;
+    var q = (document.getElementById("product-search") && document.getElementById("product-search").value) || "";
+    if (loading) loading.remove();
+    tbody.innerHTML = "";
+    var list = allProducts.filter(function (p) {
+      return matchesSearch(p, q.trim());
+    });
+    if (!list.length) {
+      var tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td class="px-6 py-10 text-center text-on-surface-variant" colspan="7">' +
+        (allProducts.length ? "Không có món khớp tìm kiếm." : "Chưa có sản phẩm. Nhấn «Thêm sản phẩm».") +
+        "</td>";
+      tbody.appendChild(tr);
+      return;
+    }
+    list.forEach(function (p) {
+      var tr = document.createElement("tr");
+      tr.className = "hover:bg-surface-container-low/50";
+      var img = '<img class="w-14 h-14 object-cover rounded-lg border border-outline-variant/20" alt="" src="' + esc(productThumb(p.imageUrl)) + '"/>';
+      var priceStr = p.price != null ? moneyFmt.format(Number(p.price)) + " đ" : "—";
+      var qty = p.quantity != null ? String(p.quantity) : "0";
+      var avail = p.available !== false ? "Có" : "Ngừng";
+      tr.innerHTML =
+        '<td class="px-4 md:px-6 py-3">' +
+        img +
+        "</td>" +
+        '<td class="px-4 md:px-6 py-3 font-medium text-[#271310]">' +
+        esc(p.name) +
+        "</td>" +
+        '<td class="px-4 md:px-6 py-3 hidden sm:table-cell text-on-surface-variant">' +
+        esc(p.categoryName || "—") +
+        "</td>" +
+        '<td class="px-4 md:px-6 py-3 whitespace-nowrap">' +
+        priceStr +
+        "</td>" +
+        '<td class="px-4 md:px-6 py-3 text-center text-on-surface-variant">' +
+        esc(qty) +
+        "</td>" +
+        '<td class="px-4 md:px-6 py-3 hidden md:table-cell">' +
+        esc(avail) +
+        "</td>" +
+        '<td class="px-4 md:px-6 py-3 text-right">' +
+        '<div class="flex justify-end gap-2">' +
+        '<button type="button" class="p-btn-edit inline-flex items-center justify-center w-9 h-9 rounded-full bg-surface-container hover:bg-surface-container-high text-primary" title="Sửa" data-id="' +
+        p.id +
+        '"><span class="material-symbols-outlined text-lg">edit</span></button>' +
+        '<button type="button" class="p-btn-del inline-flex items-center justify-center w-9 h-9 rounded-full bg-error-container/20 hover:bg-error-container/40 text-error" title="Xóa" data-id="' +
+        p.id +
+        '"><span class="material-symbols-outlined text-lg">delete</span></button>' +
+        "</div></td>";
+      var imgEl = tr.querySelector("img");
+      if (imgEl) {
+        imgEl.onerror = function () {
+          this.onerror = null;
+          this.src = PLACEHOLDER;
+        };
+      }
+      tr.querySelector(".p-btn-edit").addEventListener("click", function () {
+        productModalOpen("edit", p);
+      });
+      tr.querySelector(".p-btn-del").addEventListener("click", function () {
+        if (!confirm("Xóa món «" + (p.name || "") + "»?")) return;
+        fetch("/api/admin/products/" + p.id, { method: "DELETE", credentials: "same-origin" })
+          .then(function (r) {
+            if (!r.ok) return r.text().then(function (t) { throw new Error(t || "Lỗi"); });
+            return loadAll();
+          })
+          .catch(function (ex) {
+            alert(ex.message || "Không xóa được.");
+          });
+      });
+      tbody.appendChild(tr);
+    });
+  }
+
+  function loadAll() {
+    var errEl = document.getElementById("page-error");
+    if (errEl) errEl.classList.add("hidden");
+    return fetch("/api/admin/categories", { credentials: "same-origin" })
+      .then(function (r) {
+        if (r.status === 401 || r.status === 403) {
+          window.location.href = "/login";
+          return null;
+        }
+        if (!r.ok) throw new Error("Danh mục");
+        return r.json();
+      })
+      .then(function (cats) {
+        if (cats == null) return null;
+        allCategories = Array.isArray(cats) ? cats : [];
+        return fetch("/api/admin/products", { credentials: "same-origin" }).then(function (r) {
+          if (!r.ok) throw new Error("Sản phẩm");
+          return r.json();
+        });
+      })
+      .then(function (products) {
+        if (products === undefined) return;
+        allProducts = Array.isArray(products) ? products : [];
+        renderTable();
+      })
+      .catch(function () {
+        if (errEl) {
+          errEl.textContent = "Không tải được dữ liệu. Vui lòng đăng nhập admin.";
+          errEl.classList.remove("hidden");
+        }
+        var tbody = document.getElementById("product-tbody");
+        if (tbody) tbody.innerHTML = '<tr><td class="px-6 py-8 text-center text-error" colspan="7">Lỗi tải dữ liệu</td></tr>';
+      });
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    setupAdminContentTransition();
+    fetch("/api/auth/me", { credentials: "same-origin" })
+      .then(function (r) {
+        return r.ok ? r.json() : null;
+      })
+      .then(function (data) {
+        var el = document.getElementById("current-user-fullname");
+        if (!el || !data) return;
+        var name =
+          data.fullName && String(data.fullName).trim()
+            ? String(data.fullName).trim()
+            : data.username || "—";
+        el.textContent = name;
+        el.setAttribute("title", name);
+      });
+    var search = document.getElementById("product-search");
+    if (search) search.addEventListener("input", renderTable);
+    var logout = document.getElementById("admin-logout");
+    if (logout) {
+      logout.addEventListener("click", function () {
+        fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" })
+          .then(function () {
+            window.location.href = "/login";
+          })
+          .catch(function () {
+            window.location.href = "/login";
+          });
+      });
+    }
+    document.getElementById("product-modal-close").addEventListener("click", productModalClose);
+    document.getElementById("product-modal-cancel").addEventListener("click", productModalClose);
+    document.getElementById("btn-add-product").addEventListener("click", function () {
+      productModalOpen("create", null);
+    });
+    document.getElementById("product-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var errBox = document.getElementById("product-modal-error");
+      if (errBox) errBox.classList.add("hidden");
+      var id = document.getElementById("pf-id").value.trim();
+      var priceRaw = document.getElementById("pf-price").value;
+      var priceNum = parseFloat(priceRaw, 10);
+      if (isNaN(priceNum) || priceNum < 0) {
+        if (errBox) {
+          errBox.textContent = "Giá không hợp lệ.";
+          errBox.classList.remove("hidden");
+        }
+        return;
+      }
+      var catId = parseInt(document.getElementById("pf-category").value, 10);
+      if (isNaN(catId)) {
+        if (errBox) {
+          errBox.textContent = "Chọn danh mục.";
+          errBox.classList.remove("hidden");
+        }
+        return;
+      }
+      var payload = {
+        name: document.getElementById("pf-name").value.trim(),
+        description: document.getElementById("pf-desc").value.trim() || null,
+        price: priceNum,
+        imageUrl: document.getElementById("pf-image").value.trim() || null,
+        available: document.getElementById("pf-available").checked,
+        categoryId: catId
+      };
+      var url = id ? "/api/admin/products/" + id : "/api/admin/products";
+      var method = id ? "PUT" : "POST";
+      fetch(url, {
+        method: method,
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+        .then(function (r) {
+          if (!r.ok) return r.text().then(function (t) { throw new Error(t || "Lỗi"); });
+          productModalClose();
+          return loadAll();
+        })
+        .catch(function (ex) {
+          if (errBox) {
+            errBox.textContent = ex.message || "Lỗi";
+            errBox.classList.remove("hidden");
+          }
+        });
+    });
+    loadAll();
+  });
+})();
+</script>
+</body>
+</html>

@@ -12,8 +12,9 @@ public record AdminProductRequest(
 		String description,
 		@NotNull @DecimalMin("0.0") BigDecimal price,
 		@Size(max = 255) String imageUrl,
+		/** Bị bỏ qua: tồn kho do nhân viên cập nhật qua API riêng. */
 		Integer quantity,
 		Boolean available,
-		Integer categoryId
+		@NotNull Integer categoryId
 ) {
 }

@@ -1,8 +1,7 @@
 package com.example.WebCafe.controller;
 
-import com.example.WebCafe.dto.request.AdminProductRequest;
 import com.example.WebCafe.dto.request.PaymentRequest;
-import com.example.WebCafe.dto.request.StaffProductUpdateRequest;
+import com.example.WebCafe.dto.request.StaffProductPatchRequest;
 import com.example.WebCafe.dto.response.CategoryOptionResponse;
 import com.example.WebCafe.dto.response.OrderQueueResponse;
 import com.example.WebCafe.dto.response.ProductResponse;
@@ -48,15 +47,10 @@ public class StaffController {
 		return staffService.listCategories();
 	}
 
-	@PostMapping("/products")
-	public ProductResponse createProduct(@Valid @RequestBody AdminProductRequest request) {
-		return staffService.createProduct(request);
-	}
-
 	@PatchMapping("/products/{productId}")
-	public ProductResponse updateProduct(@PathVariable Integer productId,
-			@RequestBody StaffProductUpdateRequest request) {
-		return staffService.updateProduct(productId, request);
+	public ProductResponse patchProduct(@PathVariable Integer productId,
+			@Valid @RequestBody StaffProductPatchRequest request) {
+		return staffService.patchProduct(productId, request);
 	}
 
 	@GetMapping("/queue")
